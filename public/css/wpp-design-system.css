@@ -1,0 +1,531 @@
+/* ================================================================
+   WPP MEDIA SOLUTIONS — Design System Global
+   Brand Guidelines 2025 — Version 1.0
+   ================================================================ */
+
+/* ===== FONTS ===== */
+@font-face {
+    font-family: 'WPP';
+    src: url('https://cdn.nexus-creative-solutions.com/LATAM/applications/fonts/WPP-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'WPP';
+    src: url('https://cdn.nexus-creative-solutions.com/LATAM/applications/fonts/WPP-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Primary Palette */
+    --wpp-navy: #000050;
+    --wpp-lime: #B0F467;
+    --wpp-cyan: #93DFE3;
+    --wpp-white: #FFFFFF;
+
+    /* Secondary Palette */
+    --wpp-cornflower: #5465FF;
+    --wpp-periwinkle: #788BFF;
+    --wpp-teal: #00DBEE;
+    --wpp-yellow: #FCFE67;
+
+    /* Backgrounds */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --bg-input: #F8FAFC;
+    --bg-navbar: var(--wpp-navy);
+
+    /* Borders */
+    --border-card: rgba(0, 0, 80, 0.08);
+    --border-input: rgba(0, 0, 80, 0.15);
+    --border-input-focus: var(--wpp-cyan);
+
+    /* Text */
+    --text-primary: var(--wpp-navy);
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-on-navy: var(--wpp-white);
+    --text-on-lime: var(--wpp-navy);
+
+    /* States */
+    --color-success: var(--wpp-lime);
+    --color-error: #ef4444;
+    --color-error-hover: #dc2626;
+    --color-warning: var(--wpp-yellow);
+    --color-info: var(--wpp-cyan);
+
+    /* Gradients */
+    --gradient-lime-cyan: linear-gradient(135deg, #B0F467, #93DFE3);
+    --gradient-cornflower-periwinkle: linear-gradient(135deg, #5465FF, #788BFF);
+    --gradient-teal-lime: linear-gradient(135deg, #00DBEE, #B0F467);
+    --gradient-navy-cornflower: linear-gradient(135deg, #000050, #5465FF);
+
+    /* Shadows */
+    --shadow-card: 0 12px 32px rgba(0, 0, 80, 0.03), 0 4px 12px rgba(0, 0, 80, 0.01);
+    --shadow-card-hover: 0 16px 40px rgba(0, 0, 80, 0.06), 0 8px 16px rgba(0, 0, 80, 0.02);
+    --shadow-glow-lime: 0 0 60px rgba(176, 244, 103, 0.08);
+    --shadow-glow-cyan: 0 0 20px rgba(147, 223, 227, 0.25);
+
+    /* Radius */
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-full: 100px;
+
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-med: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'WPP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+h1 { font-size: 28px; }
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+h4 { font-size: 16px; }
+
+p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--wpp-cornflower);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--wpp-periwinkle);
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-family: 'WPP', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    line-height: 1;
+}
+
+.btn-primary {
+    background: var(--wpp-lime);
+    color: var(--wpp-navy);
+}
+
+.btn-primary:hover {
+    background: var(--wpp-cyan);
+    box-shadow: var(--shadow-glow-cyan);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--wpp-navy);
+    border: 1px solid var(--wpp-navy);
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 0, 80, 0.05);
+}
+
+.btn-danger {
+    background: var(--color-error);
+    color: var(--wpp-white);
+}
+
+.btn-danger:hover {
+    background: var(--color-error-hover);
+}
+
+.btn-accent {
+    background: var(--wpp-cornflower);
+    color: var(--wpp-white);
+}
+
+.btn-accent:hover {
+    background: var(--wpp-periwinkle);
+}
+
+.btn-gradient {
+    background: var(--wpp-lime);
+    color: var(--wpp-navy);
+    border: none;
+}
+
+.btn-gradient:hover {
+    opacity: 0.9;
+    box-shadow: var(--shadow-glow-lime);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== INPUTS & FORMS ===== */
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-family: 'WPP', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--border-input-focus);
+    box-shadow: 0 0 0 3px rgba(147, 223, 227, 0.25);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ===== CARDS & CONTAINERS ===== */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow var(--transition-med);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* ===== ALERTS / FEEDBACK ===== */
+.alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: rgba(176, 244, 103, 0.1);
+    border: 1px solid rgba(176, 244, 103, 0.3);
+    color: #3d7a0a;
+}
+
+.alert-error {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: var(--color-error);
+}
+
+.alert-warning {
+    background-color: rgba(252, 254, 103, 0.15);
+    border: 1px solid rgba(252, 254, 103, 0.4);
+    color: #92400e;
+}
+
+.alert-info {
+    background-color: rgba(147, 223, 227, 0.1);
+    border: 1px solid rgba(147, 223, 227, 0.3);
+    color: #0e6e74;
+}
+
+/* ===== APP LAYOUT (Sidebar + Main) ===== */
+.app-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--wpp-navy);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0;
+    overflow-y: auto;
+    z-index: 50;
+}
+
+.sidebar-brand {
+    padding: 0 24px 32px;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--wpp-white);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 24px;
+}
+
+.sidebar-section {
+    padding: 0 16px;
+    margin-bottom: 28px;
+}
+
+.sidebar-section-title {
+    display: block;
+    padding: 0 12px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    margin-bottom: 4px;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: 'WPP', sans-serif;
+    text-align: left;
+}
+
+.sidebar-link svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+}
+
+.sidebar-link:hover {
+    color: var(--wpp-white);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-link.active {
+    color: var(--wpp-white);
+    background: rgba(176, 244, 103, 0.1);
+    border-left: 3px solid var(--wpp-lime);
+    padding-left: 9px;
+    font-weight: 500;
+}
+
+/* CTA Link — "Crear Brandlift" glow effect */
+.sidebar-link-cta {
+    color: var(--wpp-white) !important;
+    font-weight: 500 !important;
+    border-radius: var(--radius-sm);
+    animation: ctaTextGlow 2.5s ease-in-out infinite;
+    margin-top: 4px;
+}
+
+.sidebar-link-cta:hover {
+    color: var(--wpp-white) !important;
+    background: rgba(176, 244, 103, 0.05) !important;
+}
+
+@keyframes ctaTextGlow {
+    0%, 100% { text-shadow: 0 0 8px rgba(176, 244, 103, 0.3); }
+    50% { text-shadow: 0 0 16px rgba(176, 244, 103, 0.8); }
+}
+
+.sidebar-link-danger {
+    color: rgba(239, 68, 68, 0.7);
+}
+
+.sidebar-link-danger:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.sidebar-spacer {
+    flex: 1;
+}
+
+/* ===== MAIN CONTENT AREA ===== */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg-secondary);
+}
+
+/* ===== TOP HEADER BAR ===== */
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px 0 40px;
+    background: transparent;
+    border-bottom: none;
+    min-height: 80px;
+    flex-shrink: 0;
+}
+
+.top-header-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.top-header-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.top-header-user-info {
+    text-align: right;
+}
+
+.top-header-user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.top-header-user-email {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.top-header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    background: var(--wpp-navy);
+    color: var(--wpp-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Content wrapper inside main */
+.content-area {
+    flex: 1;
+    padding: 32px 40px;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-muted { color: var(--text-muted); }
+.text-secondary { color: var(--text-secondary); }
+.text-primary { color: var(--text-primary); }
+.text-navy { color: var(--wpp-navy); }
+.text-lime { color: var(--wpp-lime); }
+.text-cyan { color: var(--wpp-cyan); }
+.text-white { color: var(--wpp-white); }
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-medium { font-weight: 500; }
+.font-regular { font-weight: 400; }
+
+.bg-navy { background-color: var(--wpp-navy); }
+.bg-lime { background-color: var(--wpp-lime); }
+.bg-cyan { background-color: var(--wpp-cyan); }
+.bg-white { background-color: var(--wpp-white); }
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* ===== BADGE ===== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-lime {
+    background: rgba(176, 244, 103, 0.15);
+    color: #3d7a0a;
+}
+
+.badge-cyan {
+    background: rgba(147, 223, 227, 0.15);
+    color: #0e6e74;
+}
+
+.badge-navy {
+    background: rgba(0, 0, 80, 0.1);
+    color: var(--wpp-navy);
+}
+
+.badge-gradient {
+    background: var(--wpp-navy);
+    color: var(--wpp-white);
+}
