@@ -20,7 +20,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+# /vendor  (temporalmente incluido para despliegue en Cloudways)
 _ide_helper.php
 Homestead.json
 Homestead.yaml
