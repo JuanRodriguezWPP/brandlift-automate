@@ -35,11 +35,10 @@ if (file_exists($envExamplePath)) {
 
 // Subir a la carpeta principal para ejecutar comandos
 chdir(__DIR__ . '/..');
-putenv('COMPOSER_HOME=/tmp'); // Para evitar errores de permisos de Composer
 
 // 2. Instalar Composer
 echo "2. Instalando Laravel (Composer). Esto puede tardar 1 o 2 minutos...\n";
-echo shell_exec('composer install --optimize-autoloader --no-dev 2>&1');
+echo shell_exec('export COMPOSER_HOME=/tmp && composer install --optimize-autoloader --no-dev 2>&1');
 echo "\n\n";
 
 // 3. Generar Key
