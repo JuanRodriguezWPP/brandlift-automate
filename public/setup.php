@@ -74,7 +74,7 @@ MAIL_PASSWORD=\"vtqc mkfz zpgj pugn\"
 MAIL_FROM_ADDRESS=\"xcslatam@gmail.com\"
 MAIL_FROM_NAME=\"Brandlift Automate\"
 
-CM360_CREDENTIALS_PAßH=storage/app/cm360-credentials.json
+CM360_CREDENTIALS_PATH=storage/app/cm360-credentials.json
 ";
 
 $envPath = __DIR__ . '/../.env';
