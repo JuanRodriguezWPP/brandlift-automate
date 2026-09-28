@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/camilo.serrato/Library/Application Support/Herd/bin/php85",
+            "args": [
+                "/Users/camilo.serrato/Library/CloudStorage/OneDrive-insidemedia.net/Desktop/Projects/BL Builder/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
