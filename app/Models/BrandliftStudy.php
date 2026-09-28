@@ -101,4 +101,8 @@ class BrandliftStudy extends Model
 
         return $markets[$this->market] ?? $this->market;
     }
+    public function editLogs()
+    {
+        return $this->hasMany(BrandliftEditLog::class, 'brandlift_study_id')->latest();
+    }
 }

@@ -345,16 +345,37 @@ class BrandliftController extends Controller
             
             // 1. Update questions in DB if provided
             if ($request->has('questions')) {
+                // Capture old questions for the log
+                $oldQuestions = \App\Models\BrandliftQuestion::where('brandlift_study_id', $study->id)
+                    ->orderBy('question_number')
+                    ->get()
+                    ->map(function($q) {
+                        return ['text' => $q->question_text, 'answers' => $q->answers];
+                    })->toArray();
+
                 \App\Models\BrandliftQuestion::where('brandlift_study_id', $study->id)->delete();
+                $newQuestions = [];
                 foreach ($request->input('questions') as $index => $q) {
+                    $newQuestions[] = ['text' => $q['text'] ?? '', 'answers' => $q['answers'] ?? []];
                     \App\Models\BrandliftQuestion::create([
                         'brandlift_study_id' => $study->id,
                         'question_number' => $index + 1,
                         'question_text' => $q['text'] ?? '',
                         'answers' => $q['answers'] ?? [],
-                        'creative_html' => $q['creative_html'] ?? null,
+                        'creative_html' => $q['creative_html'] ?? ($request->input('creatives')[0]['html'] ?? ''),
                     ]);
                 }
+
+                // Log the changes
+                \App\Models\BrandliftEditLog::create([
+                    'brandlift_study_id' => $study->id,
+                    'user_id' => auth()->id(),
+                    'changes_made' => [
+                        'action' => 'edit_questions',
+                        'old_questions' => $oldQuestions,
+                        'new_questions' => $newQuestions
+                    ]
+                ]);
             }
 
             // 2. Update Creatives in CM360

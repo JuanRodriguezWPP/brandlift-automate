@@ -37,7 +37,7 @@ class DashboardController extends Controller
     public function apiList(Request $request): JsonResponse
     {
         $user = auth()->user();
-        $query = BrandliftStudy::with('questions');
+        $query = BrandliftStudy::with('questions', 'creatives', 'editLogs.user');
 
         // Check if user is not admin, restrict by their market
         if ($user && $user->role !== 'admin' && !empty($user->market)) {
@@ -106,7 +106,7 @@ class DashboardController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $study = BrandliftStudy::with('questions')->findOrFail($id);
+        $study = BrandliftStudy::with(['questions', 'editLogs.user'])->findOrFail($id);
 
         return response()->json([
             'study' => $study,
