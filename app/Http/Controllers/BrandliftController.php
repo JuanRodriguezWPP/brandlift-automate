@@ -97,6 +97,15 @@ class BrandliftController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        // Limpiar strings vacíos para evitar que Laravel falle las reglas de validación (ej. end_date)
+        $inputs = $request->all();
+        foreach (['end_date', 'investment', 'cm360_site_id', 'cm360_profile_id', 'cm360_advertiser_id'] as $field) {
+            if (isset($inputs[$field]) && $inputs[$field] === '') {
+                $inputs[$field] = null;
+            }
+        }
+        $request->replace($inputs);
+
         $validator = Validator::make($request->all(), [
             'market' => 'required|string|max:50',
             'campaign_name' => 'required|string|max:255',
@@ -132,7 +141,11 @@ class BrandliftController extends Controller
             $study = DB::transaction(function () use ($request) {
                 $market = $request->input('market');
                 $campaignNameRaw = $request->input('campaign_name');
-                $clientName = str_replace(' ', '_', $request->input('client_name', 'Client'));
+                $clientNameInput = $request->input('client_name');
+                if (empty($clientNameInput)) {
+                    $clientNameInput = 'Client';
+                }
+                $clientName = str_replace(' ', '_', (string) $clientNameInput);
                 
                 $year = date('Y');
                 $month = date('m');
