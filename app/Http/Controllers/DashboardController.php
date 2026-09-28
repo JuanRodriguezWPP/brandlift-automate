@@ -36,16 +36,24 @@ class DashboardController extends Controller
      */
     public function apiList(Request $request): JsonResponse
     {
+        $user = auth()->user();
         $query = BrandliftStudy::with('questions');
+
+        // Check if user is not admin, restrict by their market
+        if ($user && $user->role !== 'admin' && !empty($user->market)) {
+            $query->where('market', $user->market);
+        }
 
         // Search by campaign name
         if ($search = $request->input('search')) {
             $query->where('campaign_name', 'LIKE', "%{$search}%");
         }
 
-        // Filter by market
+        // Filter by market (only if they are an admin or it matches their market)
         if ($market = $request->input('market')) {
-            $query->market($market);
+            if (!$user || $user->role === 'admin' || $user->market === $market) {
+                $query->market($market);
+            }
         }
 
         // Filter by status
@@ -64,14 +72,18 @@ class DashboardController extends Controller
         // Stats for KPIs (before pagination)
         $statsQuery = clone $query;
         $allStudies = BrandliftStudy::query();
+        if ($user && $user->role !== 'admin' && !empty($user->market)) {
+            $allStudies->where('market', $user->market);
+        }
 
         $stats = [
             'total' => $allStudies->count(),
-            'pushed' => BrandliftStudy::where('cm360_pushed', true)->count(),
-            'this_month' => BrandliftStudy::whereMonth('created_at', now()->month)
+            'pushed' => (clone $allStudies)->where('cm360_pushed', true)->count(),
+            'active' => (clone $allStudies)->whereDate('end_date', '>=', now())->count(),
+            'this_month' => (clone $allStudies)->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->count(),
-            'markets' => BrandliftStudy::selectRaw('market, COUNT(*) as count')
+            'markets' => (clone $allStudies)->selectRaw('market, COUNT(*) as count')
                 ->groupBy('market')
                 ->orderByDesc('count')
                 ->limit(5)
