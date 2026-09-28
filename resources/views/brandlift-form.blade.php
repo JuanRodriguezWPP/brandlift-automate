@@ -2320,12 +2320,14 @@
         const profileId = $('#cm360-profile-id').value.trim();
         const advertiserId = $('#cm360-advertiser-id').value.trim();
         const siteId = $('#cm360-site-id').value.trim();
+        const clientName = $('#bl-client-step1').value.trim();
 
         if (!market) { showToast('⚠️ Selecciona un mercado', true); goToStep(1); return; }
         if (state.dpsSelections.length === 0) { showToast('⚠️ Selecciona al menos un DPS', true); goToStep(1); return; }
         if (!campaignNameStep1) { showToast('⚠️ Ingresa el nombre de la campaña', true); goToStep(1); return; }
         if (!endDateStep1) { showToast('⚠️ Ingresa la fecha fin de campaña', true); goToStep(1); return; }
         if (!investmentStep1) { showToast('⚠️ Ingresa la inversión / bonificado', true); goToStep(1); return; }
+        if (!clientName) { showToast('⚠️ Ingresa el nombre del cliente', true); goToStep(1); return; }
         if (!profileId || !advertiserId || !siteId) { showToast('⚠️ Selecciona Profile, Advertiser y Site en la Configuración Inicial', true); goToStep(1); return; }
         
         for (let i = 0; i < state.questionCount; i++) {
@@ -2348,7 +2350,6 @@
         // 1. Automatizar el Google Sheet clonado en el Backend
         let sheetId = null;
         try {
-            const clientName = $('#bl-client-step1').value.trim();
             const res = await fetch('/api/brandlift/automate-sheet', {
                 method: 'POST',
                 headers: { 
@@ -2432,9 +2433,12 @@
                 if (storeData.success) {
                     state.studyId = storeData.study_id;
                     console.log('Brandlift guardado en DB, ID:', state.studyId);
+                } else {
+                    alert('BACKEND ERROR ON STORE DB: ' + JSON.stringify(storeData));
                 }
             } catch (storeErr) {
                 console.error('Error guardando en DB (no crítico):', storeErr);
+                alert('JS ERROR ON STORE DB: ' + storeErr.message);
             }
 
             /* CM360 Push Logic */

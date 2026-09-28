@@ -126,7 +126,7 @@ class BrandliftController extends Controller
             'cm360_site_id' => 'nullable|string',
             'cm360_profile_id' => 'nullable|string',
             'cm360_advertiser_id' => 'nullable|string',
-            'theme_colors' => 'nullable|array',
+            'theme_colors' => 'nullable',
         ]);
 
         if ($validator->fails()) {
