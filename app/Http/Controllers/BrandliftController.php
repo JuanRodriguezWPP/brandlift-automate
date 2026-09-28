@@ -29,9 +29,14 @@ class BrandliftController extends Controller
     /**
      * Show the Brandlift creator form.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('brandlift-form');
+        $editId = $request->query('edit_id');
+        $editStudy = null;
+        if ($editId) {
+            $editStudy = \App\Models\BrandliftStudy::with('questions', 'creatives')->find($editId);
+        }
+        return view('brandlift-form', compact('editStudy'));
     }
 
     /**
@@ -309,6 +314,121 @@ class BrandliftController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error interno al conectar con Campaign Manager 360: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update existing creatives in CM360 for an edited study.
+     */
+    public function updateCreatives(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'study_id' => 'required|integer|exists:brandlift_studies,id',
+            'creatives' => 'required|array|min:1',
+            'creatives.*.question_number' => 'required|integer|min:1',
+            'creatives.*.html' => 'required|string',
+            'creatives.*.variant_key' => 'nullable|string|max:255',
+            'questions' => 'nullable|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Datos de entrada inválidos',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            $study = \App\Models\BrandliftStudy::with('creatives')->findOrFail($request->input('study_id'));
+            
+            // 1. Update questions in DB if provided
+            if ($request->has('questions')) {
+                \App\Models\BrandliftQuestion::where('brandlift_study_id', $study->id)->delete();
+                foreach ($request->input('questions') as $index => $q) {
+                    \App\Models\BrandliftQuestion::create([
+                        'brandlift_study_id' => $study->id,
+                        'question_number' => $index + 1,
+                        'question_text' => $q['text'] ?? '',
+                        'answers' => $q['answers'] ?? [],
+                        'creative_html' => $q['creative_html'] ?? null,
+                    ]);
+                }
+            }
+
+            // 2. Update Creatives in CM360
+            $updatedCount = 0;
+            $errors = [];
+            
+            foreach ($request->input('creatives') as $creativeData) {
+                $qNum = $creativeData['question_number'];
+                $vKey = $creativeData['variant_key'] ?? null;
+                $newHtml = $creativeData['html'];
+                
+                // Add clickTag exactly like pushToCM360
+                $clickTagScript = '<script type="text/javascript">' .
+                    'var clickTag = "https://www.wppmedia.com/es";' .
+                    'function handleClick(){window.open(clickTag,"_blank");}' .
+                    '</script>';
+
+                if (stripos($newHtml, '<head>') !== false) {
+                    $newHtml = str_ireplace('<head>', '<head>' . $clickTagScript, $newHtml);
+                } else {
+                    $newHtml = $clickTagScript . $newHtml;
+                }
+
+                if (stripos($newHtml, 'onclick') === false && stripos($newHtml, '<body') !== false) {
+                    $newHtml = preg_replace('/<body([^>]*)>/i', '<body$1 onclick="handleClick()">', $newHtml, 1);
+                }
+
+                // Find matching creative in DB
+                $query = $study->creatives()->where('question_number', $qNum);
+                if ($vKey) {
+                    $query->where('variant_key', $vKey);
+                } else {
+                    $query->whereNull('variant_key');
+                }
+                
+                $dbCreative = $query->first();
+                
+                if ($dbCreative && $dbCreative->cm360_creative_id) {
+                    try {
+                        $creativeName = "{$study->campaign_name}_Q{$qNum}";
+                        if ($vKey) $creativeName .= "_{$vKey}";
+                        
+                        $this->cmService->updateCreativeHtml(
+                            $study->cm360_profile_id,
+                            $study->cm360_advertiser_id,
+                            $dbCreative->cm360_creative_id,
+                            $newHtml,
+                            $creativeName
+                        );
+                        
+                        // Update HTML in DB
+                        $dbCreative->update(['creative_html' => $newHtml]);
+                        $updatedCount++;
+                    } catch (\Exception $e) {
+                        $errors[] = "Error en Q{$qNum}: " . $e->getMessage();
+                        Log::error("Failed to update creative Q{$qNum}", ['error' => $e->getMessage()]);
+                    }
+                }
+            }
+            
+            if (empty($errors)) {
+                return response()->json(['success' => true, 'message' => "Creativos actualizados exitosamente ($updatedCount)"]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Algunos creativos fallaron al actualizar', 'errors' => $errors], 500);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('CM360 update creatives failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error interno al actualizar en CM360: ' . $e->getMessage()
             ], 500);
         }
     }

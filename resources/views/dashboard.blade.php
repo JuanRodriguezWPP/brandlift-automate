@@ -1338,13 +1338,23 @@
             }
 
             let previewHtml = '';
+            
+            const editBtnHtml = `
+                <div style="margin-bottom: 20px; display: flex; justify-content: flex-start; align-items: center; gap: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px;">
+                    <a href="/brandlift?edit_id=${s.id}" style="text-decoration: none; background-color: var(--wpp-cyan); color: var(--wpp-navy); border: none; padding: 8px 16px; width: auto; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                        Editar Creativos
+                    </a>
+                </div>
+            `;
+
             let clickActionHtmlTop = '';
             const firstQ = s.questions && s.questions.length > 0 ? s.questions[0] : null;
             if (firstQ && firstQ.creative_html) {
                 const hasClickEvent = firstQ.creative_html.includes('clickTag');
                 if (hasClickEvent) {
                     clickActionHtmlTop = `
-                        <div style="margin-bottom: 20px; display: flex; justify-content: flex-start; align-items: center; gap: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px;">
+                        <div style="margin-bottom: 20px; display: flex; justify-content: flex-start; align-items: center; gap: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px; border-top: none;">
                             <button style="background-color: var(--wpp-navy); color: white; border: none; padding: 8px 16px; width: auto; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onclick="removeClickEvent(${s.id}, '${escapeHtml(s.campaign_name)}')">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
                                 Retirar redirección de click
@@ -1376,6 +1386,7 @@
 
 
             body.innerHTML = `
+                ${editBtnHtml}
                 ${clickActionHtmlTop}
                 <div class="detail-grid">
                     <div class="detail-item">

@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    
+    @if(isset($editStudy))
+    <script>
+        window.editData = @json($editStudy);
+    </script>
+    @endif
+
     <style>
         /* ===== PAGE-SPECIFIC VARIABLE ALIASES (backward compat) ===== */
         :root {
@@ -1601,8 +1608,108 @@
         groups: [{ name: 'General' }],
         tagTypes: ['Ad_Exposed', 'Control'],
         dpsSelections: [],
-        totalVariants: 2
+        totalVariants: 2,
+        isEditMode: false
     };
+
+    function initEditMode() {
+        if (!window.editData) return;
+        state.isEditMode = true;
+        state.studyId = window.editData.id;
+        
+        const data = window.editData;
+        
+        // Populate Step 1 (Campaign info)
+        $('#bl-client').value = data.client_name || '';
+        $('#bl-campaign').value = data.campaign_name || '';
+        $('#bl-market').value = data.market || 'PE';
+        
+        // Split dimensions
+        if (data.creative_width && data.creative_height) {
+            $('#bl-size').value = `${data.creative_width}x${data.creative_height}`;
+            state.selectedSize = { width: data.creative_width, height: data.creative_height };
+        }
+        
+        // Disable question count dropdown
+        const qCountSelect = $('#bl-question-count');
+        if (qCountSelect && data.questions) {
+            qCountSelect.value = data.questions.length.toString();
+            qCountSelect.disabled = true; // Block adding/removing questions
+            // Trigger change event to show correct columns
+            const evt = new Event('change');
+            qCountSelect.dispatchEvent(evt);
+        }
+        
+        // Populate Questions
+        if (data.questions && data.questions.length > 0) {
+            data.questions.forEach((q, idx) => {
+                const qNum = idx + 1;
+                $(`#bl-question-${qNum}`).value = q.question_text || '';
+                
+                if (q.answers && q.answers.length > 0) {
+                    const ansSelect = $(`#bl-num-answers-${qNum}`);
+                    ansSelect.value = q.answers.length.toString();
+                    ansSelect.dispatchEvent(new Event('change'));
+                    
+                    setTimeout(() => {
+                        q.answers.forEach((ans, ansIdx) => {
+                            const input = $(`#bl-q${qNum}-ans${ansIdx + 1}`);
+                            if (input) input.value = ans;
+                        });
+                    }, 50);
+                }
+            });
+        }
+        
+        // CM360 settings
+        $('#bl-profile-id').value = data.cm360_profile_id || '';
+        $('#bl-advertiser-id').value = data.cm360_advertiser_id || '';
+        
+        // Disable fields that shouldn't change
+        $('#bl-market').disabled = true;
+        $('#bl-size').disabled = true;
+        $('#bl-client').disabled = true;
+        $('#bl-campaign').disabled = true;
+        
+        // Change submit button text
+        const submitBtn = $('#btn-cm360-push');
+        if (submitBtn) {
+            submitBtn.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 2v6h-6"></path>
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                    <path d="M3 3v5h5"></path>
+                </svg>
+                Actualizar Creativos en CM360
+            `;
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-secondary');
+            submitBtn.style.backgroundColor = 'var(--wpp-navy)';
+            submitBtn.style.color = 'white';
+        }
+
+        // Show edit banner
+        const header = document.querySelector('.top-header');
+        if (header) {
+            const banner = document.createElement('div');
+            banner.style.backgroundColor = 'rgba(176, 244, 103, 0.15)';
+            banner.style.color = 'var(--wpp-navy)';
+            banner.style.padding = '10px 20px';
+            banner.style.borderRadius = 'var(--radius-sm)';
+            banner.style.marginTop = '15px';
+            banner.style.fontSize = '14px';
+            banner.style.fontWeight = '600';
+            banner.style.display = 'flex';
+            banner.style.alignItems = 'center';
+            banner.style.gap = '8px';
+            banner.style.border = '1px solid rgba(176, 244, 103, 0.3)';
+            banner.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                Modo Edición: Actualizando campaña ${data.campaign_name}. Se regenerarán y reemplazarán los creativos en CM360 sin afectar los Ad Tags existentes.
+            `;
+            header.parentNode.insertBefore(banner, header.nextSibling);
+        }
+    }
 
     // ===== WIZARD NAVIGATION =====
     function goToStep(stepNum, animate = true) {
@@ -2341,104 +2448,112 @@
 
         const btn = $('#btn-create');
         btn.disabled = true;
-        btn.innerHTML = `<div class="spinner"></div> Creando Tags...`;
+        btn.innerHTML = state.isEditMode ? `<div class="spinner"></div> Actualizando...` : `<div class="spinner"></div> Creando Tags...`;
         
         $('#loading-messages-container').innerHTML = '';
         $('#full-loading-overlay').classList.add('active');
-        addLoadingMessage('Iniciando creación de tags...');
-        
-        // 1. Automatizar el Google Sheet clonado en el Backend
-        let sheetId = null;
-        try {
-            const res = await fetch('/api/brandlift/automate-sheet', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                },
-                body: JSON.stringify({ market, campaign_name: campaignNameStep1, client_name: clientName })
-            });
-            const data = await res.json();
-            if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Error desconocido al configurar Workspace');
-            }
-            sheetId = data.sheet_id;
-            showToast('✅ Excel configurado exitosamente');
-        } catch (e) {
-            console.error(e);
-            showToast('❌ Error Google Drive: ' + e.message, true);
-            btn.disabled = false;
-            btn.innerHTML = `Crear Tags`;
-            return;
-        }
+        addLoadingMessage(state.isEditMode ? 'Iniciando actualización de creativos...' : 'Iniciando creación de tags...');
 
         btn.innerHTML = `<div class="spinner"></div> Generando creativos...`;
         addLoadingMessage('Generando creativos y configurando variables...');
         
         await new Promise(r => setTimeout(r, 800));
 
+        let sheetId = null;
         let isSuccess = false;
         try {
             updateVariantCount();
             if (state.tagTypes.length === 0) {
                 showToast('⚠️ Selecciona al menos un tipo de tag (Ad_Exposed o Control)', true);
                 btn.disabled = false;
-                btn.innerHTML = `Crear Tags`;
+                btn.innerHTML = state.isEditMode ? `Actualizar Creativos en CM360` : `Crear Tags`;
+                $('#full-loading-overlay').classList.remove('active');
                 return;
+            }
+
+            if (!state.isEditMode) {
+                // 1. Automatizar el Google Sheet clonado en el Backend
+                try {
+                    const res = await fetch('/api/brandlift/automate-sheet', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        body: JSON.stringify({ market, campaign_name: campaignNameStep1, client_name: clientName })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.message || 'Error desconocido al configurar Workspace');
+                    }
+                    sheetId = data.sheet_id;
+                    showToast('✅ Excel configurado exitosamente');
+                } catch (e) {
+                    console.error(e);
+                    showToast('❌ Error Google Drive: ' + e.message, true);
+                    btn.disabled = false;
+                    btn.innerHTML = `Crear Tags`;
+                    $('#full-loading-overlay').classList.remove('active');
+                    return;
+                }
+            } else {
+                sheetId = window.editData?.sheet_id || '';
             }
 
             // Generate previews with actual sheetId
             generateAndShowPreviews(sheetId);
 
             // 5. Guardar en la base de datos
-            try {
-                const questionsPayload = [];
-                for (let i = 0; i < state.questionCount; i++) {
-                    const q = questionsData[i];
-                    questionsPayload.push({
-                        question_number: i + 1,
-                        question_text: q.question,
-                        answers: q.answers,
-                        creative_html: i === 0 ? (state.generatedCreatives[0]?.html || '') : null
-                    });
-                }
-
-                const storeRes = await fetch('/api/brandlift/store', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        market: market,
-                        campaign_name: campaignNameStep1,
-                        question_count: state.questionCount,
-                        creative_width: state.selectedSize.width,
-                        creative_height: state.selectedSize.height,
-                        client_name: clientName,
-                        audiences: state.groups.map(g => g.name),
-                        dps_tags: state.dpsSelections,
-                        sheet_id: sheetId,
-                        end_date: endDateStep1,
-                        investment: investmentStep1,
-                        cm360_site_id: siteId,
-                        cm360_profile_id: profileId,
-                        cm360_advertiser_id: advertiserId,
-                        theme_colors: state.theme,
-                        questions: questionsPayload
-                    })
+            const questionsPayload = [];
+            for (let i = 0; i < state.questionCount; i++) {
+                const q = questionsData[i];
+                questionsPayload.push({
+                    question_number: i + 1,
+                    text: q.question, // match backend expectation
+                    answers: q.answers,
+                    creative_html: i === 0 ? (state.generatedCreatives[0]?.html || '') : null
                 });
-                const storeData = await storeRes.json();
-                if (storeData.success) {
-                    state.studyId = storeData.study_id;
-                    console.log('Brandlift guardado en DB, ID:', state.studyId);
-                } else {
-                    alert('BACKEND ERROR ON STORE DB: ' + JSON.stringify(storeData));
+            }
+
+            if (!state.isEditMode) {
+                try {
+                    const storeRes = await fetch('/api/brandlift/store', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            market: market,
+                            campaign_name: campaignNameStep1,
+                            question_count: state.questionCount,
+                            creative_width: state.selectedSize.width,
+                            creative_height: state.selectedSize.height,
+                            client_name: clientName,
+                            audiences: state.groups.map(g => g.name),
+                            dps_tags: state.dpsSelections,
+                            sheet_id: sheetId,
+                            end_date: endDateStep1,
+                            investment: investmentStep1,
+                            cm360_site_id: siteId,
+                            cm360_profile_id: profileId,
+                            cm360_advertiser_id: advertiserId,
+                            theme_colors: state.theme,
+                            questions: questionsPayload
+                        })
+                    });
+                    const storeData = await storeRes.json();
+                    if (storeData.success) {
+                        state.studyId = storeData.study_id;
+                        console.log('Brandlift guardado en DB, ID:', state.studyId);
+                    } else {
+                        alert('BACKEND ERROR ON STORE DB: ' + JSON.stringify(storeData));
+                    }
+                } catch (storeErr) {
+                    console.error('Error guardando en DB (no crítico):', storeErr);
+                    alert('JS ERROR ON STORE DB: ' + storeErr.message);
                 }
-            } catch (storeErr) {
-                console.error('Error guardando en DB (no crítico):', storeErr);
-                alert('JS ERROR ON STORE DB: ' + storeErr.message);
             }
 
             /* CM360 Push Logic */
@@ -2532,60 +2647,73 @@
                 }
             }
             
-            statusBar.innerHTML = `<div class="spinner"></div> Creando campaña, placements, ads y generando tags...`;
-            addLoadingMessage('Creando campaña, placements, ads y generando tags en CM360...');
+            statusBar.innerHTML = state.isEditMode ? `<div class="spinner"></div> Actualizando creativos...` : `<div class="spinner"></div> Creando campaña, placements, ads y generando tags...`;
+            addLoadingMessage(state.isEditMode ? 'Actualizando creativos en CM360...' : 'Creando campaña, placements, ads y generando tags en CM360...');
 
-            const response = await fetch('/api/brandlift/push-to-cm360', {
+            const endpoint = state.isEditMode ? '/api/brandlift/update-creatives' : '/api/brandlift/push-to-cm360';
+            
+            const payload = {
+                profile_id: profileId,
+                advertiser_id: advertiserId,
+                site_id: siteId,
+                market: $('#bl-market-step1').value,
+                client_name: $('#bl-client-step1').value.trim(),
+                campaign_name: $('#bl-campaign-name-step1').value.trim(),
+                end_date: $('#bl-end-date-step1').value,
+                creative_name: 'Brandlift Creative',
+                study_id: state.studyId || null,
+                backup_image: backupImageBase64,
+                creatives: state.generatedCreatives.map((variant, idx) => ({
+                    question_number: idx + 1,
+                    html: variant.html,
+                    width: state.selectedSize.width,
+                    height: state.selectedSize.height,
+                    variant_key: variant.key
+                }))
+            };
+
+            if (state.isEditMode) {
+                payload.questions = questionsPayload;
+            }
+
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '', 'Accept': 'application/json' },
-                body: JSON.stringify({
-                    profile_id: profileId,
-                    advertiser_id: advertiserId,
-                    site_id: siteId,
-                    market: $('#bl-market-step1').value,
-                    client_name: $('#bl-client-step1').value.trim(),
-                    campaign_name: $('#bl-campaign-name-step1').value.trim(),
-                    end_date: $('#bl-end-date-step1').value,
-                    creative_name: 'Brandlift Creative',
-                    study_id: state.studyId || null,
-                    backup_image: backupImageBase64,
-                    creatives: state.generatedCreatives.map((variant, idx) => ({
-                        question_number: idx + 1,
-                        html: variant.html,
-                        width: state.selectedSize.width,
-                        height: state.selectedSize.height,
-                        variant_key: variant.key
-                    }))
-                })
+                body: JSON.stringify(payload)
             });
             const data = await response.json();
             if (response.ok && data.success) {
                 statusBar.className = 'status-bar visible success';
-                statusBar.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${data.message || 'Creativos subidos exitosamente'}`;
-                addLoadingMessage('¡Creativos subidos y tags generados exitosamente!');
-                showToast('✅ ¡Creativos subidos y tags generados!');
+                statusBar.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${data.message || 'Proceso completado exitosamente'}`;
+                addLoadingMessage(state.isEditMode ? '¡Creativos actualizados exitosamente!' : '¡Creativos subidos y tags generados exitosamente!');
+                showToast(state.isEditMode ? '✅ ¡Creativos actualizados!' : '✅ ¡Creativos subidos y tags generados!');
                 
                 // Add sleep so user can read success before overlay disappears
                 await new Promise(r => setTimeout(r, 800));
 
-                window.cm360TagsData = data.results;
-                $('#btn-download-excel-tags').style.display = 'flex';
-                
-                // Guardar los tags resultantes en la DB
-                try {
-                    await fetch('/api/brandlift/store-tags', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        },
-                        body: JSON.stringify({
-                            study_id: state.studyId,
-                            tags: data.results
-                        })
-                    });
-                } catch (e) {
-                    console.error('Error guardando tags generados en DB:', e);
+                if (!state.isEditMode) {
+                    window.cm360TagsData = data.results;
+                    $('#btn-download-excel-tags').style.display = 'flex';
+                    
+                    // Guardar los tags resultantes en la DB
+                    try {
+                        await fetch('/api/brandlift/store-tags', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                            },
+                            body: JSON.stringify({
+                                study_id: state.studyId,
+                                tags: data.results
+                            })
+                        });
+                    } catch (e) {
+                        console.error('Error guardando tags generados en DB:', e);
+                    }
+                } else {
+                    // Redirect back to dashboard
+                    setTimeout(() => window.location.href = '/dashboard', 1500);
                 }
                 
                 // Disable the create button so it can't be clicked again
@@ -3075,6 +3203,7 @@
 
     // Initialize height on load
     window.addEventListener('load', () => {
+        initEditMode();
         updateViewportHeight();
     });
 
