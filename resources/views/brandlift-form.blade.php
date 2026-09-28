@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Brandlift Creator — WPP Media</title>
+    <title>Creador de brandlifts — WPP Media</title>
     <meta name="description" content="Herramienta para crear creativos de Brandlift automáticos para Campaign Manager 360">
     <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1078,14 +1078,14 @@
             <div class="sidebar-brand">WPP MEDIA SOLUTIONS<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
 
             <div class="sidebar-section">
-                <span class="sidebar-section-title">Menu</span>
+                <span class="sidebar-section-title">Menú</span>
                 <a href="/dashboard" class="sidebar-link">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                     Dashboard
                 </a>
                 <a href="/brandlift" class="sidebar-link active sidebar-link-cta">
                     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear Tags
+                    Crear tags
                 </a>
                 @if(auth()->user()->role === 'admin')
                 <a href="/users" class="sidebar-link">
@@ -1103,7 +1103,7 @@
                     @csrf
                     <button type="submit" class="sidebar-link sidebar-link-danger">
                         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar Sesión
+                        Cerrar sesión
                     </button>
                 </form>
             </div>
@@ -1113,7 +1113,7 @@
         <main class="main-content">
             <!-- Top Header -->
             <header class="top-header">
-                <h1 class="top-header-title">Crear Creativo Brandlift</h1>
+                <h1 class="top-header-title">Crear creativo brandlift</h1>
                 <div class="top-header-user">
                     <div class="top-header-user-info">
                         <div class="top-header-user-name">{{ Auth::user()->name ?? 'Usuario' }}</div>
@@ -1131,20 +1131,20 @@
             <div>
                 <div class="card">
                     <div class="card-header">
-                        <h2>Configurar Brandlift <small>Sigue los pasos para crear tus creativos</small></h2>
+                        <h2>Configurar brandlift <small>Sigue los pasos para crear tus creativos</small></h2>
                     </div>
 
                     <!-- Stepper -->
                     <div class="stepper">
                         <div class="step-item active" data-step="1">
                             <div class="step-circle">1</div>
-                            <span class="step-label">Paso 1: Digitar información</span>
+                            <span class="step-label">Paso 1: digitar información</span>
                         </div>
                         <div class="step-line" id="step-line-1"></div>
                         
                         <div class="step-item" data-step="2" id="step-item-2">
                             <div class="step-circle">2</div>
-                            <span class="step-label">Paso 2: Digitar preguntas</span>
+                            <span class="step-label">Paso 2: digitar preguntas</span>
                         </div>
 
                     </div>
@@ -1158,7 +1158,7 @@
                                 <div class="question-block">
                                     <div class="q-label q-label-blue">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                        Configuración Inicial
+                                        Configuración inicial
                                     </div>
 
 
@@ -1210,12 +1210,12 @@
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label for="bl-campaign-name-step1">Nombre de la Campaña <span class="required">*</span></label>
-                                        <input type="text" id="bl-campaign-name-step1" class="form-input" placeholder="Ej: Campaña Verano 2026" required>
+                                        <label for="bl-campaign-name-step1">Nombre de la campaña <span class="required">*</span></label>
+                                        <input type="text" id="bl-campaign-name-step1" class="form-input" placeholder="Ej.: Campaña de verano 2026" required>
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label for="bl-end-date-step1">Fin de la Campaña <span class="required">*</span></label>
+                                        <label for="bl-end-date-step1">Fin de la campaña <span class="required">*</span></label>
                                         <div style="position: relative; width: 100%;">
                                             <input type="text" id="bl-end-date-visual" class="form-input" placeholder="-- / -- / ----" readonly style="cursor: pointer; background: var(--bg-input); pointer-events: none; color: var(--text-primary);">
                                             <input type="date" id="bl-end-date-step1" class="form-input" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="
@@ -1232,7 +1232,7 @@
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label for="bl-investment-step1">Inversión / Bonificado <span class="required">*</span></label>
+                                        <label for="bl-investment-step1">Inversión / bonificado <span class="required">*</span></label>
                                         <div style="position: relative; display: flex; align-items: center;">
                                             <span style="position: absolute; left: 16px; color: var(--text-muted); font-weight: 600; font-size: 15px;">$</span>
                                             <input type="text" id="bl-investment-step1" class="form-input" style="padding-left: 32px;" placeholder="Ej: 5,000.00" required>
@@ -1240,7 +1240,7 @@
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label>¿Para qué DSP requieres TAGS?<span class="required">*</span></label>
+                                        <label>¿Para qué DSP requieres tags?<span class="required">*</span></label>
                                         <div class="tag-type-options" style="flex-wrap: wrap;">
                                             <label class="tag-type-option">
                                                 <input type="checkbox" id="dps-dv360" value="DV360" class="dps-checkbox">
@@ -1264,7 +1264,7 @@
                                     <!-- Groups -->
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
                                         <label style="display: flex; align-items: center; gap: 6px; position: relative;">
-                                            Grupos de Audiencia
+                                            Grupos de audiencia
                                             <span class="custom-tooltip" data-tooltip="Opcional: Si tu campaña cuenta con una segmentación de audiencias, completa este campo para generar tags específicos para cada una.">
                                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                             </span>
@@ -1276,17 +1276,17 @@
                                         </div>
                                         <button type="button" class="btn-add-group" id="btn-add-group">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                                            Agregar Grupo
+                                            Agregar grupo
                                         </button>
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
                                         <label for="bl-question-count">¿Cuántas preguntas tendrá el Brandlift? <span class="required">*</span></label>
                                         <select id="bl-question-count" class="form-select">
-                                            <option value="1" selected>1 Pregunta</option>
-                                            <option value="2">2 Preguntas</option>
-                                            <option value="3">3 Preguntas</option>
-                                            <option value="4">4 Preguntas</option>
+                                            <option value="1" selected>1 pregunta</option>
+                                            <option value="2">2 preguntas</option>
+                                            <option value="3">3 preguntas</option>
+                                            <option value="4">4 preguntas</option>
                                         </select>
                                         <div id="q-count-warning" style="display:none; margin-top:12px; padding:12px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); border-radius:6px; color:#b91c1c; font-size:13px; font-weight:600; gap:8px; align-items:flex-start;">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0; margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -1299,7 +1299,7 @@
                                 <div class="step-nav">
                                     <button type="button" class="btn-next" id="btn-next-1" disabled>
                                         <span class="ripple"></span>
-                                        <span id="btn-next-1-text">Digitar Preguntas</span>
+                                        <span id="btn-next-1-text">Digitar preguntas</span>
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                                     </button>
                                 </div>
@@ -1425,7 +1425,7 @@
                                     <button type="button" class="btn-next" id="btn-create" style="flex:2;" disabled>
                                         <span class="ripple"></span>
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-                                        <span id="btn-create-text">Crear Tags Brandlift</span>
+                                        <span id="btn-create-text">Crear tags Brandlift</span>
                                     </button>
                                 </div>
 
@@ -1437,7 +1437,7 @@
                                     <div style="display:flex; justify-content:center; align-items:center;">
                                         <button type="button" id="btn-download-excel-tags" class="btn-next" style="display:none; gap:8px; align-items:center; padding:12px 24px; font-size:14px; width:100%;">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                            Descargar Excel de Tags
+                                            Descargar Excel de tags
                                         </button>
                                     </div>
                                 </div>
@@ -1462,11 +1462,11 @@
 
                 <div class="card" style="margin-bottom: 24px;">
                     <div class="card-header">
-                        <h2>Vista Previa <small>Previsualización de los creativos</small></h2>
+                        <h2>Vista previa <small>Previsualización de los creativos</small></h2>
                     </div>
 
                     <div class="preview-tabs" id="preview-tabs" style="display:none;">
-                        <button type="button" class="preview-tab active" data-preview="1">Vista Previa Interactiva</button>
+                        <button type="button" class="preview-tab active" data-preview="1">Vista previa interactiva</button>
                     </div>
 
                     <div id="preview-frame" class="preview-frame">
@@ -2003,14 +2003,14 @@
                         <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 14px;">Configuración</div>
                         ${market ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Mercado:</strong> ${market}</div>` : ''}
                         ${client ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Anunciante:</strong> ${client}</div>` : ''}
-                        ${endDate ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Fin Campaña:</strong> ${endDate}</div>` : ''}
+                        ${endDate ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Fin de campaña:</strong> ${endDate}</div>` : ''}
                         ${dps ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>DPS:</strong> ${dps}</div>` : ''}
                         ${campaign ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Campaña:</strong> ${campaign}</div>` : ''}
                         ${investment ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Inversión:</strong> $${investment}</div>` : ''}
                         ${(market || dps || campaign) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Preguntas:</strong> ${state.questionCount}</div>` : ''}
                         ${(state.groups.some(g => g.name)) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Grupos:</strong> ${state.groups.map(g => g.name).filter(n => n).join(', ')}</div>` : ''}
                         ${(state.tagTypes.length > 0) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Tags:</strong> ${state.tagTypes.join(', ')}</div>` : ''}
-                        ${(state.dpsSelections.length > 0) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Evento de Click:</strong> ${clickEventSummary}</div>` : ''}
+                        ${(state.dpsSelections.length > 0) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Evento de clic:</strong> ${clickEventSummary}</div>` : ''}
                         ${(state.totalVariants > 0) ? `<div style="color: var(--wpp-navy); margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.05); font-weight: 700; font-size: 13px;">Total de creativos a generar: ${state.totalVariants}</div>` : ''}
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="goToStep(1)" style="padding: 4px 0; font-size: 11px; height: auto; width: 70px; min-width: 70px; text-align: center; border-radius: 12px; border: 1px solid var(--border-input); flex-shrink: 0; background: var(--wpp-white); color: var(--wpp-navy); font-weight: 600;">
@@ -2328,7 +2328,7 @@
         if (!endDateStep1) { showToast('⚠️ Ingresa la fecha fin de campaña', true); goToStep(1); return; }
         if (!investmentStep1) { showToast('⚠️ Ingresa la inversión / bonificado', true); goToStep(1); return; }
         if (!clientName) { showToast('⚠️ Ingresa el nombre del cliente', true); goToStep(1); return; }
-        if (!profileId || !advertiserId || !siteId) { showToast('⚠️ Selecciona Profile, Advertiser y Site en la Configuración Inicial', true); goToStep(1); return; }
+        if (!profileId || !advertiserId || !siteId) { showToast('⚠️ Selecciona Profile, Advertiser y Site en la Configuración inicial', true); goToStep(1); return; }
         
         for (let i = 0; i < state.questionCount; i++) {
             const q = questionsData[i];
@@ -2368,7 +2368,7 @@
             console.error(e);
             showToast('❌ Error Google Drive: ' + e.message, true);
             btn.disabled = false;
-            btn.innerHTML = `Crear Tags`;
+            btn.innerHTML = `Crear tags`;
             return;
         }
 
@@ -2383,7 +2383,7 @@
             if (state.tagTypes.length === 0) {
                 showToast('⚠️ Selecciona al menos un tipo de tag (Ad_Exposed o Control)', true);
                 btn.disabled = false;
-                btn.innerHTML = `Crear Tags`;
+                btn.innerHTML = `Crear tags`;
                 return;
             }
 
@@ -2648,7 +2648,7 @@
                 btn.disabled = true;
             } else {
                 btn.disabled = false;
-                btn.innerHTML = `<span class="ripple"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Crear Tags`;
+                btn.innerHTML = `<span class="ripple"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Crear tags`;
             }
             $('#full-loading-overlay').classList.remove('active');
             updateViewportHeight();
