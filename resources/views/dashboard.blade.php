@@ -899,14 +899,8 @@
                 <div class="kpi-value" id="kpi-total">—</div>
                 <div class="kpi-sub">Estudios creados</div>
             </div>
-            <div class="kpi-card animate-in">
-                <div class="kpi-header">
-                    <span class="kpi-label">Subidos a CM360</span>
-                    <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
-                </div>
-                <div class="kpi-value" id="kpi-pushed">—</div>
-                <div class="kpi-sub">Publicados exitosamente</div>
-            </div>
+
+
             <div class="kpi-card animate-in">
                 <div class="kpi-header">
                     <span class="kpi-label">Este Mes</span>
@@ -965,6 +959,8 @@
                             <th>Grupos de Audiencia</th>
                             <th>Tag Dps</th>
                             <th>Preguntas</th>
+                            <th>Fecha Fin</th>
+                            <th>Vigencia</th>
                             <th>Estado</th>
                             <th>Fecha</th>
                             <th>Acciones</th>
@@ -1092,7 +1088,6 @@
     // ===== UPDATE KPIs =====
     function updateKPIs(stats) {
         animateCounter('kpi-total', stats.total);
-        animateCounter('kpi-pushed', stats.pushed);
         animateCounter('kpi-month', stats.this_month);
 
         const now = new Date();
@@ -1101,6 +1096,7 @@
 
     function animateCounter(id, target) {
         const el = $(`#${id}`);
+        if (!el) return;
         const current = parseInt(el.textContent) || 0;
         if (current === target) { el.textContent = target; return; }
 
@@ -1140,6 +1136,21 @@
 
             const audiencesText = (study.audiences || []).join(', ');
             const dpsTagsText = (study.dps_tags || []).join(', ');
+            const endDateStr = study.end_date ? new Date(study.end_date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+
+            let vigenciaHtml = '-';
+            if (study.end_date) {
+                const now = new Date();
+                now.setHours(0, 0, 0, 0);
+                const [y, m, d] = study.end_date.split('-');
+                const endDate = new Date(y, m - 1, d);
+
+                if (endDate >= now) {
+                    vigenciaHtml = `<span class="badge badge-pushed"><span class="badge-dot"></span>Activo</span>`;
+                } else {
+                    vigenciaHtml = `<span class="badge badge-error"><span class="badge-dot"></span>Inactivo</span>`;
+                }
+            }
 
             return `
                 <tr data-id="${study.id}" style="animation: fadeInUp 0.4s ease-out ${idx * 40}ms both">
@@ -1149,6 +1160,8 @@
                     <td title="${escapeHtml(audiencesText || '-')}">${escapeHtml(audiencesText || '-')}</td>
                     <td title="${escapeHtml(dpsTagsText || '-')}">${escapeHtml(dpsTagsText || '-')}</td>
                     <td>${study.question_count}</td>
+                    <td>${endDateStr}</td>
+                    <td>${vigenciaHtml}</td>
                     <td><span class="badge ${statusClass}"><span class="badge-dot"></span>${statusLabel}</span></td>
                     <td>
                         <div style="font-size:13px">${dateStr}</div>

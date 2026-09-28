@@ -370,6 +370,8 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 80, 0.2);
             transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-next:hover:not(:disabled) {
@@ -390,6 +392,7 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
             transform: translateX(-100%);
             animation: shimmer 2s infinite;
+            pointer-events: none;
         }
 
         .btn-next:disabled .ripple {
@@ -509,6 +512,50 @@
         .form-group label .required {
             color: var(--danger-red);
             margin-left: 2px;
+        }
+
+        .custom-tooltip {
+            position: relative;
+            cursor: help;
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .custom-tooltip:hover {
+            color: var(--accent-blue);
+        }
+
+        .custom-tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            background: #1e293b;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            width: max-content;
+            max-width: 280px;
+            text-align: center;
+            white-space: normal;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            pointer-events: none;
+            line-height: 1.4;
+        }
+
+        .custom-tooltip:hover::before {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-8px);
         }
 
         .form-input, .form-select, .form-textarea {
@@ -725,6 +772,7 @@
 
         .preview-frame {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 32px;
@@ -877,9 +925,10 @@
             accent-color: var(--accent-blue);
             width: 16px;
             height: 16px;
+            margin: 0;
         }
 
-        .tag-type-option label {
+        .tag-type-option span {
             font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
@@ -1161,61 +1210,74 @@
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
+                                        <label for="bl-campaign-name-step1">Nombre de la Campaña <span class="required">*</span></label>
+                                        <input type="text" id="bl-campaign-name-step1" class="form-input" placeholder="Ej: Campaña Verano 2026" required>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
+                                        <label for="bl-end-date-step1">Fin de la Campaña <span class="required">*</span></label>
+                                        <div style="position: relative; width: 100%;">
+                                            <input type="text" id="bl-end-date-visual" class="form-input" placeholder="-- / -- / ----" readonly style="cursor: pointer; background: var(--bg-input); pointer-events: none; color: var(--text-primary);">
+                                            <input type="date" id="bl-end-date-step1" class="form-input" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="
+                                                const visual = document.getElementById('bl-end-date-visual');
+                                                if(this.value) {
+                                                    const [y, m, d] = this.value.split('-');
+                                                    visual.value = `${d}/${m}/${y}`;
+                                                } else {
+                                                    visual.value = '';
+                                                }
+                                            ">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
                                         <label for="bl-investment-step1">Inversión / Bonificado <span class="required">*</span></label>
                                         <div style="position: relative; display: flex; align-items: center;">
                                             <span style="position: absolute; left: 16px; color: var(--text-muted); font-weight: 600; font-size: 15px;">$</span>
-                                            <input type="number" id="bl-investment-step1" class="form-input" style="padding-left: 32px;" placeholder="Ej: 5000" required min="0" step="0.01">
+                                            <input type="text" id="bl-investment-step1" class="form-input" style="padding-left: 32px;" placeholder="Ej: 5,000.00" required>
                                         </div>
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
                                         <label>¿Para qué DSP requieres TAGS?<span class="required">*</span></label>
                                         <div class="tag-type-options" style="flex-wrap: wrap;">
-                                            <div class="tag-type-option">
+                                            <label class="tag-type-option">
                                                 <input type="checkbox" id="dps-dv360" value="DV360" class="dps-checkbox">
-                                                <label for="dps-dv360">DV360</label>
-                                            </div>
-                                            <div class="tag-type-option">
+                                                <span>DV360</span>
+                                            </label>
+                                            <label class="tag-type-option">
                                                 <input type="checkbox" id="dps-ttd" value="TTD" class="dps-checkbox">
-                                                <label for="dps-ttd">TTD - The Trade Desk</label>
-                                            </div>
-                                            <div class="tag-type-option">
+                                                <span>TTD - The Trade Desk</span>
+                                            </label>
+                                            <label class="tag-type-option">
                                                 <input type="checkbox" id="dps-sonata" value="Sonata" class="dps-checkbox">
-                                                <label for="dps-sonata">Sonata</label>
-                                            </div>
-                                            <div class="tag-type-option">
+                                                <span>Sonata</span>
+                                            </label>
+                                            <label class="tag-type-option">
                                                 <input type="checkbox" id="dps-amazon" value="Amazon" class="dps-checkbox">
-                                                <label for="dps-amazon">Amazon</label>
-                                            </div>
+                                                <span>Amazon</span>
+                                            </label>
                                         </div>
-                                    </div>
-
-                                    <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label for="bl-campaign-name-step1">Nombre de la Campaña <span class="required">*</span></label>
-                                        <input type="text" id="bl-campaign-name-step1" class="form-input" placeholder="Ej: Campaña Verano 2026" required>
                                     </div>
 
                                     <!-- Groups -->
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label>Grupos de Audiencia</label>
+                                        <label style="display: flex; align-items: center; gap: 6px; position: relative;">
+                                            Grupos de Audiencia
+                                            <span class="custom-tooltip" data-tooltip="Opcional: Si tu campaña cuenta con una segmentación de audiencias, completa este campo para generar tags específicos para cada una.">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                            </span>
+                                        </label>
                                         <div class="groups-container" id="groups-container">
                                             <div class="group-item" data-group-index="0">
-                                                <span class="group-number">Grupo 1</span>
-                                                <input type="text" class="group-name-input" value="General" placeholder="Nombre del grupo...">
+                                                <input type="text" class="group-name-input" value="" placeholder="Nombre del grupo...">
                                             </div>
                                         </div>
                                         <button type="button" class="btn-add-group" id="btn-add-group">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
                                             Agregar Grupo
                                         </button>
-                                    </div>
-
-                                    <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label>Color del brandlift <span class="required">*</span></label>
-                                        <div style="display:flex; gap:4px; align-items:center; background:var(--bg-input); padding:4px; border-radius:20px; border:1px solid rgba(0,0,0,0.05); width: fit-content;">
-                                            <button type="button" id="theme-dark" style="border:none; padding:6px 16px; border-radius:16px; font-size:13px; cursor:pointer; background:var(--wpp-navy); color:white; font-weight:600; transition:all 0.2s;">Oscuro</button>
-                                            <button type="button" id="theme-light" style="border:none; padding:6px 16px; border-radius:16px; font-size:13px; cursor:pointer; background:transparent; color:var(--text-secondary); font-weight:600; transition:all 0.2s;">Claro</button>
-                                        </div>
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
@@ -1250,6 +1312,15 @@
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                                         Preguntas
                                     </div>
+
+                                    <div class="form-group" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
+                                        <label>Color del brandlift <span class="required">*</span></label>
+                                        <div style="display:flex; gap:4px; align-items:center; background:var(--bg-input); padding:4px; border-radius:20px; border:1px solid rgba(0,0,0,0.05); width: fit-content;">
+                                            <button type="button" id="theme-dark" style="border:none; padding:6px 16px; border-radius:16px; font-size:13px; cursor:pointer; background:var(--wpp-navy); color:white; font-weight:600; transition:all 0.2s;">Oscuro</button>
+                                            <button type="button" id="theme-light" style="border:none; padding:6px 16px; border-radius:16px; font-size:13px; cursor:pointer; background:transparent; color:var(--text-secondary); font-weight:600; transition:all 0.2s;">Claro</button>
+                                        </div>
+                                    </div>
+
                                     <div id="questions-grid" class="questions-grid" style="display: grid; gap: 24px; grid-template-columns: 1fr;">
                                         
                                         <!-- Pregunta 1 -->
@@ -1404,17 +1475,90 @@
                             <p>Digita las preguntas y respuestas<br>para ver la preview en tiempo real</p>
                         </div>
                         <div style="text-align: center; margin-bottom: 10px;">
-                            <button type="button" class="btn btn-secondary btn-restart-preview" onclick="const f=document.querySelector('#preview-content-1 iframe'); if(f){const src=f.srcdoc; f.srcdoc=''; setTimeout(()=>f.srcdoc=src,10);} this.style.display='none';" style="display: none; font-size: 12px; padding: 6px 12px; align-items: center; gap: 6px; cursor: pointer; background: transparent; border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-secondary); margin: 0 auto;">
+                            <button type="button" class="btn btn-secondary btn-restart-preview" onclick="const f=document.querySelector('#preview-content-1 iframe'); if(f){const src=f.srcdoc; f.srcdoc=''; setTimeout(()=>f.srcdoc=src,10);} window.currentPreviewStep=0; document.getElementById('preview-nav-text').innerText='Pág 1';" style="display: none; font-size: 12px; padding: 6px 12px; align-items: center; gap: 6px; cursor: pointer; background: transparent; border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-secondary); margin: 0 auto;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                                 Reiniciar
                             </button>
                         </div>
                         <div id="preview-content-1" class="preview-content"></div>
+                        <div id="preview-nav-controls" style="display: none; align-items: center; justify-content: center; gap: 16px; margin-top: 24px;">
+                            <button type="button" onclick="navigatePreview(-1)" style="border:1px solid var(--border-color); background:transparent; cursor:pointer; width:32px; height:32px; border-radius:16px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); transition:all 0.2s;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                            </button>
+                            <span id="preview-nav-text" style="font-size: 13px; font-weight: 600; color: var(--text-secondary); min-width: 60px; text-align: center;">Pág 1</span>
+                            <button type="button" onclick="navigatePreview(1)" style="border:1px solid var(--border-color); background:transparent; cursor:pointer; width:32px; height:32px; border-radius:16px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); transition:all 0.2s;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                            </button>
+                        </div>
                     </div>
 
 
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .loading-overlay .spinner-large {
+            width: 54px;
+            height: 54px;
+            border: 4px solid rgba(176, 244, 103, 0.2);
+            border-top-color: var(--wpp-lime);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 32px;
+        }
+        .loading-overlay .loading-messages {
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            max-width: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .loading-overlay .loading-messages p {
+            margin: 0;
+            opacity: 0.6;
+            font-size: 14px;
+            transform: translateY(10px);
+            animation: slideUp 0.3s forwards;
+        }
+        .loading-overlay .loading-messages p:last-child {
+            opacity: 1;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--wpp-lime);
+        }
+        @keyframes slideUp {
+            to { transform: translateY(0); }
+        }
+    </style>
+    <div id="full-loading-overlay" class="loading-overlay">
+        <div class="spinner-large"></div>
+        <div id="loading-messages-container" class="loading-messages">
         </div>
     </div>
 
@@ -1431,6 +1575,13 @@
 
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
+
+    function addLoadingMessage(msg) {
+        const container = $('#loading-messages-container');
+        if (container) {
+            container.innerHTML += `<p>${msg}</p>`;
+        }
+    }
 
     // ===== STATE =====
     const state = {
@@ -1571,9 +1722,10 @@
         if (stepNum === 1) {
             const market = $('#bl-market-step1').value;
             const client = $('#bl-client-step1').value.trim();
+            const endDate = $('#bl-end-date-step1').value;
             const campaign = $('#bl-campaign-name-step1').value.trim();
             const investment = $('#bl-investment-step1').value.trim();
-            return market && state.dpsSelections.length > 0 && client && campaign && investment;
+            return market && state.dpsSelections.length > 0 && client && endDate && campaign && investment;
         }
         if (stepNum === 2) {
             for (let i = 1; i <= state.questionCount; i++) {
@@ -1684,7 +1836,57 @@
         });
     });
     $('#bl-campaign-name-step1').addEventListener('input', populateSummary);
-    $('#bl-investment-step1').addEventListener('input', populateSummary);
+    $('#bl-end-date-step1').addEventListener('input', populateSummary);
+    
+    // ===== INVESTMENT FORMATTING =====
+    const investmentInput = $('#bl-investment-step1');
+    investmentInput.addEventListener('input', function(e) {
+        // Remove non-numeric characters except dots
+        let value = this.value.replace(/[^0-9.]/g, '');
+        
+        // Handle multiple dots (keep only the first one)
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        
+        // Check 1 million limit
+        let numValue = parseFloat(value) || 0;
+        if (numValue > 1000000) {
+            value = '1000000';
+        }
+
+        // Format to US currency (with commas)
+        if (value) {
+            const splitValue = value.split('.');
+            splitValue[0] = splitValue[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            // Allow up to 2 decimal places if dot is present
+            if (splitValue.length > 1) {
+                splitValue[1] = splitValue[1].substring(0, 2);
+                this.value = splitValue.join('.');
+            } else {
+                this.value = splitValue[0];
+            }
+        } else {
+            this.value = '';
+        }
+
+        populateSummary();
+        checkStepCompletion(1);
+    });
+
+    // Handle blur to add .00 if needed
+    investmentInput.addEventListener('blur', function(e) {
+        let value = this.value.replace(/,/g, '');
+        let numValue = parseFloat(value);
+        if (!isNaN(numValue)) {
+            this.value = numValue.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        populateSummary();
+    });
 
     // ===== QUESTION COUNT TOGGLE =====
     $('#bl-question-count').addEventListener('change', (e) => {
@@ -1718,7 +1920,7 @@
         state.dpsSelections = dpsSelections;
 
         const groupInputs = $$('.group-name-input');
-        state.groups = [...groupInputs].map(input => ({ name: input.value.trim() || 'Sin nombre' }));
+        state.groups = [...groupInputs].map(input => ({ name: input.value.trim() }));
 
         state.totalVariants = state.groups.length * tagTypes.length * Math.max(1, dpsSelections.length);
         populateSummary();
@@ -1733,7 +1935,6 @@
         groupItem.className = 'group-item';
         groupItem.dataset.groupIndex = index;
         groupItem.innerHTML = `
-            <span class="group-number">Grupo ${index + 1}</span>
             <input type="text" class="group-name-input" placeholder="Nombre del grupo..." value="">
             <button type="button" class="btn-remove-group" title="Eliminar grupo">✕</button>
         `;
@@ -1745,9 +1946,8 @@
         // Remove button
         groupItem.querySelector('.btn-remove-group').addEventListener('click', () => {
             groupItem.remove();
-            // Re-number groups
+            // Re-number groups (data-index only)
             $$('.group-item').forEach((item, i) => {
-                item.querySelector('.group-number').textContent = `Grupo ${i + 1}`;
                 item.dataset.groupIndex = i;
             });
             updateVariantCount();
@@ -1758,10 +1958,11 @@
     });
 
     // Listen to default group name changes
-    // Prevent Enter key from triggering unintended button clicks in group inputs
+    // Allow Enter key to automatically add a new group input
     $('#groups-container').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
+            $('#btn-add-group').click();
         }
     });
 
@@ -1783,6 +1984,7 @@
         const market = $('#bl-market-step1').value;
         const dps = state.dpsSelections.join(', ');
         const client = $('#bl-client-step1').value.trim();
+        const endDate = $('#bl-end-date-step1').value;
         const campaign = $('#bl-campaign-name-step1').value.trim();
         const investment = $('#bl-investment-step1').value.trim();
         
@@ -1792,7 +1994,7 @@
             clickEventSummary = 'Activado';
         }
 
-        const showConfig = market || client || state.dpsSelections.length > 0 || campaign || investment;
+        const showConfig = market || client || endDate || state.dpsSelections.length > 0 || campaign || investment;
         if (showConfig) {
             hasData = true;
             widgetHTML += `
@@ -1801,11 +2003,12 @@
                         <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-size: 14px;">Configuración</div>
                         ${market ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Mercado:</strong> ${market}</div>` : ''}
                         ${client ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Anunciante:</strong> ${client}</div>` : ''}
+                        ${endDate ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Fin Campaña:</strong> ${endDate}</div>` : ''}
                         ${dps ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>DPS:</strong> ${dps}</div>` : ''}
                         ${campaign ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Campaña:</strong> ${campaign}</div>` : ''}
                         ${investment ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Inversión:</strong> $${investment}</div>` : ''}
                         ${(market || dps || campaign) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Preguntas:</strong> ${state.questionCount}</div>` : ''}
-                        ${(state.groups.length > 0) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Grupos:</strong> ${state.groups.map(g => g.name).join(', ')}</div>` : ''}
+                        ${(state.groups.some(g => g.name)) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Grupos:</strong> ${state.groups.map(g => g.name).filter(n => n).join(', ')}</div>` : ''}
                         ${(state.tagTypes.length > 0) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Tags:</strong> ${state.tagTypes.join(', ')}</div>` : ''}
                         ${(state.dpsSelections.length > 0) ? `<div style="color: var(--text-secondary); margin-bottom: 2px;"><strong>Evento de Click:</strong> ${clickEventSummary}</div>` : ''}
                         ${(state.totalVariants > 0) ? `<div style="color: var(--wpp-navy); margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.05); font-weight: 700; font-size: 13px;">Total de creativos a generar: ${state.totalVariants}</div>` : ''}
@@ -2055,7 +2258,7 @@
         // Use default tags/groups for early preview if empty
         const tagTypes = state.tagTypes.length > 0 ? state.tagTypes : ['Ad_Exposed'];
         const dpsSelections = state.dpsSelections.length > 0 ? state.dpsSelections : ['DPS_Test'];
-        const groups = state.groups.length > 0 ? state.groups : [{name: 'General'}];
+        const groups = state.groups.length > 0 ? state.groups : [{name: ''}];
         
         state.generatedCreatives = [];
 
@@ -2065,7 +2268,7 @@
 
             for (const group of groups) {
                 for (const tagType of tagTypes) {
-                    const key = `${dps}_${group.name}_${tagType}`;
+                    const key = group.name ? `${dps}_${group.name}_${tagType}` : `${dps}_${tagType}`;
                     const html = generateCreativeHTML(questionsData, state.selectedSize.width, state.selectedSize.height, sheetId, campaignNameStep1, market, group.name, tagType, clickUrl, state.theme);
                     state.generatedCreatives.push({ key, groupName: group.name, tagType, html, dps });
                 }
@@ -2112,6 +2315,7 @@
 
         const market = $('#bl-market-step1').value;
         const campaignNameStep1 = $('#bl-campaign-name-step1').value.trim();
+        const endDateStep1 = $('#bl-end-date-step1').value;
         const investmentStep1 = $('#bl-investment-step1').value.trim();
         const profileId = $('#cm360-profile-id').value.trim();
         const advertiserId = $('#cm360-advertiser-id').value.trim();
@@ -2120,6 +2324,7 @@
         if (!market) { showToast('⚠️ Selecciona un mercado', true); goToStep(1); return; }
         if (state.dpsSelections.length === 0) { showToast('⚠️ Selecciona al menos un DPS', true); goToStep(1); return; }
         if (!campaignNameStep1) { showToast('⚠️ Ingresa el nombre de la campaña', true); goToStep(1); return; }
+        if (!endDateStep1) { showToast('⚠️ Ingresa la fecha fin de campaña', true); goToStep(1); return; }
         if (!investmentStep1) { showToast('⚠️ Ingresa la inversión / bonificado', true); goToStep(1); return; }
         if (!profileId || !advertiserId || !siteId) { showToast('⚠️ Selecciona Profile, Advertiser y Site en la Configuración Inicial', true); goToStep(1); return; }
         
@@ -2135,6 +2340,10 @@
         const btn = $('#btn-create');
         btn.disabled = true;
         btn.innerHTML = `<div class="spinner"></div> Creando Tags...`;
+        
+        $('#loading-messages-container').innerHTML = '';
+        $('#full-loading-overlay').classList.add('active');
+        addLoadingMessage('Iniciando creación de tags...');
         
         // 1. Automatizar el Google Sheet clonado en el Backend
         let sheetId = null;
@@ -2163,8 +2372,11 @@
         }
 
         btn.innerHTML = `<div class="spinner"></div> Generando creativos...`;
+        addLoadingMessage('Generando creativos y configurando variables...');
+        
         await new Promise(r => setTimeout(r, 800));
 
+        let isSuccess = false;
         try {
             updateVariantCount();
             if (state.tagTypes.length === 0) {
@@ -2207,6 +2419,12 @@
                         audiences: state.groups.map(g => g.name),
                         dps_tags: state.dpsSelections,
                         sheet_id: sheetId,
+                        end_date: endDateStep1,
+                        investment: investmentStep1,
+                        cm360_site_id: siteId,
+                        cm360_profile_id: profileId,
+                        cm360_advertiser_id: advertiserId,
+                        theme_colors: state.theme,
                         questions: questionsPayload
                     })
                 });
@@ -2225,8 +2443,10 @@
         btn.innerHTML = `<div class="spinner"></div> Subiendo a CM360...`;
         statusBar.className = 'status-bar visible loading';
         statusBar.innerHTML = `<div class="spinner"></div> Creando campaña, placements, ads y generando tags...`;
+        addLoadingMessage('Preparando subida a Google Campaign Manager 360...');
 
-            statusBar.innerHTML = `<div class="spinner"></div> Generando captura de backup...`;
+        statusBar.innerHTML = `<div class="spinner"></div> Generando captura de backup...`;
+        addLoadingMessage('Generando captura de pantalla de backup...');
             
             // Generate screenshot of the first variant for the Default Ad
             let backupImageBase64 = null;
@@ -2309,6 +2529,7 @@
             }
             
             statusBar.innerHTML = `<div class="spinner"></div> Creando campaña, placements, ads y generando tags...`;
+            addLoadingMessage('Creando campaña, placements, ads y generando tags en CM360...');
 
             const response = await fetch('/api/brandlift/push-to-cm360', {
                 method: 'POST',
@@ -2320,6 +2541,7 @@
                     market: $('#bl-market-step1').value,
                     client_name: $('#bl-client-step1').value.trim(),
                     campaign_name: $('#bl-campaign-name-step1').value.trim(),
+                    end_date: $('#bl-end-date-step1').value,
                     creative_name: 'Brandlift Creative',
                     study_id: state.studyId || null,
                     backup_image: backupImageBase64,
@@ -2336,10 +2558,31 @@
             if (response.ok && data.success) {
                 statusBar.className = 'status-bar visible success';
                 statusBar.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${data.message || 'Creativos subidos exitosamente'}`;
+                addLoadingMessage('¡Creativos subidos y tags generados exitosamente!');
                 showToast('✅ ¡Creativos subidos y tags generados!');
+                
+                // Add sleep so user can read success before overlay disappears
+                await new Promise(r => setTimeout(r, 800));
 
                 window.cm360TagsData = data.results;
                 $('#btn-download-excel-tags').style.display = 'flex';
+                
+                // Guardar los tags resultantes en la DB
+                try {
+                    await fetch('/api/brandlift/store-tags', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        body: JSON.stringify({
+                            study_id: state.studyId,
+                            tags: data.results
+                        })
+                    });
+                } catch (e) {
+                    console.error('Error guardando tags generados en DB:', e);
+                }
                 
                 // Disable the create button so it can't be clicked again
                 const btnCreate = $('#btn-create');
@@ -2388,13 +2631,22 @@
             }
 
 
+            isSuccess = true;
             showToast(`✅ ¡${state.generatedCreatives.length} creativos generados exitosamente!`);
         } catch (error) {
             console.error(error);
             showToast('❌ Error al generar los creativos', true);
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<span class="ripple"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Crear Tags`;
+            if (isSuccess) {
+                btn.innerHTML = `Creativos subidos y tags generados exitosamente`;
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'default';
+                btn.disabled = true;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = `<span class="ripple"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Crear Tags`;
+            }
+            $('#full-loading-overlay').classList.remove('active');
             updateViewportHeight();
         }
     });
@@ -2426,7 +2678,36 @@
         iframe.dataset.lastHtml = variant.html;
         iframe.style.cssText = `border:none;width:${state.selectedSize.width}px;height:${state.selectedSize.height}px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.4);`;
         container.appendChild(iframe);
+        
+        // Reset and show nav controls
+        window.currentPreviewStep = 0;
+        $('#preview-nav-text').innerText = 'Pág 1';
+        $('#preview-nav-controls').style.display = 'flex';
+        $('.btn-restart-preview').style.display = 'inline-flex';
     }
+
+    window.navigatePreview = function(dir) {
+        const f = document.querySelector('#preview-content-1 iframe');
+        if (!f || !f.contentWindow) return;
+        
+        const totalQ = parseInt($('#bl-question-count').value) || 1;
+        const maxScreens = totalQ + 1;
+        
+        window.currentPreviewStep = (window.currentPreviewStep || 0) + dir;
+        if (window.currentPreviewStep < 0) window.currentPreviewStep = 0;
+        if (window.currentPreviewStep >= maxScreens) window.currentPreviewStep = maxScreens - 1;
+        
+        let targetId = 'screen-q' + (window.currentPreviewStep + 1);
+        if (window.currentPreviewStep === maxScreens - 1) {
+            targetId = 'screen-thanks';
+        }
+        
+        $('#preview-nav-text').innerText = (window.currentPreviewStep === maxScreens - 1) ? 'Final' : 'Pág ' + (window.currentPreviewStep + 1);
+        
+        if (typeof f.contentWindow.showScreen === 'function') {
+            f.contentWindow.showScreen(targetId);
+        }
+    };
     // ===== CM360 AUTO-FETCH LOGIC =====
     window.cm360Advertisers = [];
     window.cm360Sites = [];

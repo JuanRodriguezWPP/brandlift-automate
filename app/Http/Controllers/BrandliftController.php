@@ -112,6 +112,12 @@ class BrandliftController extends Controller
             'client_name' => 'nullable|string|max:255',
             'audiences' => 'nullable|array',
             'dps_tags' => 'nullable|array',
+            'end_date' => 'nullable|date',
+            'investment' => 'nullable|string',
+            'cm360_site_id' => 'nullable|string',
+            'cm360_profile_id' => 'nullable|string',
+            'cm360_advertiser_id' => 'nullable|string',
+            'theme_colors' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -124,9 +130,19 @@ class BrandliftController extends Controller
 
         try {
             $study = DB::transaction(function () use ($request) {
+                $market = $request->input('market');
+                $campaignNameRaw = $request->input('campaign_name');
+                $clientName = str_replace(' ', '_', $request->input('client_name', 'Client'));
+                
+                $year = date('Y');
+                $month = date('m');
+                
+                // Construimos: aaaa_mm_MCS_Mercado_advertaiser_campaña_brandlift
+                $formattedCampaignName = "{$year}_{$month}_MCS_{$market}_{$clientName}_{$campaignNameRaw}_brandlift";
+
                 $study = BrandliftStudy::create([
-                    'market' => $request->input('market'),
-                    'campaign_name' => $request->input('campaign_name'),
+                    'market' => $market,
+                    'campaign_name' => $formattedCampaignName,
                     'question_count' => $request->input('question_count'),
                     'creative_width' => $request->input('creative_width'),
                     'creative_height' => $request->input('creative_height'),
@@ -134,6 +150,13 @@ class BrandliftController extends Controller
                     'audiences' => $request->input('audiences'),
                     'dps_tags' => $request->input('dps_tags'),
                     'sheet_id' => $request->input('sheet_id'),
+                    'end_date' => $request->input('end_date'),
+                    'investment' => $request->input('investment'),
+                    'cm360_site_id' => $request->input('cm360_site_id'),
+                    'cm360_profile_id' => $request->input('cm360_profile_id'),
+                    'cm360_advertiser_id' => $request->input('cm360_advertiser_id'),
+                    'theme_colors' => $request->input('theme_colors'),
+                    'created_by' => auth()->id() ?? null,
                     'status' => 'created',
                 ]);
 
@@ -325,6 +348,62 @@ class BrandliftController extends Controller
                 'success' => false,
                 'message' => 'Error al crear el Sheet: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Guarda los tags y resultados devueltos por CM360 en la base de datos.
+     */
+    public function storeTags(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'study_id' => 'required|exists:brandlift_studies,id',
+            'tags' => 'required|array',
+            'tags.*.status' => 'required|string',
+            'tags.*.question_number' => 'nullable|integer',
+            'tags.*.creative_name' => 'nullable|string',
+            'tags.*.tag_type' => 'nullable|string',
+            'tags.*.placement_id' => 'nullable|string',
+            'tags.*.tag_script' => 'nullable|string',
+            'tags.*.error' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Datos inválidos',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::transaction(function () use ($request) {
+                $study = BrandliftStudy::findOrFail($request->input('study_id'));
+                
+                // Actualizar status del study si fue exitoso
+                $study->update([
+                    'cm360_pushed' => true,
+                    'cm360_pushed_at' => now(),
+                    'status' => 'cm360_pushed',
+                ]);
+
+                foreach ($request->input('tags') as $tagData) {
+                    $study->tags()->create([
+                        'status' => $tagData['status'],
+                        'question_number' => $tagData['question_number'] ?? null,
+                        'creative_name' => $tagData['creative_name'] ?? null,
+                        'tag_type' => $tagData['tag_type'] ?? null,
+                        'placement_id' => $tagData['placement_id'] ?? null,
+                        'tag_script' => $tagData['tag_script'] ?? null,
+                        'error' => $tagData['error'] ?? null,
+                    ]);
+                }
+            });
+
+            return response()->json(['success' => true, 'message' => 'Tags guardados exitosamente.']);
+        } catch (\Exception $e) {
+            Log::error('Error guardando tags: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error guardando tags.'], 500);
         }
     }
 }

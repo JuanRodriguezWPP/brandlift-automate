@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
 
     // API Privadas de Brandlift
     Route::post('/api/brandlift/store', [BrandliftController::class, 'store']);
+    Route::post('/api/brandlift/store-tags', [BrandliftController::class, 'storeTags']);
     Route::post('/api/brandlift/push-to-cm360', [BrandliftController::class, 'pushToCM360']);
     Route::post('/api/brandlift/automate-sheet', [BrandliftController::class, 'automateSheet']);
     

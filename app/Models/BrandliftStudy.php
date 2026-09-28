@@ -25,6 +25,10 @@ class BrandliftStudy extends Model
         'status',
         'created_by',
         'cm360_tags',
+        'end_date',
+        'investment',
+        'cm360_site_id',
+        'theme_colors',
     ];
 
     protected $casts = [
@@ -36,6 +40,7 @@ class BrandliftStudy extends Model
         'audiences' => 'array',
         'dps_tags' => 'array',
         'cm360_tags' => 'array',
+        'theme_colors' => 'array',
     ];
 
     /**
@@ -52,6 +57,14 @@ class BrandliftStudy extends Model
     public function creatives(): HasMany
     {
         return $this->hasMany(BrandliftCreative::class);
+    }
+
+    /**
+     * Get the CM360 tags generated for this brandlift study.
+     */
+    public function tags(): HasMany
+    {
+        return $this->hasMany(BrandliftTag::class);
     }
 
     /**

@@ -74,7 +74,7 @@ MAIL_PASSWORD=\"vtqc mkfz zpgj pugn\"
 MAIL_FROM_ADDRESS=\"xcslatam@gmail.com\"
 MAIL_FROM_NAME=\"Brandlift Automate\"
 
-CM360_CREDENTIALS_PATH=storage/app/cm360-credentials.json
+CM360_CREDENTIALS_PAßH=storage/app/cm360-credentials.json
 ";
 
 $envPath = __DIR__ . '/../.env';
@@ -250,6 +250,29 @@ $queries = [
         CONSTRAINT `bc_study_fk` FOREIGN KEY (`brandlift_study_id`) REFERENCES `brandlift_studies` (`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
+    // --- brandlift_tags ---
+    "CREATE TABLE IF NOT EXISTS `brandlift_tags` (
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        `brandlift_study_id` BIGINT UNSIGNED NOT NULL,
+        `status` VARCHAR(255) NOT NULL DEFAULT 'success',
+        `question_number` INT NULL DEFAULT NULL,
+        `creative_name` VARCHAR(255) NULL DEFAULT NULL,
+        `tag_type` VARCHAR(255) NULL DEFAULT NULL,
+        `placement_id` VARCHAR(255) NULL DEFAULT NULL,
+        `tag_script` TEXT NULL DEFAULT NULL,
+        `error` TEXT NULL DEFAULT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL,
+        CONSTRAINT `bt_study_fk` FOREIGN KEY (`brandlift_study_id`) REFERENCES `brandlift_studies` (`id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+    // --- update brandlift_studies columns ---
+    "ALTER TABLE `brandlift_studies` 
+     ADD COLUMN `end_date` DATE NULL DEFAULT NULL,
+     ADD COLUMN `investment` VARCHAR(255) NULL DEFAULT NULL,
+     ADD COLUMN `cm360_site_id` VARCHAR(255) NULL DEFAULT NULL,
+     ADD COLUMN `theme_colors` JSON NULL DEFAULT NULL;",
+
     // --- migrations (Laravel tracking table) ---
     "CREATE TABLE IF NOT EXISTS `migrations` (
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -291,6 +314,8 @@ $migrationFiles = [
     '2026_09_24_162349_add_details_to_brandlift_studies',
     '2026_09_24_163118_add_market_to_users_table',
     '2026_09_24_172456_add_cm360_tags_to_brandlift_studies',
+    '2026_09_25_205843_add_extra_fields_to_brandlift_studies_table',
+    '2026_09_25_205844_create_brandlift_tags_table',
 ];
 
 // Clear existing migration records first
