@@ -273,6 +273,20 @@ $queries = [
      ADD COLUMN `cm360_site_id` VARCHAR(255) NULL DEFAULT NULL,
      ADD COLUMN `theme_colors` JSON NULL DEFAULT NULL;",
 
+    // --- brandlift_edit_logs ---
+    "CREATE TABLE IF NOT EXISTS `brandlift_edit_logs` (
+        `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        `brandlift_study_id` BIGINT UNSIGNED NOT NULL,
+        `user_id` BIGINT UNSIGNED NOT NULL,
+        `action` VARCHAR(255) NOT NULL DEFAULT 'edit',
+        `old_data` JSON NULL DEFAULT NULL,
+        `new_data` JSON NULL DEFAULT NULL,
+        `created_at` TIMESTAMP NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NULL DEFAULT NULL,
+        CONSTRAINT `bel_study_fk` FOREIGN KEY (`brandlift_study_id`) REFERENCES `brandlift_studies` (`id`) ON DELETE CASCADE,
+        CONSTRAINT `bel_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
     // --- migrations (Laravel tracking table) ---
     "CREATE TABLE IF NOT EXISTS `migrations` (
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -316,6 +330,7 @@ $migrationFiles = [
     '2026_09_24_172456_add_cm360_tags_to_brandlift_studies',
     '2026_09_25_205843_add_extra_fields_to_brandlift_studies_table',
     '2026_09_25_205844_create_brandlift_tags_table',
+    '2026_09_28_183045_create_brandlift_edit_logs_table',
 ];
 
 // Clear existing migration records first
