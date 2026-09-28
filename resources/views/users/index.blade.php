@@ -115,7 +115,6 @@
             color: var(--text-secondary);
             font-size: 12px;
             font-weight: 500;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
@@ -132,7 +131,6 @@
             font-size: 12px;
             font-weight: 500;
             border: 1px solid rgba(147, 223, 227, 0.3);
-            text-transform: capitalize;
         }
     </style>
 </head>
@@ -140,17 +138,17 @@
     <div class="app-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-brand">WPP MEDIA SOLUTIONS<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
+            <div class="sidebar-brand">WPP Media Solutions<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
 
             <div class="sidebar-section">
-                <span class="sidebar-section-title">Menu</span>
+                <span class="sidebar-section-title">Menú</span>
                 <a href="/dashboard" class="sidebar-link">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                     Dashboard
                 </a>
                 <a href="/brandlift" class="sidebar-link sidebar-link-cta">
                     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear Brandlift
+                    Crear brandlift
                 </a>
                 @if(auth()->user()->role === 'admin')
                 <a href="/users" class="sidebar-link active">
@@ -168,7 +166,7 @@
                     @csrf
                     <button type="submit" class="sidebar-link sidebar-link-danger">
                         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar Sesión
+                        Cerrar sesión
                     </button>
                 </form>
             </div>
@@ -191,8 +189,8 @@
             <div class="content-area">
                 <div class="content-wrapper">
             <div class="header">
-                <h1>Gestión de Usuarios</h1>
-                <a href="{{ route('users.create') }}" class="btn-nav">+ Nuevo Usuario</a>
+                <h1>Gestión de usuarios</h1>
+                <a href="{{ route('users.create') }}" class="btn-nav">+ Nuevo usuario</a>
             </div>
 
             @if (session('success'))
@@ -209,7 +207,7 @@
                             <th>Correo</th>
                             <th>Rol</th>
                             <th>Mercado</th>
-                            <th>Fecha de Registro</th>
+                            <th>Fecha de registro</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>

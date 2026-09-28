@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Usuario — Brandlift Automate</title>
+    <title>Crear usuario — Brandlift Automate</title>
     <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
     <style>
         /* ===== PAGE-SPECIFIC STYLES ===== */
@@ -107,17 +107,17 @@
     <div class="app-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-brand">WPP MEDIA SOLUTIONS<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
+            <div class="sidebar-brand">WPP Media Solutions<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
 
             <div class="sidebar-section">
-                <span class="sidebar-section-title">Menu</span>
+                <span class="sidebar-section-title">Menú</span>
                 <a href="/dashboard" class="sidebar-link">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                     Dashboard
                 </a>
                 <a href="/brandlift" class="sidebar-link sidebar-link-cta">
                     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear Brandlift
+                    Crear brandlift
                 </a>
                 @if(auth()->user()->role === 'admin')
                 <a href="/users" class="sidebar-link active">
@@ -135,7 +135,7 @@
                     @csrf
                     <button type="submit" class="sidebar-link sidebar-link-danger">
                         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar Sesión
+                        Cerrar sesión
                     </button>
                 </form>
             </div>
@@ -145,7 +145,7 @@
         <main class="main-content">
             <!-- Top Header -->
             <header class="top-header">
-                <h1 class="top-header-title">Crear Usuario</h1>
+                <h1 class="top-header-title">Crear usuario</h1>
                 <div class="top-header-user">
                     <div class="top-header-user-info">
                         <div class="top-header-user-name">{{ Auth::user()->name ?? 'Usuario' }}</div>
@@ -159,11 +159,11 @@
         <div class="form-wrapper">
             <a href="{{ route('users.index') }}" class="back-link">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                Volver a Usuarios
+                Volver a usuarios
             </a>
 
             <div class="header">
-                <h1>Crear Nuevo Usuario</h1>
+                <h1>Crear nuevo usuario</h1>
             </div>
 
             <div class="page-card">
@@ -176,27 +176,27 @@
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="name">Nombre Completo</label>
+                        <label for="name">Nombre completo</label>
                         <input type="text" id="name" name="name" placeholder="Ej: Juan Perez" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Correo Electrónico (@wppmedia.com)</label>
+                        <label for="email">Correo electrónico (@wppmedia.com)</label>
                         <input type="email" id="email" name="email" placeholder="usuario@wppmedia.com" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="role">Rol en la Plataforma</label>
+                        <label for="role">Rol en la plataforma</label>
                         <select id="role" name="role" required onchange="toggleMarketSelect()">
                             <option value="">Selecciona un rol...</option>
-                            <option value="admin">Administrador (Acceso total)</option>
+                            <option value="admin">Administrador (acceso total)</option>
                             <option value="diseñador">Diseñador</option>
                             <option value="mercado">Mercado</option>
                         </select>
                     </div>
 
                     <div class="form-group" id="market-group" style="display: none;">
-                        <label for="market">Mercado Asignado</label>
+                        <label for="market">Mercado asignado</label>
                         <select id="market" name="market">
                             <option value="">Selecciona un mercado...</option>
                             <option value="PE">Perú (PE)</option>
@@ -210,7 +210,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn-submit">Guardar Usuario</button>
+                    <button type="submit" class="btn-submit">Guardar usuario</button>
                 </form>
             </div>
         </div>

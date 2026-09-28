@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Brandlift Automate</title>
+    <title>Acceso — Brandlift Automate</title>
     <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
     <style>
         /* ===== LOGIN SPLIT LAYOUT ===== */
@@ -220,8 +220,8 @@
         <!-- Left Hero Section -->
         <div class="login-hero">
             <div class="hero-content">
-                <h1 class="hero-title" style="text-transform: uppercase;">
-                    WPP MEDIA SOLUTIONS <br>
+                <h1 class="hero-title">
+                    WPP Media Solutions <br>
                     <span style="color: var(--wpp-lime); font-size: 0.6em; display: inline-block; margin-top: 8px;">| Creative Services LATAM</span>
                 </h1>
                 <p class="hero-subtitle">
@@ -253,7 +253,7 @@
                 <form action="{{ route('login.send') }}" method="POST">
                     @csrf
                     <div class="form-group">
-                        <label for="email">Correo Electrónico</label>
+                        <label for="email">Correo electrónico</label>
                         <input type="email" id="email" name="email" placeholder="usuario@wppmedia.com" required autofocus autocomplete="email">
                     </div>
                     

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Dashboard — Brandlift History</title>
+    <title>Dashboard — historial de brandlifts</title>
     <meta name="description" content="Dashboard de historial de Brandlifts creados para Campaign Manager 360">
     <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -283,7 +283,6 @@
             font-size: 11px;
             font-weight: 700;
             color: #94a3b8; /* Gris muy claro para encabezados */
-            text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid rgba(0, 0, 80, 0.05);
             white-space: nowrap;
@@ -613,7 +612,6 @@
             font-size: 11px;
             font-weight: 700;
             color: var(--text-muted);
-            text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 6px;
         }
@@ -840,17 +838,17 @@
     <div class="app-layout">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-brand">WPP MEDIA SOLUTIONS<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
+            <div class="sidebar-brand">WPP Media Solutions<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
 
             <div class="sidebar-section">
-                <span class="sidebar-section-title">Menu</span>
+                <span class="sidebar-section-title">Menú</span>
                 <a href="/dashboard" class="sidebar-link active">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                     Dashboard
                 </a>
                 <a href="/brandlift" class="sidebar-link sidebar-link-cta">
                     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear Brandlift
+                    Crear brandlift
                 </a>
                 @if(auth()->user()->role === 'admin')
                 <a href="/users" class="sidebar-link">
@@ -868,7 +866,7 @@
                     @csrf
                     <button type="submit" class="sidebar-link sidebar-link-danger">
                         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar Sesión
+                        Cerrar sesión
                     </button>
                 </form>
             </div>
@@ -893,7 +891,7 @@
         <div class="kpi-grid">
             <div class="kpi-card animate-in">
                 <div class="kpi-header">
-                    <span class="kpi-label">Total Brandlifts</span>
+                    <span class="kpi-label">Total de brandlifts</span>
                     <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
                 </div>
                 <div class="kpi-value" id="kpi-total">—</div>
@@ -903,7 +901,7 @@
 
             <div class="kpi-card animate-in">
                 <div class="kpi-header">
-                    <span class="kpi-label">Este Mes</span>
+                    <span class="kpi-label">Este mes</span>
                     <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
                 </div>
                 <div class="kpi-value" id="kpi-month">—</div>
@@ -912,7 +910,7 @@
 
             <div class="kpi-card animate-in">
                 <div class="kpi-header">
-                    <span class="kpi-label">Brandlifts Activos</span>
+                    <span class="kpi-label">Brandlifts activos</span>
                     <div class="kpi-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -930,7 +928,7 @@
         <div class="card animate-in">
             <div class="card-header-row">
                 <h2>
-                    Historial de Brandlifts
+                    Historial de brandlifts
                 </h2>
             </div>
 
@@ -970,10 +968,10 @@
                             <th>#</th>
                             <th>Campaña</th>
                             <th>Anunciante</th>
-                            <th>Grupos de Audiencia</th>
-                            <th>Tag Dps</th>
+                            <th>Grupos de audiencia</th>
+                            <th>Tag DPS</th>
                             <th>Preguntas</th>
-                            <th>Fecha Fin</th>
+                            <th>Fecha fin</th>
                             <th>Vigencia</th>
                             <th>Estado</th>
                             <th>Fecha</th>
@@ -993,7 +991,7 @@
                 <p>Todavía no has creado ningún brandlift.<br>Crea tu primer estudio y aparecerá aquí.</p>
                 <a href="/brandlift" class="btn-cta">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear Brandlift
+                    Crear brandlift
                 </a>
             </div>
 
@@ -1011,7 +1009,7 @@
             <div class="modal-header">
                 <h3>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                    Detalle del Brandlift
+                    Detalle del brandlift
                 </h3>
                 <button class="modal-close" id="modal-close-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1027,7 +1025,7 @@
     <div class="confirm-overlay" id="confirm-dialog">
         <div class="confirm-box">
             <div class="icon">🗑️</div>
-            <h3>¿Eliminar Brandlift?</h3>
+            <h3>¿Eliminar brandlift?</h3>
             <p id="confirm-message">Esta acción no se puede deshacer. El registro será eliminado permanentemente.</p>
             <div class="confirm-actions">
                 <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
@@ -1050,7 +1048,7 @@
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
 
-    const MONTHS_ES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const MONTHS_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     const MARKET_NAMES = {
         'PE': 'Perú', 'PRI': 'Puerto Rico', 'ARG': 'Argentina',
         'MIA': 'Miami', 'MEX': 'México', 'CHL': 'Chile',
@@ -1298,7 +1296,7 @@
                         <div style="margin-top: 15px;">
                             <button class="btn btn-secondary" onclick="downloadTagsFromDashboard(this)" data-tags="${tagsDataStr}" data-market="${escapeAttr(s.market)}" data-client="${escapeAttr(s.client_name || '')}" data-campaign="${escapeAttr(s.campaign_name)}" style="font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; gap: 8px; background: var(--wpp-teal); color: #fff; border: none; font-weight: 600;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                Descargar Tags CM360
+                                Descargar tags CM360
                             </button>
                         </div>
                     `;
@@ -1343,7 +1341,7 @@
                 <div style="margin-bottom: 20px; display: flex; justify-content: flex-start; align-items: center; gap: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px;">
                     <a href="/brandlift?edit_id=${s.id}" style="text-decoration: none; background-color: var(--wpp-cyan); color: var(--wpp-navy); border: none; padding: 8px 16px; width: auto; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                        Editar Creativos
+                        Editar creativos
                     </a>
                 </div>
             `;
@@ -1369,7 +1367,7 @@
 
                 previewHtml = `
                     <div class="detail-section">
-                        <h4>• Vista Previa</h4>
+                        <h4>• Vista previa</h4>
                         <div style="text-align: center; margin-bottom: 10px;">
                             <button type="button" class="btn btn-secondary btn-restart-preview" onclick="const f=document.querySelector('#dash-preview-frame iframe'); if(f){const src=f.srcdoc; f.srcdoc=''; setTimeout(()=>f.srcdoc=src,10);} this.style.display='none';" style="display: none; font-size: 12px; padding: 6px 12px; align-items: center; gap: 6px; cursor: pointer; background: transparent; border: 1px solid var(--border-card); border-radius: var(--radius-sm); color: var(--text-secondary); margin: 0 auto;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
@@ -1414,7 +1412,7 @@
                 ${cm360Html}
 
                 <div class="detail-section">
-                    <h4>• Preguntas y Respuestas</h4>
+                    <h4>• Preguntas y respuestas</h4>
                     ${questionsHtml || '<p style="color:var(--text-muted);font-size:13px">Sin preguntas registradas</p>'}
                 </div>
 
@@ -1485,7 +1483,7 @@
         }
 
         const modalBody = $('#modal-body');
-        modalBody.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><p style="color:var(--text-muted)">Actualizando creativos en Base de Datos y CM360...</p><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Por favor espera, no cierres esta ventana.</p></div>';
+        modalBody.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><p style="color:var(--text-muted)">Actualizando creativos en la base de datos y CM360...</p><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Por favor espera, no cierres esta ventana.</p></div>';
 
         try {
             const res = await fetch(`/api/brandlift/history/${id}/remove-click`, {
