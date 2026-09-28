@@ -345,7 +345,7 @@
             color: var(--wpp-navy);
         }
 
-        .badge-pushed {
+        .badge-pushed, .badge-cm360_pushed {
             background: rgba(176, 244, 103, 0.25);
             color: var(--wpp-navy);
         }
@@ -361,7 +361,7 @@
         }
 
         .badge-created .badge-dot { background: var(--wpp-cyan); }
-        .badge-pushed .badge-dot { background: var(--wpp-lime); }
+        .badge-pushed .badge-dot, .badge-cm360_pushed .badge-dot { background: var(--wpp-lime); }
         .badge-error .badge-dot { background: #ef4444; }
 
         /* ===== ACTION BUTTONS ===== */
@@ -951,7 +951,7 @@
                 <select id="filter-status" class="filter-select">
                     <option value="">Todos los estados</option>
                     <option value="created">Creado</option>
-                    <option value="pushed">Subido a CM360</option>
+                    <option value="cm360_pushed">Subido</option>
                     <option value="error">Error</option>
                 </select>
                 <input type="date" id="filter-date-from" class="filter-input" style="min-width:140px;flex:0;" title="Fecha desde">
@@ -1056,7 +1056,7 @@
         'MIA': 'Miami', 'MEX': 'México', 'CHL': 'Chile',
         'COL': 'Colombia', 'ECU': 'Ecuador'
     };
-    const STATUS_LABELS = { 'created': 'Creado', 'pushed': 'Subido', 'error': 'Error' };
+    const STATUS_LABELS = { 'created': 'Creado', 'pushed': 'Subido', 'cm360_pushed': 'Subido', 'error': 'Error' };
 
     let currentPage = 1;
     let deleteTargetId = null;
