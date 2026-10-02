@@ -1,4 +1,5 @@
 <?php
+
 $content = file_get_contents('resources/views/dashboard.blade.php');
 
 // 1. Extract downloadTagsBtn logic and remove from cm360Html
@@ -77,7 +78,6 @@ $replace3 = <<< 'TEXT'
 TEXT;
 $content = str_replace($search3, $replace3, $content);
 
-
 // 2. Modify editBtnHtml and create accionesBlockHtml
 $search4 = <<< 'TEXT'
                         const editBtnHtml = `
@@ -134,5 +134,4 @@ TEXT;
 $content = str_replace($search6, $replace6, $content);
 
 file_put_contents('resources/views/dashboard.blade.php', $content);
-echo "Patch applied!";
-?>
+echo 'Patch applied!';

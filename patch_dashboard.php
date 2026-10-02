@@ -1,4 +1,5 @@
 <?php
+
 $content = file_get_contents('resources/views/dashboard.blade.php');
 
 // 1. Inject the button
@@ -13,8 +14,8 @@ $editBtnHtml = <<< 'HTML'
             `;
 HTML;
 
-$content = str_replace("let clickActionHtmlTop = '';", $editBtnHtml . "\n            let clickActionHtmlTop = '';", $content);
-$content = str_replace("\${clickActionHtmlTop}", "\${editBtnHtml}\n                \${clickActionHtmlTop}", $content);
+$content = str_replace("let clickActionHtmlTop = '';", $editBtnHtml."\n            let clickActionHtmlTop = '';", $content);
+$content = str_replace('${clickActionHtmlTop}', "\${editBtnHtml}\n                \${clickActionHtmlTop}", $content);
 
 // 2. Add Modal and Script at the end
 $modalAndScript = <<< 'HTML'
@@ -325,8 +326,7 @@ async function saveEditedQuestions() {
 </script>
 HTML;
 
-$content = str_replace("</body>", $modalAndScript . "\n</body>", $content);
+$content = str_replace('</body>', $modalAndScript."\n</body>", $content);
 
 file_put_contents('resources/views/dashboard.blade.php', $content);
-echo "Done appending modal";
-?>
+echo 'Done appending modal';

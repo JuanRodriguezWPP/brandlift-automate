@@ -1,4 +1,5 @@
 <?php
+
 $content = file_get_contents('resources/views/dashboard.blade.php');
 
 $modalHtml = <<< 'TEXT'
@@ -17,7 +18,7 @@ $modalHtml = <<< 'TEXT'
 TEXT;
 
 // Insert after edit-questions-modal
-$content = str_replace('<div class="modal-overlay" id="edit-questions-modal">', $modalHtml . "\n\n" . '<div class="modal-overlay" id="edit-questions-modal">', $content);
+$content = str_replace('<div class="modal-overlay" id="edit-questions-modal">', $modalHtml."\n\n".'<div class="modal-overlay" id="edit-questions-modal">', $content);
 
 $jsCode = <<< 'TEXT'
 
@@ -86,8 +87,7 @@ $jsCode = <<< 'TEXT'
 TEXT;
 
 // Insert JS
-$content = str_replace('// ===== DETAIL MODAL =====', $jsCode . "\n    // ===== DETAIL MODAL =====", $content);
+$content = str_replace('// ===== DETAIL MODAL =====', $jsCode."\n    // ===== DETAIL MODAL =====", $content);
 
 file_put_contents('resources/views/dashboard.blade.php', $content);
 echo "Modal patch applied.\n";
-?>

@@ -1,4 +1,5 @@
 <?php
+
 $content = file_get_contents('app/Http/Controllers/BrandliftController.php');
 
 $method = <<< 'TEXT'
@@ -87,4 +88,3 @@ TEXT;
 $content = str_replace("}\n", $method, $content);
 file_put_contents('app/Http/Controllers/BrandliftController.php', $content);
 echo "Method added.\n";
-?>

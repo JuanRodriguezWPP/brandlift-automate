@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script de despliegue automático para Cloudways
  * No usa shell_exec, exec, putenv ni ninguna función bloqueada.
@@ -8,7 +9,7 @@
 // Seguridad: requiere la clave de la BD como parámetro
 $dbPassword = $_GET['pwd'] ?? '';
 if (empty($dbPassword)) {
-    die("<h3>⛔ Seguridad:</h3>Agrega tu clave a la URL. Ejemplo: <b>setup.php?pwd=TU_CONTRASEÑA_DB</b>");
+    exit('<h3>⛔ Seguridad:</h3>Agrega tu clave a la URL. Ejemplo: <b>setup.php?pwd=TU_CONTRASEÑA_DB</b>');
 }
 
 $dbName = 'zcemumdaeb';
@@ -25,7 +26,7 @@ echo "╚═══════════════════════�
 // =============================================
 echo "▶ PASO 1: Configurando archivo .env...\n";
 
-$appKey = 'base64:' . base64_encode(random_bytes(32));
+$appKey = 'base64:'.base64_encode(random_bytes(32));
 
 $envContent = "APP_NAME=\"Brandlift Automate\"
 APP_ENV=production
@@ -77,7 +78,7 @@ MAIL_FROM_NAME=\"Brandlift Automate\"
 CM360_CREDENTIALS_PATH=storage/app/cm360-credentials.json
 ";
 
-$envPath = __DIR__ . '/../.env';
+$envPath = __DIR__.'/../.env';
 file_put_contents($envPath, $envContent);
 echo "  ✅ Archivo .env creado con APP_KEY generada.\n\n";
 
@@ -93,7 +94,7 @@ try {
     ]);
     echo "  ✅ Conexión exitosa a MySQL ({$dbName}).\n\n";
 } catch (PDOException $e) {
-    die("  ❌ Error de conexión: " . $e->getMessage() . "\n</pre>");
+    exit('  ❌ Error de conexión: '.$e->getMessage()."\n</pre>");
 }
 
 // =============================================
@@ -118,15 +119,15 @@ $queries = [
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
     // --- password_reset_tokens ---
-    "CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
+    'CREATE TABLE IF NOT EXISTS `password_reset_tokens` (
         `email` VARCHAR(255) NOT NULL,
         `token` VARCHAR(255) NOT NULL,
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         PRIMARY KEY (`email`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- sessions ---
-    "CREATE TABLE IF NOT EXISTS `sessions` (
+    'CREATE TABLE IF NOT EXISTS `sessions` (
         `id` VARCHAR(255) NOT NULL,
         `user_id` BIGINT UNSIGNED NULL DEFAULT NULL,
         `ip_address` VARCHAR(45) NULL DEFAULT NULL,
@@ -136,28 +137,28 @@ $queries = [
         PRIMARY KEY (`id`),
         KEY `sessions_user_id_index` (`user_id`),
         KEY `sessions_last_activity_index` (`last_activity`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- cache ---
-    "CREATE TABLE IF NOT EXISTS `cache` (
+    'CREATE TABLE IF NOT EXISTS `cache` (
         `key` VARCHAR(255) NOT NULL,
         `value` MEDIUMTEXT NOT NULL,
         `expiration` BIGINT NOT NULL,
         PRIMARY KEY (`key`),
         KEY `cache_expiration_index` (`expiration`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- cache_locks ---
-    "CREATE TABLE IF NOT EXISTS `cache_locks` (
+    'CREATE TABLE IF NOT EXISTS `cache_locks` (
         `key` VARCHAR(255) NOT NULL,
         `owner` VARCHAR(255) NOT NULL,
         `expiration` BIGINT NOT NULL,
         PRIMARY KEY (`key`),
         KEY `cache_locks_expiration_index` (`expiration`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- jobs ---
-    "CREATE TABLE IF NOT EXISTS `jobs` (
+    'CREATE TABLE IF NOT EXISTS `jobs` (
         `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `queue` VARCHAR(255) NOT NULL,
         `payload` LONGTEXT NOT NULL,
@@ -166,10 +167,10 @@ $queries = [
         `available_at` INT UNSIGNED NOT NULL,
         `created_at` INT UNSIGNED NOT NULL,
         KEY `jobs_queue_index` (`queue`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- job_batches ---
-    "CREATE TABLE IF NOT EXISTS `job_batches` (
+    'CREATE TABLE IF NOT EXISTS `job_batches` (
         `id` VARCHAR(255) NOT NULL,
         `name` VARCHAR(255) NOT NULL,
         `total_jobs` INT NOT NULL,
@@ -181,10 +182,10 @@ $queries = [
         `created_at` INT NOT NULL,
         `finished_at` INT NULL DEFAULT NULL,
         PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- failed_jobs ---
-    "CREATE TABLE IF NOT EXISTS `failed_jobs` (
+    'CREATE TABLE IF NOT EXISTS `failed_jobs` (
         `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `uuid` VARCHAR(255) NOT NULL,
         `connection` VARCHAR(255) NOT NULL,
@@ -193,7 +194,7 @@ $queries = [
         `exception` LONGTEXT NOT NULL,
         `failed_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- brandlift_studies ---
     "CREATE TABLE IF NOT EXISTS `brandlift_studies` (
@@ -223,7 +224,7 @@ $queries = [
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
     // --- brandlift_questions ---
-    "CREATE TABLE IF NOT EXISTS `brandlift_questions` (
+    'CREATE TABLE IF NOT EXISTS `brandlift_questions` (
         `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `brandlift_study_id` BIGINT UNSIGNED NOT NULL,
         `question_number` INT NOT NULL,
@@ -234,10 +235,10 @@ $queries = [
         `updated_at` TIMESTAMP NULL DEFAULT NULL,
         KEY `bq_study_qn_index` (`brandlift_study_id`, `question_number`),
         CONSTRAINT `bq_study_fk` FOREIGN KEY (`brandlift_study_id`) REFERENCES `brandlift_studies` (`id`) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- brandlift_creatives ---
-    "CREATE TABLE IF NOT EXISTS `brandlift_creatives` (
+    'CREATE TABLE IF NOT EXISTS `brandlift_creatives` (
         `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `brandlift_study_id` BIGINT UNSIGNED NOT NULL,
         `question_number` INT NOT NULL,
@@ -248,7 +249,7 @@ $queries = [
         `created_at` TIMESTAMP NULL DEFAULT NULL,
         `updated_at` TIMESTAMP NULL DEFAULT NULL,
         CONSTRAINT `bc_study_fk` FOREIGN KEY (`brandlift_study_id`) REFERENCES `brandlift_studies` (`id`) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 
     // --- brandlift_tags ---
     "CREATE TABLE IF NOT EXISTS `brandlift_tags` (
@@ -267,11 +268,11 @@ $queries = [
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
     // --- update brandlift_studies columns ---
-    "ALTER TABLE `brandlift_studies` 
+    'ALTER TABLE `brandlift_studies` 
      ADD COLUMN `end_date` DATE NULL DEFAULT NULL,
      ADD COLUMN `investment` VARCHAR(255) NULL DEFAULT NULL,
      ADD COLUMN `cm360_site_id` VARCHAR(255) NULL DEFAULT NULL,
-     ADD COLUMN `theme_colors` JSON NULL DEFAULT NULL;",
+     ADD COLUMN `theme_colors` JSON NULL DEFAULT NULL;',
 
     // --- brandlift_edit_logs ---
     "CREATE TABLE IF NOT EXISTS `brandlift_edit_logs` (
@@ -288,11 +289,11 @@ $queries = [
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
     // --- migrations (Laravel tracking table) ---
-    "CREATE TABLE IF NOT EXISTS `migrations` (
+    'CREATE TABLE IF NOT EXISTS `migrations` (
         `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `migration` VARCHAR(255) NOT NULL,
         `batch` INT NOT NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
 ];
 
 $tableCount = 0;
@@ -305,7 +306,7 @@ foreach ($queries as $sql) {
         $tableCount++;
     } catch (PDOException $e) {
         preg_match('/`(\w+)`/', $sql, $m);
-        echo "  ⚠️  Tabla '{$m[1]}': " . $e->getMessage() . "\n";
+        echo "  ⚠️  Tabla '{$m[1]}': ".$e->getMessage()."\n";
     }
 }
 
@@ -334,13 +335,13 @@ $migrationFiles = [
 ];
 
 // Clear existing migration records first
-$pdo->exec("DELETE FROM `migrations`");
+$pdo->exec('DELETE FROM `migrations`');
 
-$stmt = $pdo->prepare("INSERT INTO `migrations` (`migration`, `batch`) VALUES (?, 1)");
+$stmt = $pdo->prepare('INSERT INTO `migrations` (`migration`, `batch`) VALUES (?, 1)');
 foreach ($migrationFiles as $migration) {
     $stmt->execute([$migration]);
 }
-echo "  ✅ " . count($migrationFiles) . " migraciones registradas.\n\n";
+echo '  ✅ '.count($migrationFiles)." migraciones registradas.\n\n";
 
 // =============================================
 // PASO 5: Crear usuario Admin por defecto
@@ -362,16 +363,16 @@ if ($existingAdmin['c'] == 0) {
 echo "▶ PASO 6: Verificando carpetas de almacenamiento...\n";
 
 $dirs = [
-    __DIR__ . '/../storage/framework/cache',
-    __DIR__ . '/../storage/framework/sessions',
-    __DIR__ . '/../storage/framework/views',
-    __DIR__ . '/../storage/logs',
-    __DIR__ . '/../storage/app/temp',
-    __DIR__ . '/../bootstrap/cache',
+    __DIR__.'/../storage/framework/cache',
+    __DIR__.'/../storage/framework/sessions',
+    __DIR__.'/../storage/framework/views',
+    __DIR__.'/../storage/logs',
+    __DIR__.'/../storage/app/temp',
+    __DIR__.'/../bootstrap/cache',
 ];
 
 foreach ($dirs as $dir) {
-    if (!is_dir($dir)) {
+    if (! is_dir($dir)) {
         mkdir($dir, 0775, true);
     }
 }
@@ -389,4 +390,4 @@ echo "  2. Cambia el 'Webroot' a: public_html/LATAM/public\n";
 echo "  3. Guarda y listo.\n\n";
 echo "⚠️  IMPORTANTE: Borra este archivo (setup.php) después\n";
 echo "   de terminar por seguridad.\n";
-echo "</pre>";
+echo '</pre>';
