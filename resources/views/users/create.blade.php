@@ -105,55 +105,11 @@
 </head>
 <body>
     <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">WPP Media Solutions<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">Menú</span>
-                <a href="/dashboard" class="sidebar-link">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    Dashboard
-                </a>
-                <a href="/brandlift" class="sidebar-link sidebar-link-cta">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear brandlift
-                </a>
-                @if(auth()->user()->role === 'admin')
-                <a href="/users" class="sidebar-link active">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Usuarios
-                </a>
-                @endif
-            </div>
-
-            <div class="sidebar-spacer"></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">General</span>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="sidebar-link sidebar-link-danger">
-                        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </aside>
+        @include('partials.sidebar', ['active' => 'users'])
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Header -->
-            <header class="top-header">
-                <h1 class="top-header-title">Crear usuario</h1>
-                <div class="top-header-user">
-                    <div class="top-header-user-info">
-                        <div class="top-header-user-name">{{ Auth::user()->name ?? 'Usuario' }}</div>
-                        <div class="top-header-user-email">{{ Auth::user()->email ?? '' }}</div>
-                    </div>
-                    <div class="top-header-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}</div>
-                </div>
-            </header>
+            @include('partials.top-header', ['title' => 'Crear usuario'])
 
             <div class="content-area">
         <div class="form-wrapper">
@@ -175,38 +131,56 @@
 
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="name">Nombre completo</label>
-                        <input type="text" id="name" name="name" placeholder="Ej: Juan Perez" required>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Ej: Juan Perez" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="email">Correo electrónico (@wppmedia.com)</label>
-                        <input type="email" id="email" name="email" placeholder="usuario@wppmedia.com" required>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="usuario@wppmedia.com" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="role">Rol en la plataforma</label>
                         <select id="role" name="role" required onchange="toggleMarketSelect()">
                             <option value="">Selecciona un rol...</option>
-                            <option value="admin">Administrador (acceso total)</option>
-                            <option value="diseñador">Diseñador</option>
-                            <option value="mercado">Mercado</option>
+                            <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrador (acceso total)</option>
+                            <option value="local" {{ old('role') === 'local' ? 'selected' : '' }}>Local (acceso por mercado/s asignados)</option>
+                            <option value="diseñador" {{ old('role') === 'diseñador' ? 'selected' : '' }}>Diseñador</option>
                         </select>
                     </div>
 
-                    <div class="form-group" id="market-group" style="display: none;">
-                        <label for="market">Mercado asignado</label>
-                        <select id="market" name="market">
-                            <option value="">Selecciona un mercado...</option>
-                            <option value="PE">Perú (PE)</option>
-                            <option value="PRI">Puerto Rico (PRI)</option>
-                            <option value="ARG">Argentina (ARG)</option>
-                            <option value="MIA">Miami (MIA)</option>
-                            <option value="MEX">México (MEX)</option>
-                            <option value="CHL">Chile (CHL)</option>
-                            <option value="COL">Colombia (COL)</option>
-                            <option value="ECU">Ecuador (ECU)</option>
+                    <div class="form-group" id="market-group" style="{{ old('role') === 'local' ? 'display: block;' : 'display: none;' }} margin-bottom: 20px;">
+                        <label style="margin-bottom: 10px;">Mercados asociados <span style="font-weight: normal; color: var(--text-muted);">(puedes seleccionar uno o varios)</span></label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;">
+                            @php
+                                $allMarkets = [
+                                    'PE' => ['name' => 'Perú', 'flag' => '🇵🇪'],
+                                    'PRI' => ['name' => 'Puerto Rico', 'flag' => '🇵🇷'],
+                                    'ARG' => ['name' => 'Argentina', 'flag' => '🇦🇷'],
+                                    'MIA' => ['name' => 'Miami', 'flag' => '🇺🇸'],
+                                    'MEX' => ['name' => 'México', 'flag' => '🇲🇽'],
+                                    'CHL' => ['name' => 'Chile', 'flag' => '🇨🇱'],
+                                    'COL' => ['name' => 'Colombia', 'flag' => '🇨🇴'],
+                                    'ECU' => ['name' => 'Ecuador', 'flag' => '🇪🇨'],
+                                ];
+                                $oldMarkets = (array) old('markets', []);
+                            @endphp
+                            @foreach($allMarkets as $code => $info)
+                            <label style="display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border-input); padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-primary); margin: 0;">
+                                <input type="checkbox" name="markets[]" value="{{ $code }}" {{ in_array($code, $oldMarkets) ? 'checked' : '' }} style="width: auto; margin: 0;">
+                                <span>{{ $info['flag'] }} {{ $code }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label for="status">Estado de la cuenta</label>
+                        <select id="status" name="status" required>
+                            <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Activo</option>
+                            <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Inactivo</option>
                         </select>
                     </div>
 
@@ -214,7 +188,7 @@
                 </form>
             </div>
         </div>
-        </div>
+    </div>
             </div><!-- .content-area -->
         </main><!-- .main-content -->
     </div><!-- .app-layout -->
@@ -222,14 +196,10 @@
         function toggleMarketSelect() {
             const role = document.getElementById('role').value;
             const marketGroup = document.getElementById('market-group');
-            const marketSelect = document.getElementById('market');
-            if (role === 'mercado') {
+            if (role === 'local' || role === 'mercado') {
                 marketGroup.style.display = 'block';
-                marketSelect.setAttribute('required', 'required');
             } else {
                 marketGroup.style.display = 'none';
-                marketSelect.removeAttribute('required');
-                marketSelect.value = '';
             }
         }
     </script>

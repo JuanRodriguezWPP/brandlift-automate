@@ -18,6 +18,7 @@ class AdminMiddleware
         if (auth()->check() && auth()->user()->role !== 'admin') {
             abort(403, 'No tienes permisos para acceder a esta sección.');
         }
+
         return $next($request);
     }
 }

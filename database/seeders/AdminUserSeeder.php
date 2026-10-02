@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class AdminUserSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'role' => 'admin',
-                'password' => null
+                'password' => null,
             ]
         );
     }

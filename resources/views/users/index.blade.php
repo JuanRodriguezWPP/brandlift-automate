@@ -136,55 +136,11 @@
 </head>
 <body>
     <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">WPP Media Solutions<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">Menú</span>
-                <a href="/dashboard" class="sidebar-link">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    Dashboard
-                </a>
-                <a href="/brandlift" class="sidebar-link sidebar-link-cta">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear brandlift
-                </a>
-                @if(auth()->user()->role === 'admin')
-                <a href="/users" class="sidebar-link active">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Usuarios
-                </a>
-                @endif
-            </div>
-
-            <div class="sidebar-spacer"></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">General</span>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="sidebar-link sidebar-link-danger">
-                        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </aside>
+        @include('partials.sidebar', ['active' => 'users'])
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Header -->
-            <header class="top-header">
-                <h1 class="top-header-title">Usuarios</h1>
-                <div class="top-header-user">
-                    <div class="top-header-user-info">
-                        <div class="top-header-user-name">{{ Auth::user()->name ?? 'Usuario' }}</div>
-                        <div class="top-header-user-email">{{ Auth::user()->email ?? '' }}</div>
-                    </div>
-                    <div class="top-header-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}</div>
-                </div>
-            </header>
+            @include('partials.top-header', ['title' => 'Gestión de usuarios'])
 
             <div class="content-area">
                 <div class="content-wrapper">
@@ -206,27 +162,74 @@
                             <th>Nombre</th>
                             <th>Correo</th>
                             <th>Rol</th>
-                            <th>Mercado</th>
-                            <th>Fecha de registro</th>
+                            <th>Mercados asociados</th>
+                            <th>Estado</th>
+                            <th>Última conexión</th>
+                            <th>Acceso directo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($users as $user)
                         <tr>
-                            <td>{{ $user->name }}</td>
-                            <td style="color: var(--text-secondary)">{{ $user->email }}</td>
-                            <td><span class="role-badge">{{ $user->role }}</span></td>
-                            <td style="color: var(--text-secondary)">{{ $user->market ?? '-' }}</td>
-                            <td style="color: var(--text-secondary);">{{ $user->created_at->format('d M Y') }}</td>
                             <td>
-                                <div style="display: flex; gap: 8px;">
-                                    <a href="{{ route('users.edit', $user) }}" class="btn-submit" style="padding: 4px 10px; font-size: 12px; height: auto;">Editar</a>
+                                <strong>{{ $user->name }}</strong>
+                            </td>
+                            <td style="color: var(--text-secondary)">{{ $user->email }}</td>
+                            <td>
+                                <span class="role-badge" style="{{ $user->role === 'admin' ? 'background: #e0f2fe; color: #0369a1; border-color: #bae6fd;' : ($user->role === 'local' ? 'background: #f0fdf4; color: #15803d; border-color: #bbf7d0;' : 'background: #faf5ff; color: #7e22ce; border-color: #f3e8ff;') }}">
+                                    {{ ucfirst($user->role) }}
+                                </span>
+                            </td>
+                            <td>
+                                @if($user->role === 'admin')
+                                    <span style="font-size: 12px; color: var(--text-muted); font-style: italic;">Todos (Global)</span>
+                                @elseif(!empty($user->assigned_markets))
+                                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                                        @foreach($user->assigned_markets as $mkt)
+                                            <span style="background: var(--bg-secondary); border: 1px solid var(--border-input); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">
+                                                {{ $mkt }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span style="color: var(--text-muted); font-size: 12px;">Ninguno</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if(($user->status ?? 'active') === 'active')
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981;"></span>
+                                        Activo
+                                    </span>
+                                @else
+                                    <span style="display: inline-flex; align-items: center; gap: 4px; background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600;">
+                                        <span style="width: 6px; height: 6px; border-radius: 50%; background: #ef4444;"></span>
+                                        Inactivo
+                                    </span>
+                                @endif
+                            </td>
+                            <td style="color: var(--text-secondary); font-size: 12px;">
+                                {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Sin registro' }}
+                            </td>
+                            <td>
+                                @if($user->login_token)
+                                    <button type="button" class="btn-submit" onclick="copyLoginLink('{{ route('login.token', $user->login_token) }}', this)" style="padding: 4px 8px; font-size: 11px; background: var(--bg-secondary); color: var(--wpp-navy); border: 1px solid var(--border-input);">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                        Copiar link
+                                    </button>
+                                @else
+                                    <span style="color: var(--text-muted); font-size: 11px;">-</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 6px;">
+                                    <a href="{{ route('users.edit', $user) }}" class="btn-submit" style="padding: 4px 8px; font-size: 11px; height: auto;">Editar</a>
                                     @if(auth()->id() !== $user->id)
                                     <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar a este usuario?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-danger">Eliminar</button>
+                                        <button type="submit" class="btn-danger" style="padding: 4px 8px; font-size: 11px;">Eliminar</button>
                                     </form>
                                     @endif
                                 </div>
@@ -235,7 +238,7 @@
                         @endforeach
                         @if($users->isEmpty())
                         <tr>
-                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">No hay usuarios registrados.</td>
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No hay usuarios registrados.</td>
                         </tr>
                         @endif
                     </tbody>
@@ -246,5 +249,20 @@
             </div><!-- .content-area -->
         </main><!-- .main-content -->
     </div><!-- .app-layout -->
+    <script>
+        function copyLoginLink(url, btn) {
+            navigator.clipboard.writeText(url).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✓ ¡Copiado!';
+                btn.style.background = '#dcfce7';
+                btn.style.color = '#15803d';
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.style.background = 'var(--bg-secondary)';
+                    btn.style.color = 'var(--wpp-navy)';
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>

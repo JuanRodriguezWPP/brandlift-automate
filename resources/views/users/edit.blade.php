@@ -115,55 +115,11 @@
 </head>
 <body>
     <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">WPP Media Solutions<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">Menú</span>
-                <a href="/dashboard" class="sidebar-link">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    Dashboard
-                </a>
-                <a href="/brandlift" class="sidebar-link sidebar-link-cta">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear brandlift
-                </a>
-                @if(auth()->user()->role === 'admin')
-                <a href="/users" class="sidebar-link active">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Usuarios
-                </a>
-                @endif
-            </div>
-
-            <div class="sidebar-spacer"></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">General</span>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="sidebar-link sidebar-link-danger">
-                        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </aside>
+        @include('partials.sidebar', ['active' => 'users'])
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Top Header -->
-            <header class="top-header">
-                <h1 class="top-header-title">Editar usuario</h1>
-                <div class="top-header-user">
-                    <div class="top-header-user-info">
-                        <div class="top-header-user-name">{{ Auth::user()->name ?? 'Usuario' }}</div>
-                        <div class="top-header-user-email">{{ Auth::user()->email ?? '' }}</div>
-                    </div>
-                    <div class="top-header-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}</div>
-                </div>
-            </header>
+            @include('partials.top-header', ['title' => 'Editar usuario'])
 
             <div class="content-area">
         <div class="form-wrapper">
@@ -186,46 +142,84 @@
                 <form action="{{ route('users.update', $user) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="name">Nombre completo</label>
                         <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" placeholder="Ej: Juan Perez" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="email">Correo electrónico (@wppmedia.com)</label>
                         <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" placeholder="usuario@wppmedia.com" required>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 20px;">
                         <label for="role">Rol en la plataforma</label>
                         <select id="role" name="role" required onchange="toggleMarketSelect()">
                             <option value="">Selecciona un rol...</option>
                             <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Administrador (acceso total)</option>
-                            <option value="diseñador" {{ old('role', $user->role) === 'diseñador' || old('role', $user->role) === 'disenador' ? 'selected' : '' }}>Diseñador</option>
-                            <option value="mercado" {{ old('role', $user->role) === 'mercado' ? 'selected' : '' }}>Mercado</option>
+                            <option value="local" {{ in_array(old('role', $user->role), ['local', 'mercado']) ? 'selected' : '' }}>Local (acceso por mercado/s asignados)</option>
+                            <option value="diseñador" {{ in_array(old('role', $user->role), ['diseñador', 'disenador']) ? 'selected' : '' }}>Diseñador</option>
                         </select>
                     </div>
 
-                    <div class="form-group" id="market-group" style="{{ old('role', $user->role) === 'mercado' ? 'display: block;' : 'display: none;' }}">
-                        <label for="market">Mercado asignado</label>
-                        <select id="market" name="market" {{ old('role', $user->role) === 'mercado' ? 'required' : '' }}>
-                            <option value="">Selecciona un mercado...</option>
-                            <option value="PE" {{ old('market', $user->market) === 'PE' ? 'selected' : '' }}>Perú (PE)</option>
-                            <option value="PRI" {{ old('market', $user->market) === 'PRI' ? 'selected' : '' }}>Puerto Rico (PRI)</option>
-                            <option value="ARG" {{ old('market', $user->market) === 'ARG' ? 'selected' : '' }}>Argentina (ARG)</option>
-                            <option value="MIA" {{ old('market', $user->market) === 'MIA' ? 'selected' : '' }}>Miami (MIA)</option>
-                            <option value="MEX" {{ old('market', $user->market) === 'MEX' ? 'selected' : '' }}>México (MEX)</option>
-                            <option value="CHL" {{ old('market', $user->market) === 'CHL' ? 'selected' : '' }}>Chile (CHL)</option>
-                            <option value="COL" {{ old('market', $user->market) === 'COL' ? 'selected' : '' }}>Colombia (COL)</option>
-                            <option value="ECU" {{ old('market', $user->market) === 'ECU' ? 'selected' : '' }}>Ecuador (ECU)</option>
+                    <div class="form-group" id="market-group" style="{{ in_array(old('role', $user->role), ['local', 'mercado']) ? 'display: block;' : 'display: none;' }} margin-bottom: 20px;">
+                        <label style="margin-bottom: 10px;">Mercados asociados <span style="font-weight: normal; color: var(--text-muted);">(puedes seleccionar uno o varios)</span></label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;">
+                            @php
+                                $allMarkets = [
+                                    'PE' => ['name' => 'Perú', 'flag' => '🇵🇪'],
+                                    'PRI' => ['name' => 'Puerto Rico', 'flag' => '🇵🇷'],
+                                    'ARG' => ['name' => 'Argentina', 'flag' => '🇦🇷'],
+                                    'MIA' => ['name' => 'Miami', 'flag' => '🇺🇸'],
+                                    'MEX' => ['name' => 'México', 'flag' => '🇲🇽'],
+                                    'CHL' => ['name' => 'Chile', 'flag' => '🇨🇱'],
+                                    'COL' => ['name' => 'Colombia', 'flag' => '🇨🇴'],
+                                    'ECU' => ['name' => 'Ecuador', 'flag' => '🇪🇨'],
+                                ];
+                                $userMarkets = (array) old('markets', $user->assigned_markets);
+                            @endphp
+                            @foreach($allMarkets as $code => $info)
+                            <label style="display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border-input); padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-primary); margin: 0;">
+                                <input type="checkbox" name="markets[]" value="{{ $code }}" {{ in_array($code, $userMarkets) ? 'checked' : '' }} style="width: auto; margin: 0;">
+                                <span>{{ $info['flag'] }} {{ $code }}</span>
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label for="status">Estado de la cuenta</label>
+                        <select id="status" name="status" required>
+                            <option value="active" {{ old('status', $user->status ?? 'active') === 'active' ? 'selected' : '' }}>Activo</option>
+                            <option value="inactive" {{ old('status', $user->status ?? 'active') === 'inactive' ? 'selected' : '' }}>Inactivo</option>
                         </select>
                     </div>
+
+                    @if($user->login_token)
+                    <div class="form-group" style="margin-bottom: 24px; background: var(--bg-secondary); border: 1px dashed var(--border-input); border-radius: var(--radius-sm); padding: 16px;">
+                        <label style="font-weight: 600; color: var(--wpp-navy); margin-bottom: 6px;">Enlace de Acceso Directo</label>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0;">Este enlace permite ingresar a la plataforma directamente sin solicitar magic link por correo:</p>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="text" readonly value="{{ route('login.token', $user->login_token) }}" style="font-family: monospace; font-size: 12px; background: white;" id="tokenUrlInput">
+                            <button type="button" class="btn-submit" onclick="copyTokenLink()" style="width: auto; padding: 10px 16px; margin: 0; white-space: nowrap;" id="btnCopyToken">Copiar</button>
+                        </div>
+                    </div>
+                    @endif
 
                     <button type="submit" class="btn-submit">Guardar cambios</button>
                 </form>
+
+                @if($user->login_token)
+                <form action="{{ route('users.regenerate-token', $user) }}" method="POST" style="margin-top: 14px;" onsubmit="return confirm('¿Regenerar el token invalidará el enlace anterior. Continuar?');">
+                    @csrf
+                    <button type="submit" style="background: none; border: none; color: var(--text-muted); text-decoration: none; font-size: 12px; cursor: pointer; padding: 0;">
+                        ↻ Regenerar token de acceso directo
+                    </button>
+                </form>
+                @endif
             </div>
         </div>
-        </div>
+    </div>
             </div><!-- .content-area -->
         </main><!-- .main-content -->
     </div><!-- .app-layout -->
@@ -233,15 +227,22 @@
         function toggleMarketSelect() {
             const role = document.getElementById('role').value;
             const marketGroup = document.getElementById('market-group');
-            const marketSelect = document.getElementById('market');
-            if (role === 'mercado') {
+            if (role === 'local' || role === 'mercado') {
                 marketGroup.style.display = 'block';
-                marketSelect.setAttribute('required', 'required');
             } else {
                 marketGroup.style.display = 'none';
-                marketSelect.removeAttribute('required');
-                marketSelect.value = '';
             }
+        }
+
+        function copyTokenLink() {
+            const input = document.getElementById('tokenUrlInput');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                const btn = document.getElementById('btnCopyToken');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✓ ¡Copiado!';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+            });
         }
     </script>
 </body>

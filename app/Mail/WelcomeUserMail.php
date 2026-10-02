@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
@@ -9,19 +10,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MagicLinkEmail extends Mailable
+class WelcomeUserMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $url;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($url)
-    {
-        $this->url = $url;
-    }
+    public function __construct(public User $user) {}
 
     /**
      * Get the message envelope.
@@ -29,7 +25,7 @@ class MagicLinkEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Tu enlace de acceso para Brandlift Automate',
+            subject: 'Bienvenido a Brandlift Automate — Tu enlace de acceso',
         );
     }
 
@@ -39,7 +35,7 @@ class MagicLinkEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.magic-link',
+            view: 'emails.welcome-user',
         );
     }
 
