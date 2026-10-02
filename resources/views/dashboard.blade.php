@@ -25,59 +25,16 @@
             background-color: var(--bg-secondary);
         }
 
-        /* ===== ANIMATED BACKGROUND ===== */
-        .bg-animation {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            pointer-events: none;
+        a, a:hover, a:focus {
+            text-decoration: none !important;
         }
-
-        .bg-animation .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.12;
-            animation: orbFloat 20s ease-in-out infinite;
-        }
-
-        .bg-animation .orb:nth-child(1) {
-            width: 600px; height: 600px;
-            background: var(--wpp-lime);
-            top: -15%; left: -10%;
-        }
-
-        .bg-animation .orb:nth-child(2) {
-            width: 500px; height: 500px;
-            background: var(--wpp-cyan);
-            bottom: -20%; right: -10%;
-            animation-delay: -7s;
-        }
-
-        .bg-animation .orb:nth-child(3) {
-            width: 400px; height: 400px;
-            background: var(--wpp-lime);
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: -14s;
-        }
-
-        @keyframes orbFloat {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(30px, -40px) scale(1.05); }
-            50% { transform: translate(-20px, 20px) scale(0.95); }
-            75% { transform: translate(40px, 30px) scale(1.02); }
-        }
-
-
 
         /* ===== KPI CARDS ===== */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 32px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         @media (max-width: 1024px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -86,8 +43,8 @@
         .kpi-card {
             background: var(--bg-card);
             border: none;
-            border-radius: var(--radius-xl);
-            padding: 32px;
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
             box-shadow: var(--shadow-card);
             transition: all var(--transition-med);
             position: relative;
@@ -99,7 +56,7 @@
 
         .kpi-card:hover {
             box-shadow: var(--shadow-card-hover);
-            transform: translateY(-4px);
+            transform: translateY(-3px);
         }
 
         /* Primera Card (Solid Navy) */
@@ -112,14 +69,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
         }
 
         .kpi-label {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-secondary);
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
 
         .kpi-card.card-primary .kpi-label {
@@ -127,14 +84,19 @@
         }
 
         .kpi-icon {
-            width: 48px; height: 48px;
-            border-radius: var(--radius-md);
+            width: 34px; height: 34px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
             background: var(--bg-secondary);
             color: var(--wpp-navy);
+            flex-shrink: 0;
+        }
+
+        .kpi-icon svg {
+            width: 18px;
+            height: 18px;
         }
 
         .kpi-card.card-primary .kpi-icon {
@@ -143,10 +105,10 @@
         }
 
         .kpi-value {
-            font-size: 48px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 700;
             line-height: 1;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             color: var(--wpp-navy);
         }
 
@@ -155,7 +117,7 @@
         }
 
         .kpi-sub {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -280,16 +242,15 @@
         thead th {
             padding: 12px 16px;
             text-align: left;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8; /* Gris muy claro para encabezados */
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(0, 0, 80, 0.05);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(0, 0, 80, 0.06);
             white-space: nowrap;
             position: sticky;
             top: 0;
             background: var(--bg-card);
+            z-index: 2;
         }
 
         tbody tr {
@@ -302,10 +263,10 @@
         }
 
         tbody td {
-            padding: 16px 16px;
+            padding: 14px 16px;
             font-size: 13px;
             color: var(--text-secondary);
-            border-bottom: 1px solid rgba(0, 0, 80, 0.03);
+            border-bottom: 1px solid rgba(0, 0, 80, 0.04);
             white-space: nowrap;
         }
 
@@ -318,63 +279,141 @@
         .td-campaign {
             color: var(--text-primary);
             font-weight: 600;
-            max-width: 220px;
+            max-width: 240px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* ===== BADGES ===== */
-        .badge {
+        /* ===== STATUS INDICATORS (Normalized, non-pill) ===== */
+        .status-indicator {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 12px;
-            border-radius: var(--radius-full);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-
-        .badge-market {
-            background: var(--bg-secondary);
+            font-size: 12.5px;
+            font-weight: 500;
             color: var(--text-secondary);
         }
 
-        .badge-created {
-            background: rgba(147, 223, 227, 0.2);
-            color: var(--wpp-navy);
-        }
-
-        .badge-pushed, .badge-cm360_pushed {
-            background: rgba(176, 244, 103, 0.25);
-            color: var(--wpp-navy);
-        }
-
-        .badge-error {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-
-        .badge-dot {
-            width: 6px; height: 6px;
+        .status-dot {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
         }
 
-        .badge-created .badge-dot { background: var(--wpp-cyan); }
-        .badge-pushed .badge-dot, .badge-cm360_pushed .badge-dot { background: var(--wpp-lime); }
-        .badge-error .badge-dot { background: #ef4444; }
+        .status-indicator.active { color: #15803d; }
+        .status-indicator.active .status-dot { background: #22c55e; box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2); }
+
+        .status-indicator.finished { color: #64748b; }
+        .status-indicator.finished .status-dot { background: #94a3b8; }
+
+        .status-indicator.inactive { color: #94a3b8; }
+        .status-indicator.inactive .status-dot { background: #cbd5e1; }
+
+        .status-indicator.error { color: #dc2626; font-weight: 600; cursor: help; }
+        .status-indicator.error .status-dot { background: #ef4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); }
+
+        /* ===== TABLE LINKS (Normalized, non-pill) ===== */
+        .table-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12.5px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color var(--transition-fast), opacity var(--transition-fast);
+        }
+
+        .table-link-sheet {
+            color: #15803d;
+        }
+        .table-link-sheet:hover {
+            color: #166534;
+            text-decoration: none;
+            opacity: 0.85;
+        }
+
+        .table-link-cm360 {
+            color: #0369a1;
+        }
+        .table-link-cm360:hover {
+            color: #0c4a6e;
+            text-decoration: none;
+            opacity: 0.85;
+        }
+
+        .table-link .link-icon {
+            font-size: 15px;
+            opacity: 0.85;
+        }
+
+        .table-link .ext-icon {
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        /* ===== FLOATING TOOLTIP (Never clipped by tables or headers) ===== */
+        #floating-tooltip {
+            position: fixed;
+            z-index: 999999;
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 9px 13px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 400;
+            line-height: 1.45;
+            max-width: 320px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            white-space: normal;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        #floating-tooltip.visible {
+            opacity: 1;
+        }
+
+        .floating-tooltip-title {
+            font-weight: 600;
+            color: #fca5a5;
+            margin-bottom: 3px;
+            font-size: 11.5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .row-error-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #dc2626;
+            margin-top: 4px;
+            cursor: help;
+        }
+
+        .row-error-hint .error-icon {
+            font-size: 13px;
+            color: #ef4444;
+            flex-shrink: 0;
+        }
 
         /* ===== ACTION BUTTONS ===== */
         .actions-cell {
             display: flex;
-            gap: 6px;
+            gap: 4px;
         }
 
         .btn-action {
-            width: 32px; height: 32px;
+            width: 30px; height: 30px;
             border-radius: var(--radius-sm);
-            border: 1px solid rgba(176, 244, 103, 0.15);
-            background: rgba(176, 244, 103, 0.06);
+            border: 1px solid rgba(0, 0, 80, 0.08);
+            background: #ffffff;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -384,13 +423,22 @@
         }
 
         .btn-action:hover {
-            background: rgba(176, 244, 103, 0.15);
-            color: var(--accent-blue-light);
-            border-color: rgba(176, 244, 103, 0.3);
+            background: rgba(0, 0, 80, 0.05);
+            color: var(--wpp-navy);
+            border-color: rgba(0, 0, 80, 0.15);
+        }
+
+        .btn-action.warning:hover {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.25);
         }
 
         .btn-action.danger:hover {
-            background: rgba(239, 68, 68, 0.15);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.25);
+        }
             color: #fca5a5;
             border-color: rgba(239, 68, 68, 0.3);
         }
@@ -528,18 +576,18 @@
 
         .modal {
             background: var(--bg-card);
-            border: 1px solid var(--bg-card-border);
+            border: 1px solid var(--border-card);
             border-radius: var(--radius-xl);
             padding: 0;
-            max-width: 680px;
+            max-width: 780px;
             width: 100%;
-            max-height: 85vh;
+            max-height: 88vh;
             overflow-y: auto;
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(176, 244, 103, 0.1);
+            box-shadow: 0 24px 64px rgba(0, 0, 80, 0.2), 0 0 0 1px rgba(0, 0, 80, 0.05);
             transform: scale(0.9) translateY(20px);
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
             scrollbar-width: thin;
-            scrollbar-color: rgba(176, 244, 103, 0.2) transparent;
+            scrollbar-color: rgba(0, 0, 80, 0.15) transparent;
         }
 
         .modal-overlay.active .modal {
@@ -550,8 +598,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 24px 28px;
-            border-bottom: 1px solid rgba(176, 244, 103, 0.08);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-card);
             position: sticky;
             top: 0;
             background: var(--bg-card);
@@ -560,19 +608,20 @@
         }
 
         .modal-header h3 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--text-primary);
         }
 
         .modal-close {
-            width: 36px; height: 36px;
+            width: 34px; height: 34px;
             border-radius: 50%;
-            border: 1px solid rgba(176, 244, 103, 0.15);
-            background: rgba(176, 244, 103, 0.06);
-            color: var(--text-muted);
+            border: 1px solid var(--border-input);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -581,118 +630,441 @@
         }
 
         .modal-close:hover {
-            background: rgba(239, 68, 68, 0.15);
-            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.12);
+            color: #dc2626;
             border-color: rgba(239, 68, 68, 0.3);
         }
 
         .modal-body {
-            padding: 28px;
+            padding: 24px;
         }
 
-        .detail-grid {
+        /* ===== DETAIL MODAL SPECIFIC (ENLARGED & 2-COLUMN) ===== */
+        #detail-modal .modal {
+            max-width: 1240px;
+            width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 24px 70px rgba(0, 0, 80, 0.22), 0 0 0 1px rgba(0, 0, 80, 0.08);
+        }
+
+        #detail-modal .modal-header {
+            padding: 16px 24px;
+            flex-shrink: 0;
+        }
+
+        #detail-modal .modal-body {
+            padding: 18px 24px 22px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 80, 0.15) transparent;
+        }
+
+        .detail-modal-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
+            grid-template-columns: minmax(0, 1fr) 370px;
+            gap: 20px;
+            align-items: start;
         }
 
-        .detail-item {
+        @media (max-width: 1024px) {
+            .detail-modal-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .detail-modal-left {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .detail-modal-right {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+        }
+
+        /* Summary Card */
+        .detail-summary-card {
             background: var(--bg-secondary);
             border: 1px dashed var(--border-input);
-            border-radius: var(--radius-md);
-            padding: 16px;
+            border-radius: var(--radius-lg);
+            padding: 14px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             transition: all 0.2s ease;
         }
-        .detail-item:hover {
-            border-color: rgba(176, 244, 103, 0.5);
-            background: rgba(176, 244, 103, 0.02);
+
+        .detail-summary-card:hover {
+            border-color: rgba(0, 0, 80, 0.28);
+            background: #ffffff;
         }
 
-        .detail-item .detail-label {
-            font-size: 11px;
+        .detail-summary-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .detail-summary-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .detail-summary-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .detail-summary-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            word-break: break-all;
+            line-height: 1.35;
+        }
+
+        .detail-summary-badges {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .detail-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px 14px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0, 0, 80, 0.08);
+        }
+
+        .detail-meta-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-meta-cell .meta-lbl {
+            font-size: 10.5px;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.4px;
         }
 
-        .detail-item .detail-value {
-            font-size: 14px;
+        .detail-meta-cell .meta-val {
+            font-size: 12.5px;
             font-weight: 600;
             color: var(--text-primary);
-            word-break: break-all;
         }
 
-        .detail-section {
-            margin-bottom: 24px;
-        }
-
-        .detail-section h4 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .question-detail-block {
+        /* CM360 Bar */
+        .detail-cm360-bar {
             background: var(--bg-secondary);
             border: 1px dashed var(--border-input);
             border-radius: var(--radius-md);
-            padding: 20px;
-            height: 100%;
-            transition: all 0.2s ease;
-        }
-        .question-detail-block:hover {
-            border-color: rgba(176, 244, 103, 0.5);
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12px;
         }
 
-        .question-detail-block .q-num {
+        .detail-cm360-title {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 3px 10px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .detail-cm360-items {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .detail-cm360-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .detail-cm360-item .cm-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .detail-cm360-item .cm-val {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Audit Alert */
+        .detail-audit-alert {
+            background: #fff5f5;
+            border: 1px solid #fed7d7;
+            border-radius: var(--radius-md);
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .detail-audit-msg {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #c53030;
+            font-size: 12px;
+        }
+
+        /* Questions Section */
+        .detail-questions-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detail-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .question-card {
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-input);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .question-card:hover {
+            border-color: rgba(0, 0, 80, 0.28);
+            background: #ffffff;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .q-badge {
+            background: var(--wpp-lime);
+            color: var(--wpp-navy);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 100px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 1px 4px rgba(176, 244, 103, 0.3);
+            letter-spacing: 0.2px;
+        }
+
+        .q-title {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.35;
+        }
+
+        .q-answers-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+            gap: 5px;
+        }
+
+        .q-answer-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 80, 0.08);
+            border-radius: var(--radius-sm);
+            padding: 4px 7px;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            min-width: 0;
+        }
+
+        .q-answer-pill .opt-letter {
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: rgba(0, 0, 80, 0.06);
+            color: var(--wpp-navy);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .q-answer-pill span:last-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Pill Lists for metadata */
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        .pill-tag {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 0, 80, 0.05);
+            color: var(--wpp-navy);
+            border: 1px solid rgba(0, 0, 80, 0.12);
+            padding: 2px 7px;
             border-radius: 100px;
             font-size: 11px;
             font-weight: 700;
-            background: var(--wpp-neon);
-            border: 1px solid var(--wpp-neon);
-            color: var(--wpp-navy);
-            margin-bottom: 10px;
-            box-shadow: 0 0 10px rgba(176, 244, 103, 0.2);
         }
 
-        .question-detail-block .q-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            line-height: 1.5;
+        .pill-tag-dps {
+            background: rgba(84, 101, 255, 0.1);
+            border-color: rgba(84, 101, 255, 0.25);
+            color: var(--wpp-cornflower);
         }
 
-
-        .preview-mini-frame {
-            width: 100%;
+        /* Actions Bar */
+        .detail-actions-bar {
             display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding-top: 2px;
+        }
+
+        .btn-detail-action {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: var(--bg-secondary);
+            gap: 6px;
+            padding: 7px 13px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        /* Preview Panel */
+        .detail-preview-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
             border-radius: var(--radius-lg);
-            padding: 24px;
-            border: 1px dashed var(--border-input);
-            margin-bottom: 24px;
+            box-shadow: 0 4px 18px rgba(0, 0, 80, 0.06);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .preview-mini-frame iframe {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        .detail-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(0, 0, 80, 0.06);
+            background: var(--bg-secondary);
         }
+
+        .detail-preview-header h4 {
+            margin: 0;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-preview-header .preview-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-stage {
+            background: #090d16;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 260px;
+            position: relative;
+        }
+
+        .preview-stage iframe {
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+            display: block;
+        }
+
+        .preview-footer-note {
+            padding: 7px 12px;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(0, 0, 80, 0.05);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
 
         /* ===== TOAST ===== */
         .toast {
@@ -838,55 +1210,12 @@
 </head>
 <body>
     <div class="app-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">WPP MEDIA SOLUTIONS<br><span style="color: var(--wpp-lime); font-size: 14px; font-weight: normal; margin-top: 4px; display: inline-block;">| Creative Services LATAM</span></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">Menú</span>
-                <a href="/dashboard" class="sidebar-link active">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    Dashboard
-                </a>
-                <a href="/brandlift" class="sidebar-link sidebar-link-cta">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-                    Crear brandlift
-                </a>
-                @if(auth()->user()->role === 'admin')
-                <a href="/users" class="sidebar-link">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Usuarios
-                </a>
-                @endif
-            </div>
-
-            <div class="sidebar-spacer"></div>
-
-            <div class="sidebar-section">
-                <span class="sidebar-section-title">General</span>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="sidebar-link sidebar-link-danger">
-                        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                        Cerrar sesión
-                    </button>
-                </form>
-            </div>
-        </aside>
+        @include('partials.sidebar', ['active' => 'dashboard'])
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Top Header -->
-            <header class="top-header">
-                <h1 class="top-header-title">Dashboard</h1>
-                <div class="top-header-user">
-                    <div class="top-header-user-info">
-                        <div class="top-header-user-name">{{ Auth::user()->name ?? 'Usuario' }}</div>
-                        <div class="top-header-user-email">{{ Auth::user()->email ?? '' }}</div>
-                    </div>
-                    <div class="top-header-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}</div>
-                </div>
-            </header>
+            @include('partials.top-header', ['title' => 'Dashboard'])
 
             <div class="content-area">
         <!-- KPI Cards -->
@@ -936,26 +1265,54 @@
 
             <!-- Filters -->
             <div class="filters-bar">
-                <input type="text" id="filter-search" class="filter-input" placeholder="🔍 Buscar por nombre de campaña...">
+                <input type="text" id="filter-search" class="filter-input" placeholder="Buscar por nombre de campaña o cliente...">
+                @php
+                    $dashUser = auth()->user();
+                    $assignedMarkets = $dashUser?->assigned_markets ?? [];
+                    $allMarketDefs = [
+                        'PE' => 'Perú (PE)',
+                        'PRI' => 'Puerto Rico (PRI)',
+                        'ARG' => 'Argentina (ARG)',
+                        'MIA' => 'Miami (MIA)',
+                        'MEX' => 'México (MEX)',
+                        'CHL' => 'Chile (CHL)',
+                        'COL' => 'Colombia (COL)',
+                        'ECU' => 'Ecuador (ECU)',
+                    ];
+                    $showMarketFilter = !$dashUser || $dashUser->isAdmin() || count($assignedMarkets) > 1;
+                    if ($dashUser && !$dashUser->isAdmin() && !empty($assignedMarkets)) {
+                        $filterMarketOptions = array_intersect_key($allMarketDefs, array_flip($assignedMarkets));
+                    } else {
+                        $filterMarketOptions = $allMarketDefs;
+                    }
+                @endphp
+                @if($showMarketFilter)
                 <select id="filter-market" class="filter-select">
-                    <option value="">Todos los mercados</option>
-                    <option value="PE">Perú (PE)</option>
-                    <option value="PRI">Puerto Rico (PRI)</option>
-                    <option value="ARG">Argentina (ARG)</option>
-                    <option value="MIA">Miami (MIA)</option>
-                    <option value="MEX">México (MEX)</option>
-                    <option value="CHL">Chile (CHL)</option>
-                    <option value="COL">Colombia (COL)</option>
-                    <option value="ECU">Ecuador (ECU)</option>
+                    <option value="">{{ count($assignedMarkets) > 1 ? 'Todos mis mercados' : 'Todos los mercados' }}</option>
+                    @foreach($filterMarketOptions as $code => $name)
+                        <option value="{{ $code }}" {{ session('active_market') === $code ? 'selected' : '' }}>{{ $name }}</option>
+                    @endforeach
                 </select>
+                @endif
                 <select id="filter-status" class="filter-select">
                     <option value="">Todos los estados</option>
                     <option value="created">Creado</option>
                     <option value="cm360_pushed">Subido</option>
                     <option value="error">Error</option>
                 </select>
-                <input type="date" id="filter-date-from" class="filter-input" style="min-width:140px;flex:0;" title="Fecha desde">
-                <input type="date" id="filter-date-to" class="filter-input" style="min-width:140px;flex:0;" title="Fecha hasta">
+                <div class="filter-date-group" style="position: relative; min-width: 160px;">
+                    <input type="text" id="filter-date-visual" class="filter-input" placeholder="Hasta (dd/mm/aaaa)" readonly style="cursor: pointer; width: 100%; padding-right: 36px;">
+                    <input type="date" id="filter-date-to" class="filter-input" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="
+                        const visual = document.getElementById('filter-date-visual');
+                        if(this.value) {
+                            const [y, m, d] = this.value.split('-');
+                            visual.value = `${d}/${m}/${y}`;
+                        } else {
+                            visual.value = '';
+                        }
+                    ">
+                    <span class="material-symbols-outlined" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none;">calendar_today</span>
+                </div>
                 <button type="button" id="btn-clear-filters" class="btn-filter-clear">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     Limpiar
@@ -967,16 +1324,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Campaña</th>
-                            <th>Anunciante</th>
-                            <th>Grupos de audiencia</th>
-                            <th>Tag DPS</th>
-                            <th>Preguntas</th>
-                            <th>Fecha fin</th>
-                            <th>Vigencia</th>
+                            <th>Finaliza</th>
                             <th>Estado</th>
-                            <th>Fecha</th>
+                            <th>Respuestas</th>
+                            <th>Campaña CM360</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -988,9 +1340,8 @@
 
             <!-- Empty state -->
             <div id="empty-state" class="empty-state" style="display:none;">
-                <div class="icon">📭</div>
-                <h3>Sin brandlifts aún</h3>
-                <p>Todavía no has creado ningún brandlift.<br>Crea tu primer estudio y aparecerá aquí.</p>
+                <div class="icon"><span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-muted);">inbox</span></div>
+                <h3>No hay brandlift creados.</h3>
                 <a href="/brandlift" class="btn-cta">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
                     Crear brandlift
@@ -1001,6 +1352,102 @@
             <div class="pagination-bar" id="pagination-bar" style="display:none;">
                 <span class="pagination-info" id="pagination-info"></span>
                 <div class="pagination-buttons" id="pagination-buttons"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Tags Email Modal -->
+    <div id="send-tags-modal" class="modal-overlay">
+        <div class="modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3>
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: var(--wpp-navy); font-style: normal;">send</span>
+                    Enviar tags por correo
+                </h3>
+                <button class="modal-close" onclick="closeSendTagsModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <input type="hidden" id="send-tags-study-id">
+                
+                <!-- View 1: Form View -->
+                <div id="send-tags-form-view">
+                    <div style="margin-bottom: 16px;">
+                        <label style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Campaña</label>
+                        <div id="send-tags-campaign-title" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 4px; word-break: break-all;"></div>
+                    </div>
+
+                    <!-- Google Sheet info block -->
+                    <div id="send-tags-sheet-box" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="material-symbols-outlined" style="font-size: 24px; color: #16a34a; flex-shrink: 0;">description</span>
+                            <div style="font-size: 12.5px;">
+                                <strong style="color: #166534; display: block; font-size: 13px;">Hoja de respuestas (Google Sheets)</strong>
+                                <span style="color: #15803d; line-height: 1.4; display: block;" id="send-tags-sheet-desc">El enlace directo a la hoja se enviará automáticamente en el correo.</span>
+                            </div>
+                        </div>
+                        <a id="send-tags-sheet-link" href="#" target="_blank" style="color: #16a34a; font-weight: 700; font-size: 12px; white-space: nowrap; text-decoration: none; padding: 4px 10px; background: rgba(34, 197, 94, 0.14); border-radius: 4px;">Abrir hoja &rarr;</a>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label for="send-tags-emails" style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">
+                            Destinatarios (uno o varios correos separados por comas o enter) <span style="color: #ef4444;">*</span>
+                        </label>
+                        <textarea id="send-tags-emails" class="filter-input" rows="3" placeholder="ejemplo1@wppmedia.com, traffic@cliente.com" style="width: 100%; border-radius: var(--radius-sm); font-size: 13px; padding: 10px; resize: vertical; box-sizing: border-box;"></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label for="send-tags-message" style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">
+                            Mensaje personalizado de indicaciones y recomendaciones
+                        </label>
+                        <textarea id="send-tags-message" class="filter-input" rows="4" style="width: 100%; border-radius: var(--radius-sm); font-size: 13px; padding: 10px; resize: vertical; box-sizing: border-box;">Estimado equipo,
+
+Adjuntamos el archivo Excel con los tags de tráfico y especificaciones técnicas para la implementación de la campaña BrandLift, junto con el enlace a la hoja de Google Sheets donde se recibirán las respuestas.
+
+Por favor verificar la correcta implementación antes del inicio de la pauta.</textarea>
+                    </div>
+
+                    <div style="background: var(--bg-secondary); border: 1px dashed var(--border-input); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span class="material-symbols-outlined" style="font-size: 24px; color: #16a34a;">table_chart</span>
+                        <div style="font-size: 12px;">
+                            <strong style="color: var(--text-primary);">Archivo adjunto automático:</strong>
+                            <div style="color: var(--text-muted);" id="send-tags-attachment-name">Tags_BrandLift.xls (Formato Excel)</div>
+                        </div>
+                    </div>
+
+                    <!-- Inline Error Alert in Modal -->
+                    <div id="send-tags-error-alert" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; color: #b91c1c; font-size: 12.5px;">
+                        <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">error</span>
+                        <span id="send-tags-error-text"></span>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" id="btn-cancel-send-tags" class="btn-cancel" onclick="closeSendTagsModal()" style="padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); background: transparent; cursor: pointer; font-size: 13px; font-weight: 600;">Cancelar</button>
+                        <button type="button" id="btn-submit-send-tags" onclick="submitSendTags()" style="padding: 10px 20px; border-radius: var(--radius-sm); border: none; background: var(--wpp-navy); color: var(--wpp-lime); cursor: pointer; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+                            <span class="material-symbols-outlined" style="font-size: 16px; font-style: normal;">send</span>
+                            <span>Enviar tags</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- View 2: Success Notification View inside same modal -->
+                <div id="send-tags-success-view" style="display: none; text-align: center; padding: 16px 8px 8px;">
+                    <div style="width: 56px; height: 56px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                        <span class="material-symbols-outlined" style="font-size: 32px;">check_circle</span>
+                    </div>
+                    <h3 style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">¡Tags y enlace enviados exitosamente!</h3>
+                    <p style="font-size: 13.5px; color: var(--text-secondary); margin: 0 0 16px 0; line-height: 1.5;">
+                        Se ha enviado el correo con los tags en Excel y el enlace a la hoja de Google Sheets a los siguientes destinatarios:
+                    </p>
+                    <div id="send-tags-success-recipients" style="background: var(--bg-secondary); border: 1px solid var(--border-input); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 24px; font-size: 12.5px; color: var(--text-primary); text-align: left; max-height: 120px; overflow-y: auto;">
+                    </div>
+                    <div style="display: flex; justify-content: center;">
+                        <button type="button" onclick="closeSendTagsModal()" style="padding: 10px 28px; border-radius: var(--radius-sm); border: none; background: var(--wpp-navy); color: #ffffff; cursor: pointer; font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                            <span>Cerrar</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1023,15 +1470,20 @@
         </div>
     </div>
 
-    <!-- Confirm Delete Dialog -->
-    <div class="confirm-overlay" id="confirm-dialog">
-        <div class="confirm-box">
-            <div class="icon">🗑️</div>
-            <h3>¿Eliminar brandlift?</h3>
-            <p id="confirm-message">Esta acción no se puede deshacer. El registro será eliminado permanentemente.</p>
-            <div class="confirm-actions">
-                <button class="btn-confirm-cancel" id="btn-confirm-cancel">Cancelar</button>
-                <button class="btn-confirm-delete" id="btn-confirm-delete">Sí, eliminar</button>
+    <!-- Resolution / Problem Correction Modal -->
+    <div class="modal-overlay" id="resolution-modal">
+        <div class="modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="font-size: 22px; color: #d97706;">build_circle</span>
+                    <span>Diagnóstico y resolución</span>
+                </h3>
+                <button class="modal-close" onclick="closeResolutionModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="resolution-modal-body" style="padding: 24px;">
+                <!-- Dynamic content -->
             </div>
         </div>
     </div>
@@ -1041,6 +1493,9 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         <span id="toast-message"></span>
     </div>
+
+    <!-- Global Floating Tooltip -->
+    <div id="floating-tooltip" style="display:none;"></div>
 
     <script>
     // ====================================================================
@@ -1056,20 +1511,72 @@
         'MIA': 'Miami', 'MEX': 'México', 'CHL': 'Chile',
         'COL': 'Colombia', 'ECU': 'Ecuador'
     };
-    const STATUS_LABELS = { 'created': 'Creado', 'pushed': 'Subido', 'cm360_pushed': 'Subido', 'error': 'Error' };
+    const STATUS_LABELS = { 'created': 'Creado', 'pushed': 'Subido', 'cm360_pushed': 'Subido', 'active': 'Activo', 'inactive': 'Desactivado', 'error': 'Error' };
 
     let currentPage = 1;
-    let deleteTargetId = null;
     let debounceTimer = null;
+
+    // ===== FLOATING TOOLTIP (Never clipped by table headers/overflow) =====
+    const floatingTooltip = $('#floating-tooltip');
+
+    document.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('[data-tooltip]');
+        if (!target || !floatingTooltip) return;
+
+        const text = target.getAttribute('data-tooltip');
+        const title = target.getAttribute('data-tooltip-title');
+        if (!text) return;
+
+        floatingTooltip.innerHTML = title
+            ? `<div class="floating-tooltip-title"><span class="material-symbols-outlined" style="font-size:14px;color:#ef4444;">error</span><span>${escapeHtml(title)}</span></div><div>${escapeHtml(text)}</div>`
+            : `<div>${escapeHtml(text)}</div>`;
+
+        floatingTooltip.style.display = 'block';
+        floatingTooltip.style.visibility = 'hidden';
+
+        const rect = target.getBoundingClientRect();
+        const tipRect = floatingTooltip.getBoundingClientRect();
+
+        let left = rect.left;
+        if (left + tipRect.width > window.innerWidth - 16) {
+            left = window.innerWidth - tipRect.width - 16;
+        }
+        if (left < 16) left = 16;
+
+        // Prefer placing below target (avoids collision with sticky thead)
+        let top = rect.bottom + 8;
+        if (top + tipRect.height > window.innerHeight - 16) {
+            top = Math.max(16, rect.top - tipRect.height - 8);
+        }
+
+        floatingTooltip.style.left = `${left}px`;
+        floatingTooltip.style.top = `${top}px`;
+        floatingTooltip.style.visibility = 'visible';
+        floatingTooltip.classList.add('visible');
+    });
+
+    document.addEventListener('mouseout', (e) => {
+        const target = e.target.closest('[data-tooltip]');
+        if (!target || !floatingTooltip) return;
+        if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+        floatingTooltip.classList.remove('visible');
+        floatingTooltip.style.display = 'none';
+    });
+
+    window.addEventListener('scroll', () => {
+        if (floatingTooltip && floatingTooltip.style.display === 'block') {
+            floatingTooltip.classList.remove('visible');
+            floatingTooltip.style.display = 'none';
+        }
+    }, true);
 
     // ===== FETCH HISTORY =====
     async function fetchHistory(page = 1) {
         currentPage = page;
-        const search = $('#filter-search').value.trim();
-        const market = $('#filter-market').value;
-        const status = $('#filter-status').value;
-        const dateFrom = $('#filter-date-from').value;
-        const dateTo = $('#filter-date-to').value;
+        const search = $('#filter-search') ? $('#filter-search').value.trim() : '';
+        const market = $('#filter-market') ? $('#filter-market').value : '';
+        const status = $('#filter-status') ? $('#filter-status').value : '';
+        const dateTo = $('#filter-date-to') ? $('#filter-date-to').value : '';
 
         const params = new URLSearchParams();
         params.set('page', page);
@@ -1077,12 +1584,13 @@
         if (search) params.set('search', search);
         if (market) params.set('market', market);
         if (status) params.set('status', status);
-        if (dateFrom) params.set('date_from', dateFrom);
         if (dateTo) params.set('date_to', dateTo);
 
         // Show/hide clear button
-        const hasFilters = search || market || status || dateFrom || dateTo;
-        $('#btn-clear-filters').classList.toggle('visible', !!hasFilters);
+        const hasFilters = search || market || status || dateTo;
+        if ($('#btn-clear-filters')) {
+            $('#btn-clear-filters').classList.toggle('visible', !!hasFilters);
+        }
 
         // Show skeleton while loading
         showSkeleton();
@@ -1095,7 +1603,7 @@
             renderTable(data.studies);
         } catch (e) {
             console.error('Error fetching history:', e);
-            showToast('❌ Error al cargar el historial', true);
+            showToast('Error al cargar el historial', true);
         }
     }
 
@@ -1128,6 +1636,46 @@
         requestAnimationFrame(tick);
     }
 
+    // ===== ERROR HELPER =====
+    function getStudyErrorInfo(study) {
+        let full = study.error_message || '';
+        let type = 'cm360';
+        let short = 'Sincronización pendiente';
+
+        if (!full) {
+            if (!study.sheet_id) {
+                type = 'sheet';
+                short = 'Hoja de respuestas pendiente';
+                full = 'No se ha creado o vinculado la hoja de cálculo de Google Sheets para almacenar respuestas.';
+            } else if (!study.cm360_pushed || !study.cm360_campaign_id) {
+                type = 'cm360';
+                short = 'Sincronización pendiente';
+                full = 'Los creativos interactivos están generados, pero aún no han sido sincronizados con Google Campaign Manager 360.';
+            } else {
+                type = 'general';
+                short = 'Revisión requerida';
+                full = 'El estudio requiere revisión de configuración para activarse completamente.';
+            }
+        } else {
+            const lower = full.toLowerCase();
+            if (lower.includes('sheet') || lower.includes('drive')) {
+                type = 'sheet';
+                short = 'Hoja de respuestas pendiente';
+            } else if (lower.includes('cm360') || lower.includes('campaign') || lower.includes('advertiser') || lower.includes('perfil') || lower.includes('creative')) {
+                type = 'cm360';
+                short = 'Sincronización pendiente';
+            } else if (lower.includes('tag')) {
+                type = 'cm360';
+                short = 'Tags pendientes';
+            } else {
+                type = 'general';
+                short = 'Revisión requerida';
+            }
+        }
+
+        return { short, full, type };
+    }
+
     // ===== RENDER TABLE =====
     function renderTable(paginatedData) {
         const tbody = $('#table-body');
@@ -1146,55 +1694,97 @@
         $('#empty-state').style.display = 'none';
 
         tbody.innerHTML = data.map((study, idx) => {
-            const date = new Date(study.created_at);
-            const dateStr = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-            const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            const statusClass = `badge-${study.status}`;
-            const statusLabel = STATUS_LABELS[study.status] || study.status;
-
-            const audiencesText = (study.audiences || []).join(', ');
-            const dpsTagsText = (study.dps_tags || []).join(', ');
             const endDateStr = study.end_date ? new Date(study.end_date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+            const hasError = study.status === 'error';
+            const errorInfo = hasError ? getStudyErrorInfo(study) : null;
 
             let vigenciaHtml = '-';
-            if (study.end_date) {
+            if (study.status === 'inactive') {
+                vigenciaHtml = `<span class="status-indicator inactive"><span class="status-dot"></span>Desactivado</span>`;
+            } else if (hasError) {
+                vigenciaHtml = `<span class="status-indicator error" onclick="event.stopPropagation(); openResolutionModal(${study.id})" style="cursor: pointer;" data-tooltip="Haz clic para diagnosticar y resolver" data-tooltip-title="${escapeAttr(errorInfo.short)}"><span class="status-dot"></span>${escapeHtml(errorInfo.short)}</span>`;
+            } else if (study.end_date) {
                 const now = new Date();
                 now.setHours(0, 0, 0, 0);
                 const [y, m, d] = study.end_date.split('-');
                 const endDate = new Date(y, m - 1, d);
 
                 if (endDate >= now) {
-                    vigenciaHtml = `<span class="badge badge-pushed"><span class="badge-dot"></span>Activo</span>`;
+                    vigenciaHtml = `<span class="status-indicator active"><span class="status-dot"></span>Activo</span>`;
                 } else {
-                    vigenciaHtml = `<span class="badge badge-error"><span class="badge-dot"></span>Inactivo</span>`;
+                    vigenciaHtml = `<span class="status-indicator finished"><span class="status-dot"></span>Finalizado</span>`;
                 }
             }
 
+            const sheetUrl = study.sheet_id ? `https://docs.google.com/spreadsheets/d/${study.sheet_id}` : null;
+            const sheetCell = sheetUrl
+                ? `<a href="${sheetUrl}" target="_blank" rel="noopener noreferrer" class="table-link table-link-sheet" title="Abrir Google Sheet de respuestas" onclick="event.stopPropagation()">
+                    <span class="material-symbols-outlined link-icon">table_chart</span>
+                    <span>Google Sheet</span>
+                    <span class="material-symbols-outlined ext-icon">open_in_new</span>
+                   </a>`
+                : (hasError
+                    ? `<span style="color:#ef4444;font-size:12px;font-weight:500;cursor:pointer;" onclick="event.stopPropagation(); openResolutionModal(${study.id})" data-tooltip="Haz clic para vincular hoja de cálculo" data-tooltip-title="Hoja pendiente">No disponible</span>`
+                    : `<span style="color:var(--text-muted);font-size:12px;">—</span>`);
+
+            const accountId = study.cm360_account_id || '732535';
+            const cm360Url = study.cm360_url || (study.cm360_campaign_id
+                ? `https://campaignmanager.google.com/trafficking/#/accounts/${accountId}/campaigns/${study.cm360_campaign_id}/explorer?statuses=0;2`
+                : null);
+
+            const cm360Cell = cm360Url
+                ? `<a href="${cm360Url}" target="_blank" rel="noopener noreferrer" class="table-link table-link-cm360" title="Abrir campaña ${study.cm360_campaign_id} en Google Campaign Manager 360" data-cm360-url="${cm360Url.replace(/"/g, '&quot;')}" onclick="event.stopPropagation(); openCm360Campaign(this); return false;">
+                    <span>Ver campaña</span>
+                    <span class="material-symbols-outlined ext-icon">open_in_new</span>
+                   </a>`
+                : `<span style="color:var(--text-muted);font-size:12px;">—</span>`;
+
+            const marketName = MARKET_NAMES[study.market] || study.market;
+
+            const advertiserCountryHtml = (study.client_name || study.market)
+                ? `<div class="td-campaign-sub" style="font-size: 11.5px; color: var(--text-muted); margin-top: 3px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
+                    <span style="font-weight: 500; color: var(--text-secondary);">${escapeHtml(study.client_name || 'Sin anunciante')}</span>
+                    ${study.market ? `<span style="opacity: 0.4;">•</span><span>${escapeHtml(marketName || '')} <span style="opacity: 0.65;">· ${escapeHtml(study.market)}</span></span>` : ''}
+                   </div>`
+                : '';
+
+            const errorAlertHtml = hasError
+                ? `<div class="row-error-hint" onclick="event.stopPropagation(); openResolutionModal(${study.id})" data-tooltip="Haz clic para diagnosticar y resolver" data-tooltip-title="${escapeAttr(errorInfo.short)}" style="cursor: pointer;">
+                    <span class="material-symbols-outlined error-icon">build</span>
+                    <span>${escapeHtml(errorInfo.short)}</span>
+                    <span style="font-size: 10px; opacity: 0.75; margin-left: 2px;">• Resolver</span>
+                   </div>`
+                : '';
+
             return `
                 <tr data-id="${study.id}" style="animation: fadeInUp 0.4s ease-out ${idx * 40}ms both">
-                    <td class="td-id">${study.id}</td>
-                    <td class="td-campaign" title="${escapeHtml(study.campaign_name)}">${escapeHtml(study.campaign_name)}</td>
-                    <td title="${escapeHtml(study.client_name || '-')}">${escapeHtml(study.client_name || '-')}</td>
-                    <td title="${escapeHtml(audiencesText || '-')}">${escapeHtml(audiencesText || '-')}</td>
-                    <td title="${escapeHtml(dpsTagsText || '-')}">${escapeHtml(dpsTagsText || '-')}</td>
-                    <td>${study.question_count}</td>
+                    <td>
+                        <div class="td-campaign" title="${escapeHtml(study.campaign_name)}">${escapeHtml(study.campaign_name)}</div>
+                        ${advertiserCountryHtml}
+                        ${errorAlertHtml}
+                    </td>
                     <td>${endDateStr}</td>
                     <td>${vigenciaHtml}</td>
-                    <td><span class="badge ${statusClass}"><span class="badge-dot"></span>${statusLabel}</span></td>
-                    <td>
-                        <div style="font-size:13px">${dateStr}</div>
-                        <div style="font-size:11px;color:var(--text-muted)">${timeStr}</div>
-                    </td>
+                    <td>${sheetCell}</td>
+                    <td>${cm360Cell}</td>
                     <td>
                         <div class="actions-cell" onclick="event.stopPropagation()">
-                            <button class="btn-action" title="Ver detalle" onclick="openDetail(${study.id})">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            ${hasError ? `
+                            <button type="button" class="btn-action warning" title="Resolver problema del brandlift" onclick="openResolutionModal(${study.id})" style="color: #c2410c; border-color: rgba(234, 88, 12, 0.3); background: rgba(254, 243, 199, 0.6);">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">build</span>
                             </button>
-                            <button class="btn-action" title="Historial de Edición" onclick="openHistory(${study.id})">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                            ` : ''}
+                            <button type="button" class="btn-action" title="Enviar tags por correo" onclick="openSendTagsModal(${study.id})">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">mail</span>
                             </button>
-                            <button class="btn-action danger" title="Eliminar" onclick="confirmDelete(${study.id}, '${escapeHtml(study.campaign_name)}')">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                            <a href="/preview/${study.liquid_id || study.id}" target="_blank" class="btn-action" title="Vista previa pública (sitio simulado)">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+                            </a>
+                            <a href="/brandlift?edit_id=${study.liquid_id || study.id}" class="btn-action" title="Editar brandlift">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+                            </a>
+                            <button type="button" class="btn-action danger" title="Eliminar brandlift y su Google Sheet" onclick="deleteStudy(${study.id})">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
                             </button>
                         </div>
                     </td>
@@ -1215,13 +1805,15 @@
         const tbody = $('#table-body');
         tbody.innerHTML = Array.from({ length: 5 }, () => `
             <tr class="skeleton-row">
-                <td><div class="skeleton-bar" style="width:30px"></div></td>
-                <td><div class="skeleton-bar" style="width:180px"></div></td>
-                <td><div class="skeleton-bar" style="width:50px"></div></td>
-                <td><div class="skeleton-bar" style="width:20px"></div></td>
-                <td><div class="skeleton-bar" style="width:70px"></div></td>
+                <td>
+                    <div class="skeleton-bar" style="width:200px; margin-bottom: 6px;"></div>
+                    <div class="skeleton-bar" style="width:120px; height: 10px;"></div>
+                </td>
                 <td><div class="skeleton-bar" style="width:80px"></div></td>
-                <td><div class="skeleton-bar" style="width:60px"></div></td>
+                <td><div class="skeleton-bar" style="width:70px"></div></td>
+                <td><div class="skeleton-bar" style="width:90px"></div></td>
+                <td><div class="skeleton-bar" style="width:90px"></div></td>
+                <td><div class="skeleton-bar" style="width:80px"></div></td>
             </tr>
         `).join('');
     }
@@ -1283,7 +1875,7 @@
         const modal = $('#history-modal');
         const body = $('#history-modal-body');
 
-        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><p style="color:var(--text-muted)">Cargando historial...</p></div>';
+        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Cargando historial...</p></div>';
         modal.classList.add('active');
 
         try {
@@ -1328,7 +1920,7 @@
             body.innerHTML = html;
         } catch (e) {
             console.error('Error in openHistory:', e);
-            body.innerHTML = '<div style="text-align:center;padding:40px;color:#fca5a5">❌ Error al cargar el historial</div>';
+            body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="material-symbols-outlined">error</span> Error al cargar el historial</div>';
         }
     }
 
@@ -1338,166 +1930,346 @@
         }
     });
 
+    function openCm360Campaign(el) {
+        const url = el.dataset.cm360Url || el.getAttribute('href');
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
     // ===== DETAIL MODAL =====
     async function openDetail(id) {
         const modal = $('#detail-modal');
         const body = $('#modal-body');
 
-        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><p style="color:var(--text-muted)">Cargando...</p></div>';
+        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Cargando información guardada...</p></div>';
         modal.classList.add('active');
 
         try {
             const res = await fetch(`/api/brandlift/history/${id}`);
             const data = await res.json();
             const s = data.study;
+            window.currentDetailStudy = s;
 
-            const date = new Date(s.created_at);
-            const dateStr = date.toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-            const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            // Error info
+            const errorInfo = (s.status === 'error' || s.error_message) ? getStudyErrorInfo(s) : null;
+            let errorAlertHtmlTop = '';
+            if (errorInfo) {
+                errorAlertHtmlTop = `
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px;">
+                        <span class="material-symbols-outlined" style="color: #ef4444; font-size: 20px; flex-shrink: 0; margin-top: 1px;">error</span>
+                        <div style="font-size: 12.5px;">
+                            <strong style="color: #991b1b; display: block; font-size: 13px;">${escapeHtml(errorInfo.short)}:</strong>
+                            <span style="color: #b91c1c; line-height: 1.4; display: block; margin-top: 2px;">${escapeHtml(errorInfo.full)}</span>
+                        </div>
+                    </div>
+                `;
+            }
 
-            const statusClass = `badge-${s.status}`;
-            const statusLabel = STATUS_LABELS[s.status] || s.status;
+            // Fechas
+            const createdDate = new Date(s.created_at);
+            const createdDateStr = createdDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+            const createdTimeStr = createdDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
 
-            let cm360Html = '';
-            let downloadTagsBtn = '';
-            if (s.cm360_pushed) {
-                                const pushedDate = s.cm360_pushed_at ? new Date(s.cm360_pushed_at).toLocaleString('es-ES') : '—';
-                
-                if (s.cm360_tags) {
-                    const tagsDataStr = typeof s.cm360_tags === 'string' ? escapeAttr(s.cm360_tags) : escapeAttr(JSON.stringify(s.cm360_tags));
-                    downloadTagsBtn = `
-                        <button class="btn btn-secondary" onclick="downloadTagsFromDashboard(this)" data-tags="\${tagsDataStr}" data-market="\${escapeAttr(s.market)}" data-client="\${escapeAttr(s.client_name || '')}" data-campaign="\${escapeAttr(s.campaign_name)}" style="font-size: 13px; padding: 8px 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--wpp-lime); color: var(--wpp-navy); border: none; font-weight: 600; flex: 1;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Descargar Tags CM360
-                        </button>
-                    `;
+            const monthNamesFull = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            let endDateStr = 'Sin fecha fin';
+            let vigenciaBadge = '';
+            if (s.status === 'inactive') {
+                vigenciaBadge = `<span class="status-indicator inactive"><span class="status-dot"></span>Desactivado</span>`;
+            } else if (s.status === 'error' || errorInfo) {
+                vigenciaBadge = `<span class="status-indicator error" data-tooltip="${escapeAttr(errorInfo.full)}" data-tooltip-title="${escapeAttr(errorInfo.short)}"><span class="status-dot"></span>${escapeHtml(errorInfo.short)}</span>`;
+            } else if (s.end_date) {
+                const parts = s.end_date.split('-');
+                const y = parseInt(parts[0]);
+                const m = parseInt(parts[1]);
+                const d = parseInt(parts[2]);
+                endDateStr = `${d} de ${monthNamesFull[m - 1]} de ${y}`;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const endD = new Date(y, m - 1, d);
+                if (endD >= today) {
+                    vigenciaBadge = `<span class="status-indicator active"><span class="status-dot"></span>Activo</span>`;
+                } else {
+                    vigenciaBadge = `<span class="status-indicator finished"><span class="status-dot"></span>Finalizado</span>`;
                 }
-                
+            } else {
+                vigenciaBadge = `<span class="status-indicator active"><span class="status-dot"></span>Activo</span>`;
+            }
 
+            // Audiencias
+            let audiencesHtml = '<span style="color:var(--text-muted);font-size:12px;">General</span>';
+            if (Array.isArray(s.audiences) && s.audiences.length > 0) {
+                audiencesHtml = `<div class="pill-list">${s.audiences.map(a => `<span class="pill-tag">${escapeHtml(a)}</span>`).join('')}</div>`;
+            }
+
+            // DSPs
+            let dpsHtml = '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+            if (Array.isArray(s.dps_tags) && s.dps_tags.length > 0) {
+                dpsHtml = `<div class="pill-list">${s.dps_tags.map(d => `<span class="pill-tag pill-tag-dps">${escapeHtml(d)}</span>`).join('')}</div>`;
+            }
+
+            // Google Sheets
+            let sheetHtml = '<span style="color:var(--text-muted);font-size:12px;">No configurada</span>';
+            if (s.sheet_id) {
+                const shortSheetId = s.sheet_id.length > 18 ? s.sheet_id.substring(0, 14) + '...' : s.sheet_id;
+                sheetHtml = `
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                        <a href="https://docs.google.com/spreadsheets/d/${escapeAttr(s.sheet_id)}" target="_blank" rel="noopener noreferrer" style="color:#15803d;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:12.5px;">
+                            <span class="material-symbols-outlined" style="font-size:16px;color:#16a34a;">table_chart</span>
+                            <span>Google Sheet (Respuestas)</span>
+                            <span class="material-symbols-outlined" style="font-size:13px;opacity:0.6;">open_in_new</span>
+                        </a>
+                        <span style="font-size:11px;color:var(--text-muted);font-family:monospace;" title="${escapeAttr(s.sheet_id)}">${escapeHtml(shortSheetId)}</span>
+                    </div>
+                `;
+            }
+
+            // CM360
+            let cm360Html = '';
+            const detailAccountId = s.cm360_account_id || '732535';
+            const detailCm360Url = s.cm360_url || (s.cm360_campaign_id 
+                ? `https://campaignmanager.google.com/trafficking/#/accounts/${detailAccountId}/campaigns/${s.cm360_campaign_id}/explorer?statuses=0;2`
+                : null);
+
+            const hasCm360 = s.cm360_pushed || s.cm360_campaign_id || s.cm360_advertiser_id || s.cm360_profile_id;
+            if (hasCm360) {
+                const pushedDate = s.cm360_pushed_at ? new Date(s.cm360_pushed_at).toLocaleString('es-ES') : (s.cm360_pushed ? 'Sincronizado' : 'Pendiente');
                 cm360Html = `
-                    <div class="detail-section">
-                        <h4>• Campaign Manager 360</h4>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <div class="detail-label">Campaign ID</div>
-                                <div class="detail-value">${s.cm360_campaign_id || '—'}</div>
+                    <div class="detail-cm360-bar">
+                        <div class="detail-cm360-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            <span>Campaign Manager 360</span>
+                        </div>
+                        <div class="detail-cm360-items">
+                            <div class="detail-cm360-item">
+                                <span class="cm-lbl">Campaign:</span>
+                                <span class="cm-val">${detailCm360Url ? `<a href="${detailCm360Url}" target="_blank" rel="noopener noreferrer" style="color:var(--wpp-navy);font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">${escapeHtml(String(s.cm360_campaign_id))} <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : (s.cm360_campaign_id ? escapeHtml(String(s.cm360_campaign_id)) : '—')}</span>
                             </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Subido</div>
-                                <div class="detail-value">${pushedDate}</div>
+                            <div class="detail-cm360-item">
+                                <span class="cm-lbl">Advertiser:</span>
+                                <span class="cm-val">${s.cm360_advertiser_id ? escapeHtml(String(s.cm360_advertiser_id)) : '—'}</span>
+                            </div>
+                            <div class="detail-cm360-item">
+                                <span class="cm-lbl">Site:</span>
+                                <span class="cm-val">${s.cm360_site_id ? escapeHtml(String(s.cm360_site_id)) : '—'}</span>
+                            </div>
+                            <div class="detail-cm360-item">
+                                <span class="cm-lbl">Estado:</span>
+                                <span class="cm-val">${pushedDate}</span>
                             </div>
                         </div>
                     </div>
                 `;
             }
 
+            // Preguntas y respuestas
             let questionsHtml = '';
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
             if (s.questions && s.questions.length > 0) {
-                const qHtml = s.questions.map(q => {
-                    const answers = (q.answers || []).map(a => escapeHtml(a)).join(' · ');
+                questionsHtml = s.questions.map((q, idx) => {
+                    const answersHtml = (q.answers || []).map((ans, aIdx) => `
+                        <div class="q-answer-pill" title="${escapeAttr(ans)}">
+                            <span class="opt-letter">${letters[aIdx] || (aIdx + 1)}</span>
+                            <span>${escapeHtml(ans)}</span>
+                        </div>
+                    `).join('');
+
                     return `
-                        <div class="question-detail-block">
-                            <div class="q-num">Pregunta ${q.question_number}</div>
-                            <div class="q-text">${escapeHtml(q.question_text)}</div>
-                            <div style="font-size: 13px; color: var(--text-muted);"><strong>Respuestas:</strong> <span style="color: var(--text-secondary);">${answers}</span></div>
+                        <div class="question-card">
+                            <div class="question-header">
+                                <span class="q-badge">P${q.question_number || (idx + 1)}</span>
+                                <div class="q-title">${escapeHtml(q.question_text)}</div>
+                            </div>
+                            <div class="q-answers-list">
+                                ${answersHtml || '<span style="color:var(--text-muted);font-size:11px;">Sin opciones</span>'}
+                            </div>
                         </div>
                     `;
                 }).join('');
-                questionsHtml = `<div class="detail-grid" style="margin-bottom: 0;">${qHtml}</div>`;
             }
 
-            let previewHtml = '';
-            const editBtnHtml = `
-                <button onclick="openEditQuestionsModal(${s.id})" style="background-color: var(--wpp-navy); color: #ffffff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; flex: 1;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                    Editar Preguntas
-                </button>
-            `;
-            
-            const accionesBlockHtml = `
-                <div class="detail-section">
-                    <h4>• Acciones</h4>
-                    <div style="display: flex; gap: 10px; width: 100%;">
-                        ${editBtnHtml}
-                        ${downloadTagsBtn}
-                    </div>
-                </div>
-            `;
+            // Click redirection removal (Audit alert)
             let clickActionHtmlTop = '';
             const firstQ = s.questions && s.questions.length > 0 ? s.questions[0] : null;
-            if (firstQ && firstQ.creative_html) {
-                const hasClickEvent = firstQ.creative_html.includes('clickTag');
-                if (hasClickEvent) {
-                    clickActionHtmlTop = `
-                        <div style="margin-bottom: 20px; display: flex; justify-content: flex-start; align-items: center; gap: 15px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px;">
-                            <button style="background-color: var(--wpp-navy); color: white; border: none; padding: 8px 16px; width: auto; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;" onclick="removeClickEvent(${s.id}, '${escapeHtml(s.campaign_name)}')">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
-                                Retirar redirección de click
-                            </button>
-                            <div style="background-color: #fef2f2; border: 1px solid #f87171; color: #dc2626; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                <span><strong>Importante:</strong> Después de pasar el audit recuerda retirar el evento de click</span>
+            if (firstQ && firstQ.creative_html && firstQ.creative_html.includes('clickTag')) {
+                clickActionHtmlTop = `
+                    <div class="detail-audit-alert">
+                        <div class="detail-audit-msg">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <span><strong>Audit:</strong> Recuerda retirar el evento de click después de pasar el proceso de auditoría</span>
+                        </div>
+                        <button style="background-color: var(--wpp-navy); color: white; border: none; padding: 6px 12px; font-size: 11.5px; font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s ease; white-space: nowrap;" onclick="removeClickEvent(${s.id})">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
+                            Retirar redirección de click
+                        </button>
+                    </div>
+                `;
+            }
+
+            // Vista previa
+            const previewCreativeHtml = (firstQ && firstQ.creative_html) 
+                || (s.creatives && s.creatives.length > 0 && s.creatives[0].creative_html) 
+                || null;
+            const previewUrl = `/preview/${s.liquid_id || s.id}`;
+
+            let previewHtml = '';
+            if (previewCreativeHtml) {
+                previewHtml = `
+                    <div class="detail-preview-panel">
+                        <div class="detail-preview-header">
+                            <h4>
+                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--wpp-navy);">visibility</span>
+                                Vista previa
+                            </h4>
+                            <div class="preview-actions">
+                                <button type="button" class="btn-detail-action btn-restart-preview" onclick="const f=document.querySelector('#dash-preview-frame iframe'); if(f){const src=f.srcdoc; f.srcdoc=''; setTimeout(()=>f.srcdoc=src,10);} this.style.display='none';" style="display: none; font-size: 11px; padding: 4px 9px; background: transparent; border: 1px solid var(--border-input); color: var(--text-secondary);">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                    Reiniciar
+                                </button>
+                                <a href="${previewUrl}" target="_blank" title="Ver en simulador de sitio web" class="btn-detail-action" style="font-size: 11px; padding: 4px 9px; background: transparent; border: 1px solid var(--border-input); color: var(--text-secondary);">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                    Simulador
+                                </a>
                             </div>
                         </div>
-                    `;
-                }
-
-                previewHtml = `
-                    <div class="detail-section">
-                        <h4>• Vista Previa</h4>
-                        <div style="text-align: center; margin-bottom: 10px;">
-                            <button type="button" class="btn btn-secondary btn-restart-preview" onclick="const f=document.querySelector('#dash-preview-frame iframe'); if(f){const src=f.srcdoc; f.srcdoc=''; setTimeout(()=>f.srcdoc=src,10);} this.style.display='none';" style="display: none; font-size: 12px; padding: 6px 12px; align-items: center; gap: 6px; cursor: pointer; background: transparent; border: 1px solid var(--border-card); border-radius: var(--radius-sm); color: var(--text-secondary); margin: 0 auto;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                                Reiniciar
-                            </button>
+                        <div class="preview-stage" id="dash-preview-frame">
+                            <iframe srcdoc="${escapeAttr(previewCreativeHtml)}" width="${s.creative_width}" height="${s.creative_height}"></iframe>
                         </div>
-                        <div class="preview-mini-frame" id="dash-preview-frame">
-                            <iframe srcdoc="${escapeAttr(firstQ.creative_html)}" width="${s.creative_width}" height="${s.creative_height}"></iframe>
+                    </div>
+                `;
+            } else {
+                previewHtml = `
+                    <div class="detail-preview-panel">
+                        <div class="detail-preview-header">
+                            <h4>
+                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--wpp-navy);">visibility</span>
+                                Vista previa
+                            </h4>
+                            <a href="${previewUrl}" target="_blank" class="btn-detail-action" style="font-size: 11px; padding: 4px 9px; background: transparent; border: 1px solid var(--border-input); color: var(--text-secondary);">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Simulador
+                            </a>
+                        </div>
+                        <div class="preview-stage" id="dash-preview-frame" style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 12px; min-height: 200px;">
+                            <span>El banner interactivo se genera al guardar el estudio. Puedes abrir el simulador para visualizar la experiencia.</span>
                         </div>
                     </div>
                 `;
             }
 
+            const editBtnHtml = `
+                <a href="/brandlift?edit_id=${s.liquid_id || s.id}" class="btn-detail-action" style="background: var(--wpp-navy); color: #ffffff; border: none; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px; border-radius: var(--radius-md);">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+                    Editar
+                </a>
+            `;
 
+            // Audit Logs History Timeline
+            let auditLogHtml = '';
+            if (s.edit_logs && s.edit_logs.length > 0) {
+                const logsList = s.edit_logs.map(log => {
+                    const logDate = new Date(log.created_at);
+                    const logDateStr = logDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    const userName = (log.user && log.user.name) || (log.changes_made && log.changes_made.user_name) || 'Usuario';
+                    const action = log.changes_made ? (log.changes_made.action || 'Modificación') : 'Modificación';
+                    const desc = log.changes_made ? (log.changes_made.description || 'Cambios guardados') : 'Modificación registrada';
+
+                    let actionBadge = `<span style="background:rgba(3,105,161,0.12);color:#0369a1;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Modificación</span>`;
+                    if (action === 'created') actionBadge = `<span style="background:rgba(22,163,74,0.12);color:#15803d;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Creación</span>`;
+                    if (action === 'send_tags') actionBadge = `<span style="background:rgba(217,119,6,0.12);color:#b45309;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Tags enviados</span>`;
+
+                    return `
+                        <div style="padding: 8px 12px; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border-input); font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <strong style="color: var(--text-primary); font-size: 12px;">${escapeHtml(userName)}</strong>
+                                    ${actionBadge}
+                                </div>
+                                <span style="color: var(--text-muted); font-size: 11px;">${logDateStr}</span>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 12px;">${escapeHtml(desc)}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                auditLogHtml = `
+                    <div class="detail-questions-section" style="margin-top: 16px;">
+                        <h4 class="detail-section-title">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">history</span>
+                            Historial y log de auditoría (${s.edit_logs.length})
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            ${logsList}
+                        </div>
+                    </div>
+                `;
+            }
 
             body.innerHTML = `
-                ${clickActionHtmlTop}
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <div class="detail-label">Campaña</div>
-                        <div class="detail-value">${escapeHtml(s.campaign_name)}</div>
+                <div class="detail-modal-layout">
+                    <!-- Left Column: Summary, Questions, Actions -->
+                    <div class="detail-modal-left">
+                        ${errorAlertHtmlTop}
+                        ${clickActionHtmlTop}
+                        
+                        <div class="detail-summary-card">
+                            <div class="detail-summary-top">
+                                <div class="detail-summary-title-group">
+                                    <span class="detail-summary-label">Campaña</span>
+                                    <span class="detail-summary-name">${escapeHtml(s.campaign_name)}</span>
+                                </div>
+                                <div class="detail-summary-badges">
+                                    <span style="font-size:12px;color:var(--text-secondary);font-weight:600;">${escapeHtml(MARKET_NAMES[s.market] || s.market)}</span>
+                                    ${vigenciaBadge}
+                                </div>
+                            </div>
+
+                            <div class="detail-meta-grid">
+                                <div class="detail-meta-cell">
+                                    <span class="meta-lbl">Anunciante / Cliente</span>
+                                    <span class="meta-val">${escapeHtml(s.client_name || '—')}</span>
+                                </div>
+                                <div class="detail-meta-cell">
+                                    <span class="meta-lbl">Finaliza</span>
+                                    <span class="meta-val">${endDateStr}</span>
+                                </div>
+                                <div class="detail-meta-cell">
+                                    <span class="meta-lbl">Creado el</span>
+                                    <span class="meta-val">${createdDateStr} <span style="color:var(--text-muted);font-size:11px;">(${createdTimeStr})</span></span>
+                                </div>
+                                <div class="detail-meta-cell">
+                                    <span class="meta-lbl">DSPs / Plataformas</span>
+                                    <div class="meta-val">${dpsHtml}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${cm360Html}
+
+                        <div class="detail-questions-section">
+                            <h4 class="detail-section-title">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                Preguntas y Respuestas (${s.questions ? s.questions.length : 0})
+                            </h4>
+                            <div class="questions-grid">
+                                ${questionsHtml || '<p style="color:var(--text-muted);font-size:12px;margin:0;">Sin preguntas registradas</p>'}
+                            </div>
+                        </div>
+
+                        ${auditLogHtml}
+
+                        <div class="detail-actions-bar">
+                            ${editBtnHtml}
+                        </div>
                     </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Mercado</div>
-                        <div class="detail-value"><span class="badge badge-market">${s.market}</span> ${MARKET_NAMES[s.market] || ''}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Estado</div>
-                        <div class="detail-value"><span class="badge ${statusClass}"><span class="badge-dot"></span>${statusLabel}</span></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Tamaño</div>
-                        <div class="detail-value">${s.creative_width}×${s.creative_height}</div>
-                    </div>
-                    <div class="detail-item" style="grid-column: span 2">
-                        <div class="detail-label">Creado</div>
-                        <div class="detail-value">${dateStr} — ${timeStr}</div>
+
+                    <!-- Right Column: Creative Preview -->
+                    <div class="detail-modal-right">
+                        ${previewHtml}
                     </div>
                 </div>
-
-                ${cm360Html}
-
-                <div class="detail-section">
-                    <h4>• Preguntas y respuestas</h4>
-                    ${questionsHtml || '<p style="color:var(--text-muted);font-size:13px">Sin preguntas registradas</p>'}
-                </div>
-
-                ${accionesBlockHtml}
-                ${previewHtml}
             `;
         } catch (e) {
             console.error('Error in openDetail:', e);
-            body.innerHTML = '<div style="text-align:center;padding:40px;color:#fca5a5">❌ Error al cargar los detalles</div>';
+            body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="material-symbols-outlined">error</span> Error al cargar los detalles</div>';
         }
     }
 
@@ -1510,58 +2282,534 @@
         if (e.target === $('#detail-modal')) closeModal();
     });
 
-    // ===== DELETE =====
-    function confirmDelete(id, name) {
-        deleteTargetId = id;
-        $('#confirm-message').textContent = `¿Estás seguro de eliminar "${name}"? Esta acción no se puede deshacer.`;
-        $('#confirm-dialog').classList.add('active');
+    // ===== RESOLUTION MODAL =====
+    function closeResolutionModal() {
+        $('#resolution-modal').classList.remove('active');
     }
 
-    $('#btn-confirm-cancel').addEventListener('click', () => {
-        $('#confirm-dialog').classList.remove('active');
-        deleteTargetId = null;
+    $('#resolution-modal').addEventListener('click', (e) => {
+        if (e.target === $('#resolution-modal')) closeResolutionModal();
     });
 
-    $('#btn-confirm-delete').addEventListener('click', async () => {
-        if (!deleteTargetId) return;
+    async function openResolutionModal(studyId) {
+        const modal = $('#resolution-modal');
+        const body = $('#resolution-modal-body');
 
-        const btn = $('#btn-confirm-delete');
-        btn.textContent = 'Eliminando...';
-        btn.disabled = true;
+        body.innerHTML = `
+            <div style="text-align:center;padding:40px;">
+                <div style="font-size:24px;margin-bottom:12px;">
+                    <span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span>
+                </div>
+                <p style="color:var(--text-muted);font-size:13px;">Analizando estado del brandlift...</p>
+            </div>
+        `;
+        modal.classList.add('active');
 
         try {
-            const res = await fetch(`/api/brandlift/history/${deleteTargetId}`, {
-                method: 'DELETE',
+            const res = await fetch(`/api/brandlift/history/${studyId}`);
+            const data = await res.json();
+            const s = data.study;
+            window.currentResolvingStudy = s;
+
+            const errorInfo = getStudyErrorInfo(s);
+            const marketName = MARKET_NAMES[s.market] || s.market;
+
+            let resolutionActionHtml = '';
+
+            if (errorInfo.type === 'sheet') {
+                // Sheet resolution
+                resolutionActionHtml = `
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-input); border-radius: var(--radius-md); padding: 18px; margin-top: 14px;">
+                        <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="color: #16a34a; font-size: 18px;">table_chart</span>
+                            Opción 1: Generar hoja de cálculo automática
+                        </h4>
+                        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                            Crea una nueva hoja de cálculo en Google Drive en la carpeta de <strong>${escapeHtml(marketName)}</strong> basada en la plantilla estándar de respuestas.
+                        </p>
+                        <button type="button" id="btn-resolve-sheet" onclick="executeResolveSheet(${s.id})" style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="font-size: 15px;">add</span>
+                            <span>Generar Google Sheet ahora</span>
+                        </button>
+
+                        <div style="margin: 18px 0 14px; border-top: 1px dashed var(--border-input);"></div>
+
+                        <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="color: #0284c7; font-size: 18px;">link</span>
+                            Opción 2: Vincular hoja existente
+                        </h4>
+                        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
+                            Si ya dispones de una hoja creada en Google Drive para esta campaña, ingresa su URL o ID:
+                        </p>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="resolve-sheet-url" class="filter-input" placeholder="https://docs.google.com/spreadsheets/d/1.../edit" style="flex: 1; font-size: 12.5px; padding: 7px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-input);">
+                            <button type="button" onclick="executeLinkManualSheet(${s.id})" style="background: var(--wpp-navy); color: white; border: none; padding: 7px 14px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                                Vincular
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // CM360 Sync resolution
+                resolutionActionHtml = `
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-input); border-radius: var(--radius-md); padding: 18px; margin-top: 14px;">
+                        <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="color: #0369a1; font-size: 18px;">sync</span>
+                            Sincronización con Google Campaign Manager 360
+                        </h4>
+                        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                            Los creativos HTML están generados. Puedes reintentar la subida o ajustar los parámetros de CM360:
+                        </p>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px;">ID de Perfil</label>
+                                <input type="text" id="res-cm-profile" value="${escapeAttr(s.cm360_profile_id || '732535')}" class="filter-input" style="width: 100%; font-size: 12px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px;">ID de Anunciante</label>
+                                <input type="text" id="res-cm-advertiser" value="${escapeAttr(s.cm360_advertiser_id || '')}" placeholder="ID Anunciante" class="filter-input" style="width: 100%; font-size: 12px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px;">ID de Sitio</label>
+                                <input type="text" id="res-cm-site" value="${escapeAttr(s.cm360_site_id || '')}" placeholder="ID Sitio" class="filter-input" style="width: 100%; font-size: 12px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); box-sizing: border-box;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                            <button type="button" id="btn-resolve-sync" onclick="executeResolveSync(${s.id})" style="background: var(--wpp-navy); color: #ffffff; border: none; padding: 9px 18px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span>
+                                <span>Reintentar sincronización ahora</span>
+                            </button>
+
+                            <a href="/brandlift?edit_id=${s.liquid_id || s.id}" class="btn-detail-action" style="font-size: 12px; color: var(--text-secondary); text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                                <span class="material-symbols-outlined" style="font-size: 15px;">tune</span>
+                                <span>Abrir configurador completo</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            body.innerHTML = `
+                <!-- Study Info Header -->
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                        <div>
+                            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Campaña</span>
+                            <div style="font-size: 14px; font-weight: 700; color: var(--wpp-navy); margin-top: 1px;">${escapeHtml(s.campaign_name)}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                                ${escapeHtml(s.client_name || 'Sin anunciante')} • ${escapeHtml(marketName)} (${escapeHtml(s.market)})
+                            </div>
+                        </div>
+                        <span style="background: rgba(234, 88, 12, 0.12); color: #c2410c; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;">
+                            ${escapeHtml(errorInfo.short)}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Diagnostic Explanation -->
+                <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <span class="material-symbols-outlined" style="color: #d97706; font-size: 18px; flex-shrink: 0; margin-top: 1px;">info</span>
+                        <div style="font-size: 12px; color: #92400e; line-height: 1.45;">
+                            <strong style="display: block; font-size: 12.5px; margin-bottom: 2px; color: #78350f;">Diagnóstico:</strong>
+                            ${escapeHtml(errorInfo.full)}
+                        </div>
+                    </div>
+                    ${s.error_message ? `
+                        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(217, 119, 6, 0.3); font-size: 11px; color: #b45309; font-family: monospace; word-break: break-all;">
+                            <strong>Detalle técnico:</strong> ${escapeHtml(s.error_message)}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Feedback alert slot -->
+                <div id="res-feedback-slot"></div>
+
+                <!-- Resolution Action Box -->
+                ${resolutionActionHtml}
+            `;
+        } catch (e) {
+            console.error('Error in openResolutionModal:', e);
+            body.innerHTML = `
+                <div style="text-align:center;padding:30px;color:#ef4444;">
+                    <span class="material-symbols-outlined" style="font-size:32px;">error</span>
+                    <p style="margin-top:8px;">No se pudo cargar la información para resolución.</p>
+                </div>
+            `;
+        }
+    }
+
+    async function executeResolveSync(studyId) {
+        const btn = document.getElementById('btn-resolve-sync');
+        const feedback = document.getElementById('res-feedback-slot');
+        const profileId = document.getElementById('res-cm-profile')?.value?.trim();
+        const advertiserId = document.getElementById('res-cm-advertiser')?.value?.trim();
+        const siteId = document.getElementById('res-cm-site')?.value?.trim();
+
+        if (!profileId || !advertiserId || !siteId) {
+            feedback.innerHTML = `
+                <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+                    Por favor completa los 3 identificadores de CM360 (Perfil, Anunciante y Sitio).
+                </div>
+            `;
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; animation: spin 1s linear infinite;">progress_activity</span> Sincronizando con CM360...`;
+        feedback.innerHTML = '';
+
+        try {
+            const res = await fetch(`/api/brandlift/${studyId}/retry-sync`, {
+                method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                    'Accept': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    profile_id: profileId,
+                    advertiser_id: advertiserId,
+                    site_id: siteId
+                })
             });
 
-            if (res.ok) {
-                showToast('✅ Brandlift eliminado');
+            const data = await res.json();
+
+            if (data.success) {
+                feedback.innerHTML = `
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined" style="color: #16a34a;">check_circle</span>
+                        <span>${escapeHtml(data.message)}</span>
+                    </div>
+                `;
+                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">check</span> Sincronizado`;
+                showToast('¡Brandlift sincronizado exitosamente con CM360!');
+                
                 fetchHistory(currentPage);
+
+                setTimeout(() => {
+                    closeResolutionModal();
+                }, 1600);
             } else {
-                showToast('❌ Error al eliminar', true);
+                feedback.innerHTML = `
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 12px 14px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+                        <strong>Fallo en la sincronización:</strong><br>
+                        ${escapeHtml(data.message || 'Error desconocido al comunicar con CM360')}
+                    </div>
+                `;
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">cloud_upload</span> Reintentar de nuevo`;
             }
         } catch (e) {
-            showToast('❌ Error al eliminar', true);
-        } finally {
-            $('#confirm-dialog').classList.remove('active');
-            deleteTargetId = null;
-            btn.textContent = 'Sí, eliminar';
+            console.error(e);
+            feedback.innerHTML = `
+                <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+                    Error de conexión al reintentar la sincronización.
+                </div>
+            `;
             btn.disabled = false;
+            btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">cloud_upload</span> Reintentar sincronización`;
         }
-    });
+    }
+
+    async function executeResolveSheet(studyId) {
+        const btn = document.getElementById('btn-resolve-sheet');
+        const feedback = document.getElementById('res-feedback-slot');
+
+        btn.disabled = true;
+        btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; animation: spin 1s linear infinite;">progress_activity</span> Creando Google Sheet...`;
+        feedback.innerHTML = '';
+
+        try {
+            const res = await fetch(`/api/brandlift/${studyId}/link-sheet`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({})
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                feedback.innerHTML = `
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined" style="color: #16a34a;">check_circle</span>
+                        <span>${escapeHtml(data.message)}</span>
+                    </div>
+                `;
+                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">check</span> Hoja creada`;
+                showToast('¡Hoja de cálculo generada y vinculada!');
+                fetchHistory(currentPage);
+                setTimeout(() => {
+                    closeResolutionModal();
+                }, 1600);
+            } else {
+                feedback.innerHTML = `
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+                        ${escapeHtml(data.message || 'Error al crear la hoja')}
+                    </div>
+                `;
+                btn.disabled = false;
+                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">add</span> Generar Google Sheet ahora`;
+            }
+        } catch (e) {
+            console.error(e);
+            feedback.innerHTML = `<div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px; border-radius: 6px; font-size: 12px;">Error de conexión.</div>`;
+            btn.disabled = false;
+            btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">add</span> Generar Google Sheet ahora`;
+        }
+    }
+
+    async function executeLinkManualSheet(studyId) {
+        const input = document.getElementById('resolve-sheet-url');
+        const feedback = document.getElementById('res-feedback-slot');
+        const sheetVal = input ? input.value.trim() : '';
+
+        if (!sheetVal) {
+            feedback.innerHTML = `<div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">Por favor ingresa la URL o ID de la hoja de Google Sheets.</div>`;
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/brandlift/${studyId}/link-sheet`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ sheet_id: sheetVal })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                feedback.innerHTML = `
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined" style="color: #16a34a;">check_circle</span>
+                        <span>${escapeHtml(data.message)}</span>
+                    </div>
+                `;
+                showToast('¡Hoja vinculada exitosamente!');
+                fetchHistory(currentPage);
+                setTimeout(() => {
+                    closeResolutionModal();
+                }, 1600);
+            } else {
+                feedback.innerHTML = `<div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">${escapeHtml(data.message)}</div>`;
+            }
+        } catch (e) {
+            console.error(e);
+            feedback.innerHTML = `<div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 8px 12px; border-radius: 6px; font-size: 12px;">Error al vincular.</div>`;
+        }
+    }
+
+    // ===== SEND TAGS VIA EMAIL =====
+    function openSendTagsModal(id, campaignName = '', sheetId = '', sheetUrl = '') {
+        const study = window.allStudies?.find(s => s.id == id);
+        if (study) {
+            campaignName = campaignName || study.campaign_name || '';
+            sheetId = sheetId || study.sheet_id || '';
+            sheetUrl = sheetUrl || study.google_sheet_url || '';
+        }
+        campaignName = campaignName || 'BrandLift';
+        $('#send-tags-study-id').value = id;
+        $('#send-tags-campaign-title').textContent = campaignName;
+        const cleanName = campaignName.replace(/[^A-Za-z0-9_\-]/g, '_');
+        $('#send-tags-attachment-name').textContent = `Tags_BrandLift_${cleanName}.xls (Formato Excel)`;
+
+        // Google Sheet box
+        const sheetBox = $('#send-tags-sheet-box');
+        const sheetLink = $('#send-tags-sheet-link');
+        const sheetDesc = $('#send-tags-sheet-desc');
+        const finalUrl = sheetUrl || (sheetId ? `https://docs.google.com/spreadsheets/d/${sheetId}/edit` : '');
+
+        if (sheetBox) {
+            sheetBox.style.display = 'flex';
+            if (finalUrl) {
+                sheetDesc.textContent = 'El enlace directo a la hoja de Google Sheets se incluirá automáticamente en el correo.';
+                if (sheetLink) {
+                    sheetLink.href = finalUrl;
+                    sheetLink.style.display = 'inline-block';
+                }
+            } else {
+                sheetDesc.textContent = 'Nota: Este estudio aún no tiene vinculada una hoja de respuestas de Google Sheets.';
+                if (sheetLink) {
+                    sheetLink.style.display = 'none';
+                }
+            }
+        }
+
+        // Reset views and controls
+        const formView = $('#send-tags-form-view');
+        const successView = $('#send-tags-success-view');
+        const errorAlert = $('#send-tags-error-alert');
+
+        if (formView) formView.style.display = 'block';
+        if (successView) successView.style.display = 'none';
+        if (errorAlert) errorAlert.style.display = 'none';
+
+        const btn = $('#btn-submit-send-tags');
+        if (btn) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Enviar tags</span>';
+        }
+
+        const btnCancel = $('#btn-cancel-send-tags');
+        if (btnCancel) {
+            btnCancel.disabled = false;
+            btnCancel.style.opacity = '1';
+            btnCancel.style.cursor = 'pointer';
+        }
+
+        const emailsInput = $('#send-tags-emails');
+        const msgInput = $('#send-tags-message');
+        if (emailsInput) emailsInput.disabled = false;
+        if (msgInput) msgInput.disabled = false;
+
+        $('#send-tags-modal').classList.add('active');
+    }
+
+    function closeSendTagsModal() {
+        $('#send-tags-modal').classList.remove('active');
+    }
+
+    async function submitSendTags() {
+        const id = $('#send-tags-study-id').value;
+        const emails = $('#send-tags-emails').value.trim();
+        const message = $('#send-tags-message').value.trim();
+
+        const errorAlert = $('#send-tags-error-alert');
+        const errorText = $('#send-tags-error-text');
+        if (errorAlert) errorAlert.style.display = 'none';
+
+        if (!emails) {
+            if (errorText && errorAlert) {
+                errorText.textContent = 'Por favor ingresa al menos un correo electrónico destinatario.';
+                errorAlert.style.display = 'block';
+            }
+            showToast('Por favor ingresa al menos un correo destinatario', true);
+            $('#send-tags-emails').focus();
+            return;
+        }
+
+        const btn = $('#btn-submit-send-tags');
+        const btnCancel = $('#btn-cancel-send-tags');
+        const emailsInput = $('#send-tags-emails');
+        const messageInput = $('#send-tags-message');
+
+        // Bloquear botón y controles durante el envío
+        if (btn) {
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'not-allowed';
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px; animation: spin 1s linear infinite;">progress_activity</span><span>Enviando tags...</span>';
+        }
+        if (btnCancel) {
+            btnCancel.disabled = true;
+            btnCancel.style.opacity = '0.5';
+            btnCancel.style.cursor = 'not-allowed';
+        }
+        if (emailsInput) emailsInput.disabled = true;
+        if (messageInput) messageInput.disabled = true;
+
+        try {
+            const res = await fetch(`/api/brandlift/${id}/send-tags`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ emails, message })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                // Notificación de envío en la misma modal
+                const formView = $('#send-tags-form-view');
+                const successView = $('#send-tags-success-view');
+
+                if (formView) formView.style.display = 'none';
+                if (successView) successView.style.display = 'block';
+
+                const recipients = data.recipients || emails.split(/[\s,;]+/).filter(Boolean);
+                const recipientsHtml = recipients.map(e => `
+                    <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 12px; margin: 3px 4px 3px 0;">
+                        ${escapeHtml(e)}
+                    </span>
+                `).join('');
+
+                const recipientsContainer = $('#send-tags-success-recipients');
+                if (recipientsContainer) {
+                    recipientsContainer.innerHTML = recipientsHtml;
+                }
+
+                if (emailsInput) emailsInput.value = '';
+                showToast(data.message || 'Tags enviados exitosamente');
+
+                // Refrescar tabla en segundo plano
+                if (typeof fetchHistory === 'function') {
+                    fetchHistory(currentPage);
+                }
+            } else {
+                if (errorText && errorAlert) {
+                    errorText.textContent = data.message || 'Error al enviar los tags. Por favor intenta de nuevo.';
+                    errorAlert.style.display = 'block';
+                }
+                showToast(data.message || 'Error al enviar tags', true);
+
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
+                }
+                if (btnCancel) {
+                    btnCancel.disabled = false;
+                    btnCancel.style.opacity = '1';
+                    btnCancel.style.cursor = 'pointer';
+                }
+                if (emailsInput) emailsInput.disabled = false;
+                if (messageInput) messageInput.disabled = false;
+            }
+        } catch (e) {
+            console.error(e);
+            if (errorText && errorAlert) {
+                errorText.textContent = 'Error de conexión al enviar el correo. Por favor verifica tu red e intenta de nuevo.';
+                errorAlert.style.display = 'block';
+            }
+            showToast('Error de conexión al enviar el correo', true);
+
+            if (btn) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
+            }
+            if (btnCancel) {
+                btnCancel.disabled = false;
+                btnCancel.style.opacity = '1';
+                btnCancel.style.cursor = 'pointer';
+            }
+            if (emailsInput) emailsInput.disabled = false;
+            if (messageInput) messageInput.disabled = false;
+        }
+    }
 
     // ===== REMOVE CLICK EVENT =====
-    async function removeClickEvent(id, name) {
+    async function removeClickEvent(id, name = '') {
+        if (!name) {
+            name = window.allStudies?.find(s => s.id == id)?.campaign_name || 'este brandlift';
+        }
         if (!confirm(`¿Estás seguro de que deseas retirar la redirección de click para "${name}"?\n\nSi está subida a CM360, esto tardará unos segundos mientras se actualizan los creativos.`)) {
             return;
         }
 
         const modalBody = $('#modal-body');
-        modalBody.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;">⏳</div><p style="color:var(--text-muted)">Actualizando creativos en Base de Datos y CM360...</p><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Por favor espera, no cierres esta ventana.</p></div>';
+        modalBody.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Actualizando creativos en Base de Datos y CM360...</p><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Por favor espera, no cierres esta ventana.</p></div>';
 
         try {
             const res = await fetch(`/api/brandlift/history/${id}/remove-click`, {
@@ -1576,41 +2824,83 @@
             const data = await res.json();
             
             if (res.ok && data.success) {
-                showToast('✅ ' + data.message);
+                showToast(data.message);
                 openDetail(id); // Reload modal details
             } else {
-                showToast('⚠️ Completado con advertencias: ' + (data.message || 'Error desconocido'), true);
+                showToast('Completado con advertencias: ' + (data.message || 'Error desconocido'), true);
                 if (data.cm360_errors && data.cm360_errors.length > 0) {
                     console.error("CM360 Errors:", data.cm360_errors);
                 }
                 openDetail(id);
             }
         } catch (e) {
-            showToast('❌ Error al retirar el evento', true);
+            showToast('Error al retirar el evento', true);
             openDetail(id);
         }
     }
 
+    // ===== DELETE BRANDLIFT STUDY =====
+    window.deleteStudy = async function(id, name = '') {
+        if (!name) {
+            name = window.allStudies?.find(s => s.id == id)?.campaign_name || 'este brandlift';
+        }
+        if (!confirm(`¿Estás seguro de que deseas eliminar el brandlift "${name}"?\n\nEsta acción también eliminará permanentemente la hoja de respuestas vinculada en Google Sheets.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/brandlift/history/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                showToast(data.message || 'Brandlift eliminado correctamente');
+                fetchHistory(currentPage);
+            } else {
+                showToast(data.message || 'Error al eliminar el brandlift', true);
+            }
+        } catch (e) {
+            console.error('Error deleting study:', e);
+            showToast('Error al eliminar el brandlift', true);
+        }
+    };
+
     // ===== FILTERS =====
-    $('#filter-search').addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => fetchHistory(1), 350);
-    });
+    if ($('#filter-search')) {
+        $('#filter-search').addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => fetchHistory(1), 350);
+        });
+    }
 
-    $('#filter-market').addEventListener('change', () => fetchHistory(1));
-    $('#filter-status').addEventListener('change', () => fetchHistory(1));
-    $('#filter-date-from').addEventListener('change', () => fetchHistory(1));
-    $('#filter-date-to').addEventListener('change', () => fetchHistory(1));
+    if ($('#filter-market')) {
+        $('#filter-market').addEventListener('change', () => fetchHistory(1));
+    }
+    if ($('#filter-status')) {
+        $('#filter-status').addEventListener('change', () => fetchHistory(1));
+    }
+    if ($('#filter-date-to')) {
+        $('#filter-date-to').addEventListener('change', () => fetchHistory(1));
+    }
 
-    $('#btn-clear-filters').addEventListener('click', () => {
-        $('#filter-search').value = '';
-        $('#filter-market').value = '';
-        $('#filter-status').value = '';
-        $('#filter-date-from').value = '';
-        $('#filter-date-to').value = '';
-        $('#btn-clear-filters').classList.remove('visible');
-        fetchHistory(1);
-    });
+    if ($('#btn-clear-filters')) {
+        $('#btn-clear-filters').addEventListener('click', () => {
+            if ($('#filter-search')) $('#filter-search').value = '';
+            if ($('#filter-market')) $('#filter-market').value = '';
+            if ($('#filter-status')) $('#filter-status').value = '';
+            if ($('#filter-date-visual')) $('#filter-date-visual').value = '';
+            if ($('#filter-date-to')) $('#filter-date-to').value = '';
+            $('#btn-clear-filters').classList.remove('visible');
+            fetchHistory(1);
+        });
+    }
 
     // ===== KEYBOARD SHORTCUTS =====
     document.addEventListener('keydown', (e) => {
@@ -1630,7 +2920,7 @@
 
     function escapeAttr(str) {
         if (!str) return '';
-        return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function showToast(message, isError = false) {
@@ -1731,7 +3021,7 @@
             campaignName = campaignName.trim();
             const year = new Date().getFullYear();
             const month = String(new Date().getMonth() + 1).padStart(2, '0');
-            const fileName = `${year}_${month}_MCS_${market}_${client.replace(/\s+/g,'_')}_${campaignName}_Tags`;
+            const fileName = `${year}_${month}_WMSCSLATAM_${market}_${client.replace(/\s+/g,'_')}_${campaignName}_Tags_brandlift_b`;
             
             XLSX.writeFile(wb, `${fileName}.xlsx`);
         } catch (e) {
@@ -1768,13 +3058,13 @@
     </div>
 </div>
 
-<div id="edit-questions-modal" class="modal-overlay hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
-    <div style="background: var(--bg-card); width: 950px; max-width: 95%; max-height: 90vh; border-radius: var(--radius-md); border: 1px solid var(--border-card); padding: 25px; position: relative; display: flex; gap: 30px;">
-        <button onclick="closeEditQuestionsModal()" style="position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; z-index: 10;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+<div id="edit-questions-modal" class="modal-overlay hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,80,0.5); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+    <div style="background: var(--bg-card); width: 950px; max-width: 95%; max-height: 90vh; border-radius: var(--radius-xl); border: none; box-shadow: var(--shadow-modal); padding: 32px; position: relative; display: flex; gap: 30px;">
+        <button onclick="closeEditQuestionsModal()" style="position: absolute; top: 20px; right: 20px; background: rgba(0,0,80,0.05); border: none; border-radius: 50%; width: 32px; height: 32px; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.2s;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
         
         <!-- Left: Form -->
         <div style="flex: 1; overflow-y: auto; padding-right: 15px;">
-            <h3 style="color: var(--text-primary); margin-top: 0; margin-bottom: 20px;">Editar Preguntas</h3>
+            <h3 style="color: var(--wpp-navy); font-size: 18px; font-weight: 700; margin-top: 0; margin-bottom: 20px;">Editar Preguntas</h3>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; color: var(--text-secondary); font-size: 13px; font-weight: 600; margin-bottom: 8px;">Tema de Color</label>
@@ -1827,9 +3117,20 @@
 <script>
 let editingStudy = null;
 
-function openEditQuestionsModal(studyId) {
-    editingStudy = window.allStudies.find(s => s.id === studyId);
-    if (!editingStudy) return;
+async function openEditQuestionsModal(studyId) {
+    if (window.currentDetailStudy && Number(window.currentDetailStudy.id) === Number(studyId)) {
+        editingStudy = window.currentDetailStudy;
+    } else {
+        try {
+            const res = await fetch(`/api/brandlift/history/${studyId}`);
+            const data = await res.json();
+            editingStudy = data.study;
+        } catch (e) {
+            console.error('Error loading study for edit:', e);
+            return;
+        }
+    }
+    if (!editingStudy || !editingStudy.questions) return;
 
     // Set theme
     const theme = editingStudy.theme_colors || 'dark';
@@ -1953,21 +3254,43 @@ function generateCreativeHTML(questionsData, w, h, campaign, market, groupName, 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brandlift Survey</title>
 <style>
- .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 20px 50px 20px; box-sizing: border-box; z-index: 1; transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+ .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 16px 14px 34px 14px; box-sizing: border-box; z-index: 1; transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
  .screen.slow-transition { transition: opacity 1.4s ease, transform 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
  .screen.hidden { opacity: 0; transform: scale(0.85); pointer-events: none; }
  .screen.active { opacity: 1; transform: scale(1); pointer-events: auto; }
+ .question-box { width: 100%; max-width: 264px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; box-sizing: border-box; padding: 0 4px; overflow: hidden; flex-shrink: 0; text-align: center; }
+ .question-text { font-weight: 800; text-align: center; width: 100%; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+ .answers-box { display: flex; flex-direction: column; align-items: center; width: 100%; flex-shrink: 0; }
  .btn-anim { transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease; }
- .btn-anim:hover { transform: scale(1.05); opacity: 0.9 !important; }
- .btn-anim:active { transform: scale(0.95); }
+ .btn-anim:hover { transform: scale(1.04); opacity: 0.92 !important; }
+ .btn-anim:active { transform: scale(0.96); }
 </style>
 <script>
  var webhookUrl = ""; 
  var surveyData = {};
+
+ function fitQuestionTexts() {
+   var qTexts = document.querySelectorAll('.question-text');
+   for (var i = 0; i < qTexts.length; i++) {
+     var el = qTexts[i];
+     var box = el.parentElement;
+     if (!box) continue;
+     var maxH = box.clientHeight || 64;
+     var maxW = box.clientWidth || 264;
+     var size = parseFloat(window.getComputedStyle(el).fontSize) || 16;
+     while ((el.scrollHeight > maxH || el.scrollWidth > maxW) && size > 8.5) {
+       size -= 0.5;
+       el.style.fontSize = size + 'px';
+       el.style.lineHeight = Math.max(11, Math.round(size * 1.22)) + 'px';
+     }
+   }
+ }
  
  window.onload = function() {
-   document.getElementById('screen-q1').classList.add('slow-transition');
-   setTimeout(function() { showScreen('screen-q1'); }, 150);
+   fitQuestionTexts();
+   var q1 = document.getElementById('screen-q1');
+   if (q1) q1.classList.add('slow-transition');
+   setTimeout(function() { showScreen('screen-q1'); fitQuestionTexts(); }, 150);
  };
 
  function showScreen(id) {
@@ -1980,6 +3303,7 @@ function generateCreativeHTML(questionsData, w, h, campaign, market, groupName, 
    if (document.getElementById(id)) {
      document.getElementById(id).classList.remove('hidden');
      document.getElementById(id).classList.add('active');
+     fitQuestionTexts();
      if (id === 'screen-thanks' && window.parent) {
          window.parent.postMessage('brandlift_finished', '*');
      }
@@ -2006,7 +3330,7 @@ function generateCreativeHTML(questionsData, w, h, campaign, market, groupName, 
    }
  }
 <\/script>
-</head>
+<\/head>
 <body style="margin:0;padding:0;overflow:hidden;">
 <div style="width:${w}px;height:${h}px;${bgStyle}position:relative;overflow:hidden;font-family:Arial,Helvetica,sans-serif;box-sizing:border-box;">
  <div style="position:absolute;width:200%;height:200%;top:-80%;left:-50%;background:radial-gradient(ellipse at center,${glow} 0%,transparent 60%);pointer-events:none;"></div>`;
@@ -2017,21 +3341,74 @@ function generateCreativeHTML(questionsData, w, h, campaign, market, groupName, 
         const display = qNum === 1 ? 'active' : 'hidden';
 
         const ansCount = q.answers.length;
-        let qFontSize, btnFontSize, btnPadding, btnGap, qMarginBottom, btnMaxWidth;
-        if (ansCount <= 3) {
-            qFontSize = 18; btnFontSize = 14; btnPadding = '10px 28px'; btnGap = 8; qMarginBottom = 28; btnMaxWidth = 260;
+        const qLen = (q.question || '').length;
+        let qFontSize, btnFontSize, btnPadding, btnGap, btnMaxWidth, qBoxHeight, screenPaddingTop;
+
+        if (ansCount <= 2) {
+            qBoxHeight = 68;
+            screenPaddingTop = 18;
+            btnFontSize = 14;
+            btnPadding = '10px 24px';
+            btnGap = 8;
+            btnMaxWidth = 250;
+            if (qLen <= 30) qFontSize = 18;
+            else if (qLen <= 60) qFontSize = 15;
+            else if (qLen <= 100) qFontSize = 13;
+            else if (qLen <= 150) qFontSize = 11;
+            else qFontSize = 9.5;
+        } else if (ansCount === 3) {
+            qBoxHeight = 62;
+            screenPaddingTop = 14;
+            btnFontSize = 13;
+            btnPadding = '8px 22px';
+            btnGap = 6;
+            btnMaxWidth = 250;
+            if (qLen <= 30) qFontSize = 16;
+            else if (qLen <= 60) qFontSize = 14;
+            else if (qLen <= 100) qFontSize = 12;
+            else if (qLen <= 150) qFontSize = 10.5;
+            else qFontSize = 9;
         } else if (ansCount === 4) {
-            qFontSize = 16; btnFontSize = 13; btnPadding = '9px 24px'; btnGap = 7; qMarginBottom = 20; btnMaxWidth = 250;
+            qBoxHeight = 56;
+            screenPaddingTop = 12;
+            btnFontSize = 12;
+            btnPadding = '6px 18px';
+            btnGap = 5;
+            btnMaxWidth = 240;
+            if (qLen <= 30) qFontSize = 15;
+            else if (qLen <= 60) qFontSize = 13;
+            else if (qLen <= 100) qFontSize = 11.5;
+            else if (qLen <= 150) qFontSize = 10;
+            else qFontSize = 8.5;
         } else if (ansCount === 5) {
-            qFontSize = 14; btnFontSize = 12; btnPadding = '8px 20px'; btnGap = 6; qMarginBottom = 16; btnMaxWidth = 240;
+            qBoxHeight = 48;
+            screenPaddingTop = 10;
+            btnFontSize = 11;
+            btnPadding = '5px 16px';
+            btnGap = 4;
+            btnMaxWidth = 230;
+            if (qLen <= 30) qFontSize = 13.5;
+            else if (qLen <= 60) qFontSize = 12;
+            else if (qLen <= 100) qFontSize = 10.5;
+            else qFontSize = 8.5;
         } else {
-            qFontSize = 12; btnFontSize = 11; btnPadding = '6px 16px'; btnGap = 5; qMarginBottom = 12; btnMaxWidth = 230;
+            qBoxHeight = 44;
+            screenPaddingTop = 8;
+            btnFontSize = 10.5;
+            btnPadding = '4px 14px';
+            btnGap = 3;
+            btnMaxWidth = 230;
+            if (qLen <= 30) qFontSize = 12.5;
+            else if (qLen <= 60) qFontSize = 11;
+            else qFontSize = 8.5;
         }
 
         html += `
- <div id="screen-q${qNum}" class="screen ${display}">
-  <div style="${textStyle}font-size:${qFontSize}px;font-weight:800;text-align:center;line-height:1.35;margin-bottom:${qMarginBottom}px;padding:0 10px;max-width:90%;">${q.question}</div>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:${btnGap}px;width:100%;">`;
+ <div id="screen-q${qNum}" class="screen ${display}" style="padding-top:${screenPaddingTop}px;">
+  <div class="question-box" style="height:${qBoxHeight}px;max-height:${qBoxHeight}px;">
+   <div class="question-text" style="${textStyle}font-size:${qFontSize}px;line-height:${Math.round(qFontSize*1.22)}px;">${q.question}</div>
+  </div>
+  <div class="answers-box" style="gap:${btnGap}px;">`;
 
         q.answers.forEach(a => {
             html += `
@@ -2044,12 +3421,12 @@ function generateCreativeHTML(questionsData, w, h, campaign, market, groupName, 
     });
 
     html += `
- <div id="screen-thanks" class="screen hidden">
+ <div id="screen-thanks" class="screen hidden" style="justify-content:center;padding-top:20px;">
   <div style="${textStyle}font-size:22px;font-weight:800;text-align:center;line-height:1.4;margin-bottom:15px;text-shadow:0 2px 4px rgba(0,0,0,0.3);">¡Muchas gracias<br>por su opinión!</div>
  </div>
  <div style="position:absolute;bottom:10px;right:14px;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:${isDark?'rgba(255,255,255,0.6)':'rgba(0,0,80,0.6)'};letter-spacing:0.5px;z-index:2;"><span style="font-weight:800;">WPP</span><span style="font-weight:400;"> Media</span></div>
 </div>
-</body>
+<\/body>
 </html>`;
     return html;
 }
