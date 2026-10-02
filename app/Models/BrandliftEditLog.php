@@ -12,11 +12,11 @@ class BrandliftEditLog extends Model
     protected $fillable = [
         'brandlift_study_id',
         'user_id',
-        'changes_made'
+        'changes_made',
     ];
 
     protected $casts = [
-        'changes_made' => 'array'
+        'changes_made' => 'array',
     ];
 
     public function study()

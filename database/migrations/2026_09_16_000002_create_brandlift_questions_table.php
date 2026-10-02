@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('brandlift_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('brandlift_study_id')
-                  ->constrained('brandlift_studies')
-                  ->cascadeOnDelete();
+                ->constrained('brandlift_studies')
+                ->cascadeOnDelete();
             $table->integer('question_number');
             $table->text('question_text');
             $table->json('answers');
