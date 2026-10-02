@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\BrandliftStudy;
+use App\Services\CampaignManagerService;
+use App\Services\GoogleWorkspaceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * DashboardController
@@ -37,11 +40,19 @@ class DashboardController extends Controller
     public function apiList(Request $request): JsonResponse
     {
         $user = auth()->user();
-        $query = BrandliftStudy::with('questions', 'creatives', 'editLogs.user');
+        $query = BrandliftStudy::with('questions', 'creatives', 'tags', 'editLogs.user');
 
-        // Check if user is not admin, restrict by their market
-        if ($user && $user->role !== 'admin' && !empty($user->market)) {
-            $query->where('market', $user->market);
+        $activeMarket = session('active_market');
+
+        // Check if user is not admin, restrict by their assigned markets
+        if ($user && ! $user->isAdmin()) {
+            $assignedMarkets = $user->assigned_markets;
+            if (! empty($assignedMarkets)) {
+                $query->whereIn('market', $assignedMarkets);
+            }
+        } elseif ($user && $user->isAdmin() && ! empty($activeMarket)) {
+            // Admin is simulating a specific market
+            $query->where('market', $activeMarket);
         }
 
         // Search by campaign name
@@ -49,10 +60,10 @@ class DashboardController extends Controller
             $query->where('campaign_name', 'LIKE', "%{$search}%");
         }
 
-        // Filter by market (only if they are an admin or it matches their market)
+        // Filter by market (only if they are an admin or it matches their assigned markets)
         if ($market = $request->input('market')) {
-            if (!$user || $user->role === 'admin' || $user->market === $market) {
-                $query->market($market);
+            if (! $user || $user->hasMarket($market) || $user->isAdmin()) {
+                $query->where('market', $market);
             }
         }
 
@@ -70,10 +81,14 @@ class DashboardController extends Controller
         }
 
         // Stats for KPIs (before pagination)
-        $statsQuery = clone $query;
         $allStudies = BrandliftStudy::query();
-        if ($user && $user->role !== 'admin' && !empty($user->market)) {
-            $allStudies->where('market', $user->market);
+        if ($user && ! $user->isAdmin()) {
+            $assignedMarkets = $user->assigned_markets;
+            if (! empty($assignedMarkets)) {
+                $allStudies->whereIn('market', $assignedMarkets);
+            }
+        } elseif ($user && $user->isAdmin() && ! empty($activeMarket)) {
+            $allStudies->where('market', $activeMarket);
         }
 
         $stats = [
@@ -106,7 +121,15 @@ class DashboardController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $study = BrandliftStudy::with(['questions', 'editLogs.user'])->findOrFail($id);
+        $study = BrandliftStudy::with(['questions', 'creatives', 'tags', 'editLogs.user'])->findOrFail($id);
+        $user = auth()->user();
+
+        if ($user && ! $user->hasMarket($study->market)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para ver este Brandlift.',
+            ], 403);
+        }
 
         return response()->json([
             'study' => $study,
@@ -114,23 +137,46 @@ class DashboardController extends Controller
     }
 
     /**
-     * API: Delete a brandlift study.
+     * API: Delete a brandlift study and its associated Google Sheet.
      */
     public function destroy(int $id): JsonResponse
     {
+        $user = auth()->user();
         $study = BrandliftStudy::findOrFail($id);
+
+        if ($user && ! $user->hasMarket($study->market)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para eliminar este Brandlift.',
+            ], 403);
+        }
+
+        // Delete Google Sheet if present
+        if (! empty($study->sheet_id)) {
+            try {
+                $workspaceService = app(GoogleWorkspaceService::class);
+                $workspaceService->deleteFile($study->sheet_id);
+            } catch (\Throwable $e) {
+                Log::warning("Could not delete Google Sheet {$study->sheet_id} during study deletion: ".$e->getMessage());
+            }
+        }
+
+        $study->questions()->delete();
+        $study->creatives()->delete();
+        $study->editLogs()->delete();
+        $study->tags()->delete();
         $study->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Brandlift eliminado exitosamente.',
+            'message' => 'Brandlift y su hoja de Google Sheets eliminados correctamente.',
         ]);
     }
 
     /**
      * API: Remove click redirect event from a study's HTML and update CM360 if pushed.
      */
-    public function removeClickEvent(int $id, \App\Services\CampaignManagerService $cmService): JsonResponse
+    public function removeClickEvent(int $id, CampaignManagerService $cmService): JsonResponse
     {
         $study = BrandliftStudy::with(['questions', 'creatives'])->findOrFail($id);
 
@@ -154,7 +200,7 @@ class DashboardController extends Controller
                 $html = $creative->creative_html;
                 $html = preg_replace('/var clickTag = ".*?";\s*/is', '', $html);
                 $html = str_ireplace(' onclick="window.open(window.clickTag || clickTag, \'_blank\');"', '', $html);
-                
+
                 // Update local DB
                 $creative->update(['creative_html' => $html]);
 
@@ -172,7 +218,7 @@ class DashboardController extends Controller
                         $cm360SuccessCount++;
                     } catch (\Exception $e) {
                         \Log::error("Failed to update CM360 creative {$creative->cm360_creative_id}", [
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ]);
                         $cm360Errors[] = "Error en variante {$creative->variant_key}: {$e->getMessage()}";
                     }
@@ -185,7 +231,7 @@ class DashboardController extends Controller
             if ($hasCm360Data) {
                 $message .= " Se actualizaron {$cm360SuccessCount} creativos en CM360.";
                 if (count($cm360Errors) > 0) {
-                    $message .= " Hubo errores en algunos: " . implode(', ', $cm360Errors);
+                    $message .= ' Hubo errores en algunos: '.implode(', ', $cm360Errors);
                 }
             } else {
                 $message .= ' (No se pudo actualizar en CM360 porque este estudio es antiguo y no tiene datos de perfil).';
@@ -195,7 +241,18 @@ class DashboardController extends Controller
         return response()->json([
             'success' => empty($cm360Errors),
             'message' => $message,
-            'cm360_errors' => $cm360Errors
+            'cm360_errors' => $cm360Errors,
         ]);
+    }
+
+    /**
+     * API: Toggle active / inactive status of a brandlift study and sync with CM360.
+     */
+    public function toggleStatus(int $id, CampaignManagerService $cmService, Request $request): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'No está permitido pausar o reactivar campañas desde la plataforma.',
+        ], 403);
     }
 }
