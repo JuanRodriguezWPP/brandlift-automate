@@ -3913,7 +3913,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 </style>
 <script>
  ${clickUrl ? `var clickTag = "${clickUrl}";` : ''}
- var webhookUrl = "{{ url('/api/brandlift/submit') }}?sheetId=${sheetId}";
+ var webhookUrl = "https://phpstack-404581-6369702.cloudwaysapps.com/api/brandlift/submit?sheetId=${sheetId}";
  var surveyData = {};
 
  function fitQuestionTexts() {
