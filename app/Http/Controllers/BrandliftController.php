@@ -60,19 +60,26 @@ class BrandliftController extends Controller
                 return response()->json(['error' => 'Missing sheetId'], 400);
             }
 
-            // Extract data from the request
-            $q1 = $request->input('q1', '');
-            $a1 = $request->input('a1', '');
-            $q2 = $request->input('q2', '');
-            $a2 = $request->input('a2', '');
+            // Extract core data from the request
             $campaign = $request->input('campaign', '');
             $market = $request->input('market', '');
             $group = $request->input('group', '');
             $tagType = $request->input('tagType', '');
             $date = now()->format('Y-m-d H:i:s');
 
-            // Format row: [Date, Campaign, Market, Group, TagType, Q1, A1, Q2, A2]
-            $values = [$date, $campaign, $market, $group, $tagType, $q1, $a1, $q2, $a2];
+            // Start row values
+            $values = [$date, $campaign, $market, $group, $tagType];
+
+            // Dynamically collect questions and answers (up to 10 to prevent infinite loops, though practically 2-5)
+            for ($i = 1; $i <= 10; $i++) {
+                if ($request->has('q' . $i) || $request->has('a' . $i)) {
+                    $values[] = $request->input('q' . $i, '');
+                    $values[] = $request->input('a' . $i, '');
+                } else {
+                    break;
+                }
+            }
+
 
             // Append to Google Sheet using the service account
             $success = $this->googleService->appendRowToSheet($sheetId, $values);
@@ -126,7 +133,7 @@ class BrandliftController extends Controller
         $validator = Validator::make($request->all(), [
             'market' => 'required|string|max:50',
             'campaign_name' => 'required|string|max:255',
-            'question_count' => 'required|integer|min:1|max:2',
+            'question_count' => 'required|integer|min:1',
             'creative_width' => 'required|integer|min:1',
             'creative_height' => 'required|integer|min:1',
             'sheet_id' => 'nullable|string',
