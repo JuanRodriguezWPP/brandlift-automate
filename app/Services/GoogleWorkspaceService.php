@@ -166,7 +166,7 @@ class GoogleWorkspaceService
                 'error' => $e->getMessage(),
             ]);
 
-            return false;
+            return $e->getMessage();
         }
     }
 

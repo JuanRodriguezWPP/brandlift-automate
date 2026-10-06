@@ -84,13 +84,13 @@ class BrandliftController extends Controller
             // Append to Google Sheet using the service account
             $success = $this->googleService->appendRowToSheet($sheetId, $values);
 
-            if ($success) {
+            if ($success === true) {
                 return response()->json(['success' => true])
                     ->header('Access-Control-Allow-Origin', '*') // Allow CORS from CM360
                     ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type');
             } else {
-                return response()->json(['error' => 'Failed to write to sheet'], 500)
+                return response()->json(['error' => 'Failed to write to sheet: ' . $success], 500)
                     ->header('Access-Control-Allow-Origin', '*');
             }
 
