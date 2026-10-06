@@ -159,7 +159,7 @@ class GoogleWorkspaceService
             ];
 
             $sheetsService->spreadsheets_values->append($sheetId, 'Respuestas!A:A', $body, $params);
-
+            return true;
         } catch (Exception $e) {
             Log::error('Failed to append row to Google Sheet', [
                 'sheet_id' => $sheetId,
