@@ -61,24 +61,26 @@ class BrandliftController extends Controller
             }
 
             // Extract core data from the request
+            $userId = $request->input('userId', '');
             $campaign = $request->input('campaign', '');
             $market = $request->input('market', '');
             $group = $request->input('group', '');
-            $tagType = $request->input('tagType', '');
             $date = now()->format('Y-m-d H:i:s');
 
-            // Start row values
-            $values = [$date, $campaign, $market, $group, $tagType];
+            // Start row values with Id (userId)
+            $values = [$userId];
 
-            // Dynamically collect questions and answers (up to 10 to prevent infinite loops, though practically 2-5)
-            for ($i = 1; $i <= 10; $i++) {
-                if ($request->has('q' . $i) || $request->has('a' . $i)) {
-                    $values[] = $request->input('q' . $i, '');
-                    $values[] = $request->input('a' . $i, '');
-                } else {
-                    break;
-                }
+            // Add Questions 1 to 5 to match the 10 columns in Excel
+            for ($i = 1; $i <= 5; $i++) {
+                $values[] = $request->input('q' . $i, '');
+                $values[] = $request->input('a' . $i, '');
             }
+
+            // Add Market, Campaign, Group, Date
+            $values[] = $market;
+            $values[] = $campaign;
+            $values[] = $group;
+            $values[] = $date;
 
 
             // Append to Google Sheet using the service account
