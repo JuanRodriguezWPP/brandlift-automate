@@ -6,7 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Creador de brandlifts — WPP Media</title>
     <meta name="description" content="Herramienta para crear creativos de Brandlift automáticos para Campaign Manager 360">
-    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}?v={{ filemtime(public_path('css/wpp-design-system.css')) }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
     <style>
@@ -24,6 +27,43 @@
 
         body {
             background-color: var(--bg-secondary);
+        }
+
+        #bl-end-date-step1::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: pointer;
+            background: transparent;
+            color: transparent;
+        }
+
+        .spelling-notice {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 11px 16px;
+            background: rgba(148, 163, 184, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 0 14px rgba(148, 163, 184, 0.2), inset 0 0 8px rgba(148, 163, 184, 0.08);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+            line-height: 1.45;
+        }
+
+        .spelling-notice strong {
+            color: #e2e8f0;
+            font-weight: 600;
         }
 
 
@@ -1381,19 +1421,22 @@
         }
 
         .group-item.duplicate-error,
-        .group-item.empty-error {
+        .group-item.empty-error,
+        .group-item.reserved-error {
             border-color: var(--danger-red) !important;
-            background: rgba(239, 68, 68, 0.08) !important;
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
+            background: rgba(239, 68, 68, 0.1) !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.35), 0 0 10px rgba(239, 68, 68, 0.25) !important;
         }
 
         .group-item.duplicate-error input,
-        .group-item.empty-error input {
+        .group-item.empty-error input,
+        .group-item.reserved-error input {
             color: var(--danger-red) !important;
         }
 
         .group-item.duplicate-error input::placeholder,
-        .group-item.empty-error input::placeholder {
+        .group-item.empty-error input::placeholder,
+        .group-item.reserved-error input::placeholder {
             color: rgba(239, 68, 68, 0.6) !important;
         }
 
@@ -1534,7 +1577,7 @@
         @if(isset($editStudy) && $editStudy)
         <div style="background: rgba(176, 244, 103, 0.15); border: 1px solid rgba(176, 244, 103, 0.3); border-radius: var(--radius-md); padding: 12px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--wpp-lime); color: var(--wpp-navy);"><span class="material-symbols-outlined" style="font-size: 18px;">edit</span></span>
+                <span style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--wpp-lime); color: var(--wpp-navy);"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px;">edit</span></span>
                 <div style="font-size: 14px; font-weight: 700; color: var(--wpp-navy);">Modo Edición: {{ $editStudy->campaign_name }}</div>
             </div>
             <a href="/dashboard" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius-sm); background: #ffffff; border: 1px solid var(--border-card); color: var(--text-primary); font-size: 12px; font-weight: 600; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
@@ -1557,7 +1600,7 @@
                                 <div class="ruixen-step-halo"></div>
                                 <div class="ruixen-step-circle" id="ruixen-circle-1">
                                     <span class="ruixen-step-number">1</span>
-                                    <svg class="ruixen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <svg class="ruixen-step-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             </div>
                             <div class="ruixen-step-text">
@@ -1575,7 +1618,7 @@
                                 <div class="ruixen-step-halo"></div>
                                 <div class="ruixen-step-circle" id="ruixen-circle-2">
                                     <span class="ruixen-step-number">2</span>
-                                    <svg class="ruixen-step-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <svg class="ruixen-step-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                                 </div>
                             </div>
                             <div class="ruixen-step-text">
@@ -1596,7 +1639,7 @@
                                         $user = auth()->user();
                                         $assignedMarkets = $user?->assigned_markets ?? [];
                                         $singleMarket = count($assignedMarkets) === 1 ? $assignedMarkets[0] : null;
-                                        $isSingleMarket = !empty($singleMarket) && !$user->isAdmin();
+                                        $isSingleMarket = !empty($singleMarket) && !$user->hasGlobalAccess();
                                         $selectedMarket = old('market', $editStudy->market ?? (session('active_market') ?? ($singleMarket ?? '')));
                                         $dpsTags = $editStudy->dps_tags ?? [];
                                         if (is_string($dpsTags)) { $dpsTags = json_decode($dpsTags, true) ?? []; }
@@ -1612,7 +1655,7 @@
                                             'COL' => ['name' => 'Colombia (COL)', 'country' => 'Colombia'],
                                             'ECU' => ['name' => 'Ecuador (ECU)', 'country' => 'Ecuador'],
                                         ];
-                                        if (!empty($assignedMarkets) && !$user->isAdmin()) {
+                                        if (!empty($assignedMarkets) && !$user->hasGlobalAccess()) {
                                             $marketOptions = array_intersect_key($allMarketDefs, array_flip($assignedMarkets));
                                         } else {
                                             $marketOptions = $allMarketDefs;
@@ -1675,6 +1718,11 @@
                                         <input type="text" id="bl-campaign-name-step1" class="form-input" value="{{ $editStudy->campaign_name ?? '' }}" placeholder="Ej.: Campaña de verano 2026" required>
                                     </div>
 
+                                    <div class="form-group" style="padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
+                                        <label for="bl-campaign-objective-step1">Objetivo de campaña</label>
+                                        <input type="text" id="bl-campaign-objective-step1" class="form-input" value="{{ $editStudy->campaign_objective ?? '' }}" placeholder="Ej.: Recordación de marca, Awareness, Consideración...">
+                                    </div>
+
                                     <div class="form-row-2col" style="padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
                                         <div class="form-group" style="margin-bottom: 0;">
                                             <label for="bl-investment-step1">Inversión / bonificado <span class="required">*</span></label>
@@ -1686,9 +1734,9 @@
 
                                         <div class="form-group" style="margin-bottom: 0;">
                                             <label for="bl-end-date-step1">Fin de la campaña <span class="required">*</span></label>
-                                            <div style="position: relative; width: 100%;">
+                                            <div style="position: relative; width: 100%; cursor: pointer;" onclick="document.getElementById('bl-end-date-step1')?.showPicker?.()">
                                                 <input type="text" id="bl-end-date-visual" class="form-input" value="{{ !empty($editStudy->end_date) ? date('d/m/Y', strtotime($editStudy->end_date)) : '' }}" placeholder="-- / -- / ----" readonly style="cursor: pointer; background: var(--bg-input); pointer-events: none; color: var(--text-primary);">
-                                                <input type="date" id="bl-end-date-step1" class="form-input" value="{{ $editStudy->end_date ?? '' }}" min="{{ date('Y-m-d') }}" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="
+                                                <input type="date" id="bl-end-date-step1" class="form-input" value="{{ $editStudy->end_date ?? '' }}" min="{{ date('Y-m-d') }}" required style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 2;" onclick="try { this.showPicker(); } catch(e) {}" onchange="
                                                     const visual = document.getElementById('bl-end-date-visual');
                                                     if(this.value) {
                                                         const today = new Date().toLocaleDateString('en-CA');
@@ -1707,7 +1755,7 @@
                                                         visual.value = '';
                                                     }
                                                 ">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; z-index: 1;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                             </div>
                                         </div>
                                     </div>
@@ -1772,7 +1820,7 @@
                                                     @foreach($editStudy->audiences as $audIdx => $audName)
                                                         <div class="group-item" data-group-index="{{ $audIdx }}">
                                                             <input type="text" class="group-name-input" placeholder="Nombre de audiencia..." value="{{ $audName }}" size="14">
-                                                            <button type="button" class="btn-remove-group" title="Eliminar audiencia"><span class="material-symbols-outlined" style="font-size:16px;">close</span></button>
+                                                            <button type="button" class="btn-remove-group" title="Eliminar audiencia"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">close</span></button>
                                                         </div>
                                                     @endforeach
                                                 @endif
@@ -1785,6 +1833,10 @@
                                         <div id="groups-duplicate-warning" style="display: none; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--danger-red);">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                                             <span>No se pueden repetir los nombres de los grupos de audiencia.</span>
+                                        </div>
+                                        <div id="groups-reserved-warning" style="display: none; align-items: center; gap: 8px; margin-top: 10px; padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.45); box-shadow: 0 0 12px rgba(239, 68, 68, 0.3), inset 0 0 8px rgba(239, 68, 68, 0.12); border-radius: 8px; font-size: 12.5px; font-weight: 600; color: #ef4444; line-height: 1.45;">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                            <span>No es necesario agregar <strong>AdExposed</strong> o <strong>Control</strong> como audiencia, ya que la plataforma las genera automáticamente por defecto.</span>
                                         </div>
                                     </div>
 
@@ -1822,6 +1874,12 @@
                                         $q3 = $editStudy?->questions?->firstWhere('question_number', 3);
                                         $q4 = $editStudy?->questions?->firstWhere('question_number', 4);
                                     @endphp
+
+                                    <!-- Aviso Ortografía (Gris Neón) -->
+                                    <div class="spelling-notice">
+                                        <span>Revisa y valida la ortografía, signos de puntuación e idioma antes de subir la campaña.</span>
+                                    </div>
+
                                     <div id="questions-grid" class="questions-grid" style="display: grid; gap: 24px; grid-template-columns: 1fr;">
 
                                         <!-- Pregunta 1 -->
@@ -1993,7 +2051,7 @@
 
                     <div id="preview-frame" class="preview-frame">
                         <div id="preview-placeholder" class="preview-placeholder">
-                            <div class="icon"><span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-muted);">palette</span></div>
+                            <div class="icon"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 48px; color: var(--text-muted);">palette</span></div>
                             <p>Digita las preguntas y respuestas<br>para ver la preview en tiempo real</p>
                         </div>
                         <div style="text-align: center; margin-bottom: 10px;">
@@ -2061,7 +2119,7 @@
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
         }
-        .ai-stepper-card * {
+        .ai-stepper-card *:not(.material-symbols-outlined) {
             font-family: 'WPP', sans-serif !important;
         }
         .ai-loading-overlay.active .ai-stepper-card {
@@ -2391,12 +2449,12 @@
             <div id="ai-modal-footer-actions" style="display: none; margin-top: 18px; gap: 10px; flex-direction: column; align-items: stretch; flex-wrap: wrap;">
                 <!-- Download tags button -->
                 <button type="button" id="ai-modal-download-tags-btn" onclick="downloadExcelTags(window.cm360TagsData, $('#bl-market-step1').value, $('#bl-client-step1').value, $('#bl-campaign-name-step1').value); showToast('Descargando Excel de tags...');" style="background: var(--wpp-navy); color: var(--wpp-lime); border: none; padding: 11px 20px; border-radius: 12px; font-family: 'WPP', sans-serif !important; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; width: 100%;">
-                    <span class="material-symbols-outlined" style="font-size: 18px; font-style: normal;">download</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px; font-style: normal;">download</span>
                     Descargar tags Excel
                 </button>
                 <!-- Send email button -->
                 <button type="button" id="ai-modal-send-tags-btn" onclick="openFormSendTagsModal()" style="background: rgba(176, 244, 103, 0.15); color: var(--wpp-navy); border: 1px solid var(--wpp-lime); padding: 11px 20px; border-radius: 12px; font-family: 'WPP', sans-serif !important; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; width: 100%;">
-                    <span class="material-symbols-outlined" style="font-size: 18px; font-style: normal;">send</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px; font-style: normal;">send</span>
                     Enviar tags por correo
                 </button>
                 <!-- Close as plain link -->
@@ -2412,7 +2470,7 @@
         <div class="modal-card" style="background: #ffffff; width: 100%; max-width: 560px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); border: 1px solid rgba(0,0,80,0.1); overflow: hidden;">
             <div style="padding: 18px 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
                 <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--wpp-navy); display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined" style="font-size: 20px; color: var(--wpp-navy);">send</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px; color: var(--wpp-navy);">send</span>
                     Enviar tags por correo
                 </h3>
                 <button type="button" onclick="closeFormSendTagsModal()" style="background: none; border: none; cursor: pointer; color: #64748b; display: flex; align-items: center;">
@@ -2430,7 +2488,7 @@
                     <!-- Google Sheet info block -->
                     <div id="form-send-tags-sheet-box" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span class="material-symbols-outlined" style="font-size: 24px; color: #16a34a; flex-shrink: 0;">description</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 24px; color: #16a34a; flex-shrink: 0;">description</span>
                             <div style="font-size: 12.5px;">
                                 <strong style="color: #166534; display: block; font-size: 13px;">Hoja de respuestas (Google Sheets)</strong>
                                 <span style="color: #15803d; line-height: 1.4; display: block;" id="form-send-tags-sheet-desc">El enlace directo a la hoja se enviará automáticamente en el correo.</span>
@@ -2458,7 +2516,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     </div>
 
                     <div style="background: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <span class="material-symbols-outlined" style="font-size: 24px; color: #16a34a;">table_chart</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 24px; color: #16a34a;">table_chart</span>
                         <div style="font-size: 12px;">
                             <strong style="color: var(--text-primary);">Archivo adjunto automático:</strong>
                             <div style="color: var(--text-muted);" id="send-tags-attachment-name">Tags_BrandLift.xls (Formato Excel)</div>
@@ -2467,14 +2525,14 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
                     <!-- Inline Error Alert in Modal -->
                     <div id="form-send-tags-error-alert" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; color: #b91c1c; font-size: 12.5px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">error</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">error</span>
                         <span id="form-send-tags-error-text"></span>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
                         <button type="button" id="btn-cancel-send-tags-form" onclick="closeFormSendTagsModal()" style="padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); background: transparent; cursor: pointer; font-size: 13px; font-weight: 600;">Cancelar</button>
                         <button type="button" id="btn-submit-send-tags-form" onclick="submitFormSendTags()" style="padding: 10px 20px; border-radius: var(--radius-sm); border: none; background: var(--wpp-navy); color: var(--wpp-lime); cursor: pointer; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
-                            <span class="material-symbols-outlined" style="font-size: 16px;">send</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span>
                             <span>Enviar tags</span>
                         </button>
                     </div>
@@ -2483,7 +2541,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 <!-- View 2: Success Notification View inside same modal -->
                 <div id="form-send-tags-success-view" style="display: none; text-align: center; padding: 16px 8px 8px;">
                     <div style="width: 56px; height: 56px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                        <span class="material-symbols-outlined" style="font-size: 32px;">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 32px;">check_circle</span>
                     </div>
                     <h3 style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">¡Tags y enlace enviados exitosamente!</h3>
                     <p style="font-size: 13.5px; color: var(--text-secondary); margin: 0 0 16px 0; line-height: 1.5;">
@@ -2623,7 +2681,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             btn.disabled = false;
             btn.style.opacity = '1';
             btn.style.cursor = 'pointer';
-            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Enviar tags</span>';
+            btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span><span>Enviar tags</span>';
         }
 
         const btnCancel = $('#btn-cancel-send-tags-form');
@@ -2679,7 +2737,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             btn.disabled = true;
             btn.style.opacity = '0.6';
             btn.style.cursor = 'not-allowed';
-            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px; animation: spin 1s linear infinite;">progress_activity</span><span>Enviando tags...</span>';
+            btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px; animation: spin 1s linear infinite;">progress_activity</span><span>Enviando tags...</span>';
         }
         if (btnCancel) {
             btnCancel.disabled = true;
@@ -2733,7 +2791,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     btn.disabled = false;
                     btn.style.opacity = '1';
                     btn.style.cursor = 'pointer';
-                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
+                    btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
                 }
                 if (btnCancel) {
                     btnCancel.disabled = false;
@@ -2755,7 +2813,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 btn.style.cursor = 'pointer';
-                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
+                btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
             }
             if (btnCancel) {
                 btnCancel.disabled = false;
@@ -2904,7 +2962,13 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (state.currentStep === 1 && target > 1) {
                 const groupValidation = validateGroups(true);
                 if (!groupValidation.isValid) {
-                    showToast(groupValidation.hasEmpty ? 'No se permiten grupos de audiencia con nombres vacíos' : 'No se pueden repetir los nombres de los grupos de audiencia', true);
+                    if (groupValidation.hasReserved) {
+                        showToast('No es necesario agregar AdExposed o Control ya que funcionan por defecto', true);
+                    } else if (groupValidation.hasEmpty) {
+                        showToast('No se permiten grupos de audiencia con nombres vacíos', true);
+                    } else {
+                        showToast('No se pueden repetir los nombres de los grupos de audiencia', true);
+                    }
                     goToField(1, 'audiences');
                     return;
                 }
@@ -2920,7 +2984,9 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
     $('#btn-next-1').addEventListener('click', () => {
         const groupValidation = validateGroups(true);
         if (!groupValidation.isValid) {
-            if (groupValidation.hasEmpty && groupValidation.hasDuplicates) {
+            if (groupValidation.hasReserved) {
+                showToast('No es necesario agregar AdExposed o Control ya que funcionan por defecto', true);
+            } else if (groupValidation.hasEmpty && groupValidation.hasDuplicates) {
                 showToast('No se permiten grupos de audiencia vacíos ni repetidos', true);
             } else if (groupValidation.hasEmpty) {
                 showToast('No se permiten grupos de audiencia con nombres vacíos', true);
@@ -3351,7 +3417,11 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         });
     });
     $('#bl-campaign-name-step1').addEventListener('input', populateSummary);
+    $('#bl-campaign-objective-step1')?.addEventListener('input', populateSummary);
     $('#bl-end-date-step1').addEventListener('input', populateSummary);
+    $('#bl-end-date-step1')?.addEventListener('click', function() {
+        try { this.showPicker(); } catch (e) {}
+    });
 
     // ===== INVESTMENT FORMATTING =====
     const investmentInput = $('#bl-investment-step1');
@@ -3429,9 +3499,15 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const counts = {};
         const duplicateNames = new Set();
         let hasEmpty = false;
+        let hasReserved = false;
 
         groupInputs.forEach(input => {
-            const val = input.value.trim().toLowerCase();
+            const rawVal = input.value.trim();
+            const val = rawVal.toLowerCase();
+            const normalized = val.replace(/[\s_\-]+/g, '');
+            if (normalized === 'adexposed' || normalized === 'control') {
+                hasReserved = true;
+            }
             if (!val) {
                 hasEmpty = true;
             } else {
@@ -3446,24 +3522,30 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         groupInputs.forEach(input => {
             const rawVal = input.value.trim();
             const val = rawVal.toLowerCase();
+            const normalized = val.replace(/[\s_\-]+/g, '');
             const groupItem = input.closest('.group-item');
 
+            const isReserved = normalized === 'adexposed' || normalized === 'control';
             const isDup = val && duplicateNames.has(val);
             const isEmp = !rawVal;
 
             if (groupItem) {
-                if (isDup) {
+                groupItem.classList.remove('duplicate-error', 'empty-error', 'reserved-error');
+                if (isReserved) {
+                    groupItem.classList.add('reserved-error');
+                } else if (isDup) {
                     hasDuplicates = true;
                     groupItem.classList.add('duplicate-error');
-                    groupItem.classList.remove('empty-error');
                 } else if (isEmp && showEmptyErrors) {
                     groupItem.classList.add('empty-error');
-                    groupItem.classList.remove('duplicate-error');
-                } else {
-                    groupItem.classList.remove('duplicate-error', 'empty-error');
                 }
             }
         });
+
+        const reservedWarningEl = $('#groups-reserved-warning');
+        if (reservedWarningEl) {
+            reservedWarningEl.style.display = hasReserved ? 'flex' : 'none';
+        }
 
         const warningEl = $('#groups-duplicate-warning');
         if (warningEl) {
@@ -3482,7 +3564,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             }
         }
 
-        return { hasDuplicates, hasEmpty, isValid: !hasDuplicates && !hasEmpty };
+        return { hasDuplicates, hasEmpty, hasReserved, isValid: !hasDuplicates && !hasEmpty && !hasReserved };
     }
 
     function hasGroupErrors() {
@@ -3540,10 +3622,16 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
     // Add group button
     $('#btn-add-group').addEventListener('click', () => {
-        const emptyInput = [...$$('.group-name-input')].find(i => !i.value.trim());
-        if (emptyInput) {
-            emptyInput.focus();
-            validateGroups(true);
+        const valRes = validateGroups(true);
+        if (!valRes.isValid) {
+            if (valRes.hasReserved) {
+                showToast('No es necesario agregar AdExposed o Control ya que funcionan por defecto', true);
+            }
+            const invalidInput = [...$$('.group-name-input')].find(i => {
+                const norm = i.value.trim().toLowerCase().replace(/[\s_\-]+/g, '');
+                return !i.value.trim() || norm === 'adexposed' || norm === 'control';
+            });
+            if (invalidInput) invalidInput.focus();
             return;
         }
 
@@ -3554,7 +3642,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         groupItem.dataset.groupIndex = index;
         groupItem.innerHTML = `
             <input type="text" class="group-name-input" placeholder="Nombre de audiencia..." value="" size="14">
-            <button type="button" class="btn-remove-group" title="Eliminar audiencia"><span class="material-symbols-outlined" style="font-size:16px;">close</span></button>
+            <button type="button" class="btn-remove-group" title="Eliminar audiencia"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">close</span></button>
         `;
         container.appendChild(groupItem);
         setupGroupItem(groupItem);
@@ -3615,6 +3703,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const client = $('#bl-client-step1') ? $('#bl-client-step1').value.trim() : '';
         const endDate = $('#bl-end-date-step1') ? $('#bl-end-date-step1').value : '';
         const campaign = $('#bl-campaign-name-step1') ? $('#bl-campaign-name-step1').value.trim() : '';
+        const campaignObjective = $('#bl-campaign-objective-step1') ? $('#bl-campaign-objective-step1').value.trim() : '';
         const investment = $('#bl-investment-step1') ? $('#bl-investment-step1').value.trim() : '';
 
         let clickEventSummary = 'Desactivado';
@@ -3671,6 +3760,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const node1SubParts = [];
         node1SubParts.push(client ? escapeSummaryHtml(client) : 'Sin anunciante');
         if (market) node1SubParts.push(escapeSummaryHtml(market));
+        if (campaignObjective) node1SubParts.push(escapeSummaryHtml(campaignObjective));
         node1SubParts.push(formattedInvestment ? formattedInvestment : 'Sin inversión');
         const node1Desc = node1SubParts.join(' · ');
         const node1Meta = formattedDate || 'Paso 1';
@@ -3709,7 +3799,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             node3Meta = `${state.questionCount} preg.`;
         } else if (hasQDuplicates) {
             node3State = 'is-error';
-            node3Meta = `<span style="color:var(--danger-red, #ef4444); font-weight:700; display:inline-flex; align-items:center; gap:2px;"><span class="material-symbols-outlined" style="font-size:14px;">warning</span> Respuestas repetidas</span>`;
+            node3Meta = `<span style="color:var(--danger-red, #ef4444); font-weight:700; display:inline-flex; align-items:center; gap:2px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:14px;">warning</span> Respuestas repetidas</span>`;
         } else if (allQValid) {
             node3State = 'is-completed';
             node3Meta = `${state.questionCount} preg. completas`;
@@ -3734,14 +3824,14 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 qItems.push(`
                     <div class="timeline-subitem is-error" style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
                         <span><strong>P${i}:</strong> ${escapeSummaryHtml(shortText || 'Sin texto')}</span>
-                        <span style="font-weight:700; font-size:10px; color:var(--danger-red, #ef4444); white-space:nowrap; display:inline-flex; align-items:center; gap:2px;"><span class="material-symbols-outlined" style="font-size:12px;">warning</span> Opciones repetidas</span>
+                        <span style="font-weight:700; font-size:10px; color:var(--danger-red, #ef4444); white-space:nowrap; display:inline-flex; align-items:center; gap:2px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:12px;">warning</span> Opciones repetidas</span>
                     </div>
                 `);
             } else if (qd && qd.hasDuplicateQ) {
                 qItems.push(`
                     <div class="timeline-subitem is-error" style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
                         <span><strong>P${i}:</strong> ${escapeSummaryHtml(shortText)}</span>
-                        <span style="font-weight:700; font-size:10px; color:var(--danger-red, #ef4444); white-space:nowrap; display:inline-flex; align-items:center; gap:2px;"><span class="material-symbols-outlined" style="font-size:12px;">warning</span> Pregunta repetida</span>
+                        <span style="font-weight:700; font-size:10px; color:var(--danger-red, #ef4444); white-space:nowrap; display:inline-flex; align-items:center; gap:2px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:12px;">warning</span> Pregunta repetida</span>
                     </div>
                 `);
             } else if (qd && (qd.hasEmptyQ || qd.hasEmptyA || qd.hasFewA)) {
@@ -4183,9 +4273,13 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         if (!investmentStep1) { showToast('Ingresa la inversión / bonificado', true); goToField(1, '#bl-investment-step1'); return; }
         if (!clientName) { showToast('Ingresa el nombre del cliente', true); goToField(1, '#bl-client-step1'); return; }
         if (!profileId || !advertiserId || !siteId) { showToast('Selecciona Profile, Advertiser y Site en la Configuración inicial', true); goToField(1, '#bl-market-step1'); return; }
-        const groupValidation = validateGroups();
+        const groupValidation = validateGroups(true);
         if (!groupValidation.isValid) {
-            showToast(groupValidation.hasEmpty ? 'No se permiten grupos de audiencia con nombres vacíos' : 'No se pueden repetir los nombres de los grupos de audiencia', true);
+            if (groupValidation.hasReserved) {
+                showToast('No es necesario agregar AdExposed o Control ya que funcionan por defecto', true);
+            } else {
+                showToast(groupValidation.hasEmpty ? 'No se permiten grupos de audiencia con nombres vacíos' : 'No se pueden repetir los nombres de los grupos de audiencia', true);
+            }
             goToField(1, 'audiences');
             return;
         }
@@ -4261,6 +4355,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 body: JSON.stringify({
                     market: market,
                     campaign_name: campaignNameStep1,
+                    campaign_objective: $('#bl-campaign-objective-step1') ? $('#bl-campaign-objective-step1').value.trim() : null,
                     question_count: state.questionCount,
                     creative_width: state.selectedSize.width,
                     creative_height: state.selectedSize.height,
@@ -4419,7 +4514,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     if (failedResults.length > 0) {
                         errorHtml += '<div style="margin-top:8px; font-size:12px; opacity:0.85;">';
                         failedResults.forEach(r => {
-                            errorHtml += `<div style="margin-top:4px; display:flex; align-items:center; gap:4px;"><span class="material-symbols-outlined" style="font-size:14px; color:#ef4444;">error</span> <strong>Q${r.question_number}</strong> (${r.creative_name}): ${r.error}</div>`;
+                            errorHtml += `<div style="margin-top:4px; display:flex; align-items:center; gap:4px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:14px; color:#ef4444;">error</span> <strong>Q${r.question_number}</strong> (${r.creative_name}): ${r.error}</div>`;
                         });
                         errorHtml += '</div>';
                     }
@@ -5089,6 +5184,11 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (campEl) campEl.value = data.campaign_name;
         }
 
+        if (data.campaign_objective) {
+            const objEl = $('#bl-campaign-objective-step1');
+            if (objEl) objEl.value = data.campaign_objective;
+        }
+
         if (data.client_name) {
             const clientEl = $('#bl-client-step1');
             if (clientEl) clientEl.value = data.client_name;
@@ -5131,7 +5231,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     groupItem.dataset.groupIndex = idx;
                     groupItem.innerHTML = `
                         <input type="text" class="group-name-input" placeholder="Nombre de audiencia..." value="${escapeSummaryHtml(aud)}" size="14">
-                        <button type="button" class="btn-remove-group" title="Eliminar audiencia"><span class="material-symbols-outlined" style="font-size:16px;">close</span></button>
+                        <button type="button" class="btn-remove-group" title="Eliminar audiencia"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">close</span></button>
                     `;
                     container.appendChild(groupItem);
                     setupGroupItem(groupItem);

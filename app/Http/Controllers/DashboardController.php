@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BrandliftEditLog;
 use App\Models\BrandliftStudy;
+use App\Models\User;
 use App\Services\CampaignManagerService;
 use App\Services\GoogleWorkspaceService;
 use Illuminate\Http\JsonResponse;
@@ -40,29 +42,21 @@ class DashboardController extends Controller
     public function apiList(Request $request): JsonResponse
     {
         $user = auth()->user();
-        $query = BrandliftStudy::with('questions', 'creatives', 'tags', 'editLogs.user');
+        $query = BrandliftStudy::with('questions', 'creatives', 'tags', 'editLogs.user', 'creator');
 
         $activeMarket = session('active_market');
 
-        // Check if user is not admin, restrict by their assigned markets
-        if ($user && ! $user->isAdmin()) {
-            $assignedMarkets = $user->assigned_markets;
-            if (! empty($assignedMarkets)) {
-                $query->whereIn('market', $assignedMarkets);
-            }
-        } elseif ($user && $user->isAdmin() && ! empty($activeMarket)) {
-            // Admin is simulating a specific market
-            $query->where('market', $activeMarket);
-        }
+        // Restrict visibility by role, market, creator, and assigned_users (OOO follow-up)
+        $query->visibleTo($user, $activeMarket);
 
         // Search by campaign name
         if ($search = $request->input('search')) {
             $query->where('campaign_name', 'LIKE', "%{$search}%");
         }
 
-        // Filter by market (only if they are an admin or it matches their assigned markets)
+        // Filter by market (only if they have global access or it matches their assigned markets)
         if ($market = $request->input('market')) {
-            if (! $user || $user->hasMarket($market) || $user->isAdmin()) {
+            if (! $user || $user->hasMarket($market) || $user->hasGlobalAccess()) {
                 $query->where('market', $market);
             }
         }
@@ -81,15 +75,7 @@ class DashboardController extends Controller
         }
 
         // Stats for KPIs (before pagination)
-        $allStudies = BrandliftStudy::query();
-        if ($user && ! $user->isAdmin()) {
-            $assignedMarkets = $user->assigned_markets;
-            if (! empty($assignedMarkets)) {
-                $allStudies->whereIn('market', $assignedMarkets);
-            }
-        } elseif ($user && $user->isAdmin() && ! empty($activeMarket)) {
-            $allStudies->where('market', $activeMarket);
-        }
+        $allStudies = BrandliftStudy::query()->visibleTo($user, $activeMarket);
 
         $stats = [
             'total' => $allStudies->count(),
@@ -121,10 +107,10 @@ class DashboardController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $study = BrandliftStudy::with(['questions', 'creatives', 'tags', 'editLogs.user'])->findOrFail($id);
+        $study = BrandliftStudy::with(['questions', 'creatives', 'tags', 'editLogs.user', 'creator'])->findOrFail($id);
         $user = auth()->user();
 
-        if ($user && ! $user->hasMarket($study->market)) {
+        if ($user && ! $study->canBeAccessedBy($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permisos para ver este Brandlift.',
@@ -137,6 +123,154 @@ class DashboardController extends Controller
     }
 
     /**
+     * API: List users eligible to be assigned in copy (OOO / follow-up) for a study.
+     * - Local users only see active profiles belonging to the study's country/market.
+     * - Admin and Designer roles see all active profiles across all markets.
+     */
+    public function assignableUsers(int $id): JsonResponse
+    {
+        $study = BrandliftStudy::findOrFail($id);
+        $user = auth()->user();
+
+        if ($user && ! $study->canBeAccessedBy($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para gestionar el seguimiento de este Brandlift.',
+            ], 403);
+        }
+
+        $studyMarket = $study->market;
+        $hasGlobal = $user && $user->hasGlobalAccess();
+
+        $allActiveUsers = User::where(function ($q) {
+            $q->where('status', 'active')->orWhereNull('status');
+        })->orderBy('name')->get();
+
+        $eligible = $allActiveUsers->filter(function (User $candidate) use ($study, $studyMarket, $hasGlobal) {
+            // Exclude the original creator since they already own the study
+            if ($study->created_by && (int) $candidate->id === (int) $study->created_by) {
+                return false;
+            }
+
+            // Admin and Designer see all users
+            if ($hasGlobal) {
+                return true;
+            }
+
+            // Country separation for local profiles: only show non-global users assigned to the study's country
+            if ($candidate->hasGlobalAccess()) {
+                return false;
+            }
+
+            return in_array($studyMarket, $candidate->assigned_markets, true);
+        })->sortBy(function (User $candidate) use ($studyMarket) {
+            // Sort users matching the study's market first, then alphabetically
+            $matchesMarket = in_array($studyMarket, $candidate->assigned_markets, true) ? 0 : 1;
+
+            return $matchesMarket.'_'.strtolower($candidate->name);
+        })->values()->map(function (User $candidate) use ($studyMarket) {
+            return [
+                'id' => $candidate->id,
+                'name' => $candidate->name,
+                'email' => $candidate->email,
+                'role' => $candidate->role,
+                'markets' => $candidate->assigned_markets,
+                'matches_study_market' => in_array($studyMarket, $candidate->assigned_markets, true),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'study_id' => $study->id,
+            'campaign_name' => $study->campaign_name,
+            'market' => $study->market,
+            'market_name' => $study->market_name,
+            'created_by' => $study->created_by,
+            'creator_name' => $study->creator_name,
+            'assigned_users' => array_values(array_map('intval', $study->assigned_users ?? [])),
+            'users' => $eligible,
+        ]);
+    }
+
+    /**
+     * API: Save assigned users in copy (OOO / follow-up) for a study.
+     */
+    public function assignUsers(Request $request, int $id): JsonResponse
+    {
+        $study = BrandliftStudy::findOrFail($id);
+        $user = auth()->user();
+
+        if ($user && ! $study->canBeAccessedBy($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para asignar usuarios a este Brandlift.',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'user_ids' => 'nullable|array',
+            'user_ids.*' => 'integer|exists:users,id',
+        ]);
+
+        $requestedIds = array_values(array_unique(array_map('intval', $validated['user_ids'] ?? [])));
+        $hasGlobal = $user && $user->hasGlobalAccess();
+
+        if (! empty($requestedIds)) {
+            $targetUsers = User::whereIn('id', $requestedIds)->get();
+
+            if (! $hasGlobal) {
+                foreach ($targetUsers as $targetUser) {
+                    if (! in_array($study->market, $targetUser->assigned_markets, true)) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "El usuario {$targetUser->name} no pertenece al mercado de este estudio ({$study->market}).",
+                        ], 422);
+                    }
+                }
+            }
+
+            // Exclude creator if accidentally passed
+            if ($study->created_by) {
+                $requestedIds = array_values(array_filter(
+                    $requestedIds,
+                    fn (int $uid) => $uid !== (int) $study->created_by
+                ));
+            }
+        }
+
+        $study->update([
+            'assigned_users' => $requestedIds,
+        ]);
+
+        $assignedNames = User::whereIn('id', $requestedIds)->pluck('name')->all();
+
+        if ($user) {
+            BrandliftEditLog::create([
+                'brandlift_study_id' => $study->id,
+                'user_id' => $user->id,
+                'changes_made' => [
+                    'action' => 'assign_users',
+                    'assigned_user_ids' => $requestedIds,
+                    'assigned_names' => $assignedNames,
+                    'description' => empty($assignedNames)
+                        ? 'Se removieron los usuarios asignados para seguimiento.'
+                        : 'Seguimiento asignado a: '.implode(', ', $assignedNames),
+                ],
+            ]);
+        }
+
+        $study->load(['questions', 'creatives', 'tags', 'editLogs.user', 'creator']);
+
+        return response()->json([
+            'success' => true,
+            'message' => empty($assignedNames)
+                ? 'Lista de seguimiento actualizada (sin usuarios asignados).'
+                : 'Seguimiento compartido con: '.implode(', ', $assignedNames),
+            'study' => $study,
+        ]);
+    }
+
+    /**
      * API: Delete a brandlift study and its associated Google Sheet.
      */
     public function destroy(int $id): JsonResponse
@@ -144,7 +278,7 @@ class DashboardController extends Controller
         $user = auth()->user();
         $study = BrandliftStudy::findOrFail($id);
 
-        if ($user && ! $user->hasMarket($study->market)) {
+        if ($user && ! $study->canBeAccessedBy($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permisos para eliminar este Brandlift.',
@@ -179,6 +313,14 @@ class DashboardController extends Controller
     public function removeClickEvent(int $id, CampaignManagerService $cmService): JsonResponse
     {
         $study = BrandliftStudy::with(['questions', 'creatives'])->findOrFail($id);
+        $user = auth()->user();
+
+        if ($user && ! $study->canBeAccessedBy($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para gestionar los hotspots de este Brandlift.',
+            ], 403);
+        }
 
         $hasCm360Data = $study->cm360_profile_id && $study->cm360_advertiser_id;
         $cm360Errors = [];

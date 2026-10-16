@@ -6,7 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard — historial de brandlifts</title>
     <meta name="description" content="Dashboard de historial de Brandlifts creados para Campaign Manager 360">
-    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}?v={{ filemtime(public_path('css/wpp-design-system.css')) }}">
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
     <style>
         /* ===== PAGE-SPECIFIC VARIABLE ALIASES (backward compat) ===== */
@@ -378,13 +381,13 @@
         }
 
         .floating-tooltip-title {
-            font-weight: 600;
-            color: #fca5a5;
-            margin-bottom: 3px;
-            font-size: 11.5px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+            font-size: 12px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
 
         .row-error-hint {
@@ -438,9 +441,6 @@
             background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
             border-color: rgba(239, 68, 68, 0.25);
-        }
-            color: #fca5a5;
-            border-color: rgba(239, 68, 68, 0.3);
         }
 
         /* ===== PAGINATION ===== */
@@ -1279,8 +1279,8 @@
                         'COL' => 'Colombia (COL)',
                         'ECU' => 'Ecuador (ECU)',
                     ];
-                    $showMarketFilter = !$dashUser || $dashUser->isAdmin() || count($assignedMarkets) > 1;
-                    if ($dashUser && !$dashUser->isAdmin() && !empty($assignedMarkets)) {
+                    $showMarketFilter = !$dashUser || $dashUser->hasGlobalAccess() || count($assignedMarkets) > 1;
+                    if ($dashUser && !$dashUser->hasGlobalAccess() && !empty($assignedMarkets)) {
                         $filterMarketOptions = array_intersect_key($allMarketDefs, array_flip($assignedMarkets));
                     } else {
                         $filterMarketOptions = $allMarketDefs;
@@ -1311,7 +1311,7 @@
                             visual.value = '';
                         }
                     ">
-                    <span class="material-symbols-outlined" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none;">calendar_today</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none;">calendar_today</span>
                 </div>
                 <button type="button" id="btn-clear-filters" class="btn-filter-clear">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1340,7 +1340,7 @@
 
             <!-- Empty state -->
             <div id="empty-state" class="empty-state" style="display:none;">
-                <div class="icon"><span class="material-symbols-outlined" style="font-size: 48px; color: var(--text-muted);">inbox</span></div>
+                <div class="icon"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 48px; color: var(--text-muted);">inbox</span></div>
                 <h3>No hay brandlift creados.</h3>
                 <a href="/brandlift" class="btn-cta">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
@@ -1361,7 +1361,7 @@
         <div class="modal" style="max-width: 560px;">
             <div class="modal-header">
                 <h3>
-                    <span class="material-symbols-outlined" style="font-size: 20px; color: var(--wpp-navy); font-style: normal;">send</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px; color: var(--wpp-navy); font-style: normal;">send</span>
                     Enviar tags por correo
                 </h3>
                 <button class="modal-close" onclick="closeSendTagsModal()">
@@ -1381,7 +1381,7 @@
                     <!-- Google Sheet info block -->
                     <div id="send-tags-sheet-box" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span class="material-symbols-outlined" style="font-size: 24px; color: #16a34a; flex-shrink: 0;">description</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 24px; color: #16a34a; flex-shrink: 0;">description</span>
                             <div style="font-size: 12.5px;">
                                 <strong style="color: #166534; display: block; font-size: 13px;">Hoja de respuestas (Google Sheets)</strong>
                                 <span style="color: #15803d; line-height: 1.4; display: block;" id="send-tags-sheet-desc">El enlace directo a la hoja se enviará automáticamente en el correo.</span>
@@ -1409,7 +1409,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     </div>
 
                     <div style="background: var(--bg-secondary); border: 1px dashed var(--border-input); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <span class="material-symbols-outlined" style="font-size: 24px; color: #16a34a;">table_chart</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 24px; color: #16a34a;">table_chart</span>
                         <div style="font-size: 12px;">
                             <strong style="color: var(--text-primary);">Archivo adjunto automático:</strong>
                             <div style="color: var(--text-muted);" id="send-tags-attachment-name">Tags_BrandLift.xls (Formato Excel)</div>
@@ -1418,14 +1418,14 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
                     <!-- Inline Error Alert in Modal -->
                     <div id="send-tags-error-alert" style="display: none; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; color: #b91c1c; font-size: 12.5px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">error</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">error</span>
                         <span id="send-tags-error-text"></span>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
                         <button type="button" id="btn-cancel-send-tags" class="btn-cancel" onclick="closeSendTagsModal()" style="padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); background: transparent; cursor: pointer; font-size: 13px; font-weight: 600;">Cancelar</button>
                         <button type="button" id="btn-submit-send-tags" onclick="submitSendTags()" style="padding: 10px 20px; border-radius: var(--radius-sm); border: none; background: var(--wpp-navy); color: var(--wpp-lime); cursor: pointer; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
-                            <span class="material-symbols-outlined" style="font-size: 16px; font-style: normal;">send</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px; font-style: normal;">send</span>
                             <span>Enviar tags</span>
                         </button>
                     </div>
@@ -1434,7 +1434,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 <!-- View 2: Success Notification View inside same modal -->
                 <div id="send-tags-success-view" style="display: none; text-align: center; padding: 16px 8px 8px;">
                     <div style="width: 56px; height: 56px; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-                        <span class="material-symbols-outlined" style="font-size: 32px;">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 32px;">check_circle</span>
                     </div>
                     <h3 style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin: 0 0 8px 0;">¡Tags y enlace enviados exitosamente!</h3>
                     <p style="font-size: 13.5px; color: var(--text-secondary); margin: 0 0 16px 0; line-height: 1.5;">
@@ -1475,7 +1475,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         <div class="modal" style="max-width: 640px;">
             <div class="modal-header">
                 <h3 style="display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined" style="font-size: 22px; color: #d97706;">build_circle</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 22px; color: #d97706;">build_circle</span>
                     <span>Diagnóstico y resolución</span>
                 </h3>
                 <button class="modal-close" onclick="closeResolutionModal()">
@@ -1483,6 +1483,24 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 </button>
             </div>
             <div class="modal-body" id="resolution-modal-body" style="padding: 24px;">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Users / OOO Follow-up Modal -->
+    <div class="modal-overlay" id="assign-users-modal">
+        <div class="modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 21px; color: var(--wpp-navy);">person_add</span>
+                    <span>Seguimiento de campaña</span>
+                </h3>
+                <button class="modal-close" onclick="closeAssignModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="assign-users-modal-body" style="padding: 22px 24px;">
                 <!-- Dynamic content -->
             </div>
         </div>
@@ -1525,11 +1543,24 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
         const text = target.getAttribute('data-tooltip');
         const title = target.getAttribute('data-tooltip-title');
+        const icon = target.getAttribute('data-tooltip-icon');
         if (!text) return;
 
-        floatingTooltip.innerHTML = title
-            ? `<div class="floating-tooltip-title"><span class="material-symbols-outlined" style="font-size:14px;color:#ef4444;">error</span><span>${escapeHtml(title)}</span></div><div>${escapeHtml(text)}</div>`
-            : `<div>${escapeHtml(text)}</div>`;
+        let titleHtml = '';
+        if (title) {
+            let iconHtml = '';
+            if (icon) {
+                const iconColor = target.classList.contains('danger')
+                    ? '#ef4444'
+                    : (target.classList.contains('warning') ? '#f59e0b' : 'var(--wpp-lime, #b0f467)');
+                iconHtml = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:14px;color:${iconColor};">${escapeHtml(icon)}</span>`;
+            } else if (target.classList.contains('error') || target.closest('.row-error-hint, .status-indicator.error')) {
+                iconHtml = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:14px;color:#ef4444;">error</span>`;
+            }
+            titleHtml = `<div class="floating-tooltip-title">${iconHtml}<span>${escapeHtml(title)}</span></div>`;
+        }
+
+        floatingTooltip.innerHTML = `${titleHtml}<div style="font-size:11.5px;color:#cbd5e1;line-height:1.45;">${escapeHtml(text)}</div>`;
 
         floatingTooltip.style.display = 'block';
         floatingTooltip.style.visibility = 'hidden';
@@ -1537,7 +1568,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const rect = target.getBoundingClientRect();
         const tipRect = floatingTooltip.getBoundingClientRect();
 
-        let left = rect.left;
+        let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
         if (left + tipRect.width > window.innerWidth - 16) {
             left = window.innerWidth - tipRect.width - 16;
         }
@@ -1718,13 +1749,13 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
             const sheetUrl = study.sheet_id ? `https://docs.google.com/spreadsheets/d/${study.sheet_id}` : null;
             const sheetCell = sheetUrl
-                ? `<a href="${sheetUrl}" target="_blank" rel="noopener noreferrer" class="table-link table-link-sheet" title="Abrir Google Sheet de respuestas" onclick="event.stopPropagation()">
-                    <span class="material-symbols-outlined link-icon">table_chart</span>
+                ? `<a href="${sheetUrl}" target="_blank" rel="noopener noreferrer" class="table-link table-link-sheet" data-tooltip="Abrir la hoja de Google Sheets donde se reciben y almacenan las respuestas del Brandlift." data-tooltip-title="Google Sheets" data-tooltip-icon="table_chart" onclick="event.stopPropagation()">
+                    <span translate="no" class="material-symbols-outlined notranslate link-icon">table_chart</span>
                     <span>Google Sheet</span>
-                    <span class="material-symbols-outlined ext-icon">open_in_new</span>
+                    <span translate="no" class="material-symbols-outlined notranslate ext-icon">open_in_new</span>
                    </a>`
                 : (hasError
-                    ? `<span style="color:#ef4444;font-size:12px;font-weight:500;cursor:pointer;" onclick="event.stopPropagation(); openResolutionModal(${study.id})" data-tooltip="Haz clic para vincular hoja de cálculo" data-tooltip-title="Hoja pendiente">No disponible</span>`
+                    ? `<span style="color:#ef4444;font-size:12px;font-weight:500;cursor:pointer;" onclick="event.stopPropagation(); openResolutionModal(${study.id})" data-tooltip="Haz clic para diagnosticar o vincular una hoja de cálculo" data-tooltip-title="Hoja pendiente">No disponible</span>`
                     : `<span style="color:var(--text-muted);font-size:12px;">—</span>`);
 
             const accountId = study.cm360_account_id || '732535';
@@ -1733,9 +1764,9 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 : null);
 
             const cm360Cell = cm360Url
-                ? `<a href="${cm360Url}" target="_blank" rel="noopener noreferrer" class="table-link table-link-cm360" title="Abrir campaña ${study.cm360_campaign_id} en Google Campaign Manager 360" data-cm360-url="${cm360Url.replace(/"/g, '&quot;')}" onclick="event.stopPropagation(); openCm360Campaign(this); return false;">
+                ? `<a href="${cm360Url}" target="_blank" rel="noopener noreferrer" class="table-link table-link-cm360" data-tooltip="Abrir la campaña en Google Campaign Manager 360 para verificar el tráfico y los creativos." data-tooltip-title="Campaign Manager 360" data-tooltip-icon="open_in_new" data-cm360-url="${cm360Url.replace(/"/g, '&quot;')}" onclick="event.stopPropagation(); openCm360Campaign(this); return false;">
                     <span>Ver campaña</span>
-                    <span class="material-symbols-outlined ext-icon">open_in_new</span>
+                    <span translate="no" class="material-symbols-outlined notranslate ext-icon">open_in_new</span>
                    </a>`
                 : `<span style="color:var(--text-muted);font-size:12px;">—</span>`;
 
@@ -1750,9 +1781,18 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
             const errorAlertHtml = hasError
                 ? `<div class="row-error-hint" onclick="event.stopPropagation(); openResolutionModal(${study.id})" data-tooltip="Haz clic para diagnosticar y resolver" data-tooltip-title="${escapeAttr(errorInfo.short)}" style="cursor: pointer;">
-                    <span class="material-symbols-outlined error-icon">build</span>
+                    <span translate="no" class="material-symbols-outlined notranslate error-icon">build</span>
                     <span>${escapeHtml(errorInfo.short)}</span>
                     <span style="font-size: 10px; opacity: 0.75; margin-left: 2px;">• Resolver</span>
+                   </div>`
+                : '';
+
+            const assignedList = Array.isArray(study.assigned_users_info) ? study.assigned_users_info : [];
+            const assignedNamesStr = assignedList.map(u => u.name).join(', ');
+            const assignedBadgeHtml = assignedList.length > 0
+                ? `<div style="margin-top: 5px; display: inline-flex; align-items: center; gap: 5px; background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.25); color: #0369a1; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; cursor: pointer;" onclick="event.stopPropagation(); openAssignModal(${study.id})" title="En seguimiento: ${escapeAttr(assignedNamesStr)}">
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 13px;">group</span>
+                    <span>Seguimiento: ${escapeHtml(assignedNamesStr)}</span>
                    </div>`
                 : '';
 
@@ -1761,6 +1801,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     <td>
                         <div class="td-campaign" title="${escapeHtml(study.campaign_name)}">${escapeHtml(study.campaign_name)}</div>
                         ${advertiserCountryHtml}
+                        ${assignedBadgeHtml}
                         ${errorAlertHtml}
                     </td>
                     <td>${endDateStr}</td>
@@ -1770,21 +1811,24 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     <td>
                         <div class="actions-cell" onclick="event.stopPropagation()">
                             ${hasError ? `
-                            <button type="button" class="btn-action warning" title="Resolver problema del brandlift" onclick="openResolutionModal(${study.id})" style="color: #c2410c; border-color: rgba(234, 88, 12, 0.3); background: rgba(254, 243, 199, 0.6);">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">build</span>
+                            <button type="button" class="btn-action warning" data-tooltip="Diagnosticar errores de sincronización CM360 o vincular la hoja de Google Sheets." data-tooltip-title="Resolver problema" data-tooltip-icon="build" onclick="openResolutionModal(${study.id})" style="color: #c2410c; border-color: rgba(234, 88, 12, 0.3); background: rgba(254, 243, 199, 0.6);">
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">build</span>
                             </button>
                             ` : ''}
-                            <button type="button" class="btn-action" title="Enviar tags por correo" onclick="openSendTagsModal(${study.id})">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">mail</span>
+                            <button type="button" class="btn-action" data-tooltip="Asignar acceso a otro usuario del mercado para que pueda ver el Brandlift en su dashboard y gestionar hotspots pendientes." data-tooltip-title="Seguimiento de campaña" data-tooltip-icon="person_add" onclick="openAssignModal(${study.id})" style="${assignedList.length > 0 ? 'border-color: rgba(14, 165, 233, 0.45); background: rgba(14, 165, 233, 0.1); color: #0284c7;' : ''}">
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">person_add</span>
                             </button>
-                            <a href="/preview/${study.liquid_id || study.id}" target="_blank" class="btn-action" title="Vista previa pública (sitio simulado)">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">visibility</span>
+                            <button type="button" class="btn-action" data-tooltip="Enviar por correo electrónico el archivo Excel con los tags de tráfico y el enlace a la hoja de Google Sheets." data-tooltip-title="Enviar tags por correo" data-tooltip-icon="mail" onclick="openSendTagsModal(${study.id})">
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">mail</span>
+                            </button>
+                            <a href="/preview/${study.liquid_id || study.id}" target="_blank" class="btn-action" data-tooltip="Abrir el simulador interactivo de sitio web para previsualizar y probar los anuncios en vivo." data-tooltip-title="Vista previa pública" data-tooltip-icon="visibility">
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">visibility</span>
                             </a>
-                            <a href="/brandlift?edit_id=${study.liquid_id || study.id}" class="btn-action" title="Editar brandlift">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+                            <a href="/brandlift?edit_id=${study.liquid_id || study.id}" class="btn-action" data-tooltip="Abrir el configurador para modificar preguntas, respuestas, creativos o segmentación." data-tooltip-title="Editar brandlift" data-tooltip-icon="edit">
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">edit</span>
                             </a>
-                            <button type="button" class="btn-action danger" title="Eliminar brandlift y su Google Sheet" onclick="deleteStudy(${study.id})">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                            <button type="button" class="btn-action danger" data-tooltip="Eliminar permanentemente este Brandlift y su hoja de Google Sheets vinculada." data-tooltip-title="Eliminar brandlift" data-tooltip-icon="delete" onclick="deleteStudy(${study.id})">
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">delete</span>
                             </button>
                         </div>
                     </td>
@@ -1875,7 +1919,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const modal = $('#history-modal');
         const body = $('#history-modal-body');
 
-        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Cargando historial...</p></div>';
+        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Cargando historial...</p></div>';
         modal.classList.add('active');
 
         try {
@@ -1920,7 +1964,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             body.innerHTML = html;
         } catch (e) {
             console.error('Error in openHistory:', e);
-            body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="material-symbols-outlined">error</span> Error al cargar el historial</div>';
+            body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;display:flex;align-items:center;justify-content:center;gap:6px;"><span translate="no" class="material-symbols-outlined notranslate">error</span> Error al cargar el historial</div>';
         }
     }
 
@@ -1940,7 +1984,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const modal = $('#detail-modal');
         const body = $('#modal-body');
 
-        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Cargando información guardada...</p></div>';
+        body.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Cargando información guardada...</p></div>';
         modal.classList.add('active');
 
         try {
@@ -1955,7 +1999,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (errorInfo) {
                 errorAlertHtmlTop = `
                     <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px;">
-                        <span class="material-symbols-outlined" style="color: #ef4444; font-size: 20px; flex-shrink: 0; margin-top: 1px;">error</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="color: #ef4444; font-size: 20px; flex-shrink: 0; margin-top: 1px;">error</span>
                         <div style="font-size: 12.5px;">
                             <strong style="color: #991b1b; display: block; font-size: 13px;">${escapeHtml(errorInfo.short)}:</strong>
                             <span style="color: #b91c1c; line-height: 1.4; display: block; margin-top: 2px;">${escapeHtml(errorInfo.full)}</span>
@@ -2013,9 +2057,9 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 sheetHtml = `
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
                         <a href="https://docs.google.com/spreadsheets/d/${escapeAttr(s.sheet_id)}" target="_blank" rel="noopener noreferrer" style="color:#15803d;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:12.5px;">
-                            <span class="material-symbols-outlined" style="font-size:16px;color:#16a34a;">table_chart</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;color:#16a34a;">table_chart</span>
                             <span>Google Sheet (Respuestas)</span>
-                            <span class="material-symbols-outlined" style="font-size:13px;opacity:0.6;">open_in_new</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size:13px;opacity:0.6;">open_in_new</span>
                         </a>
                         <span style="font-size:11px;color:var(--text-muted);font-family:monospace;" title="${escapeAttr(s.sheet_id)}">${escapeHtml(shortSheetId)}</span>
                     </div>
@@ -2116,7 +2160,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     <div class="detail-preview-panel">
                         <div class="detail-preview-header">
                             <h4>
-                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--wpp-navy);">visibility</span>
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px; color: var(--wpp-navy);">visibility</span>
                                 Vista previa
                             </h4>
                             <div class="preview-actions">
@@ -2140,7 +2184,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     <div class="detail-preview-panel">
                         <div class="detail-preview-header">
                             <h4>
-                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--wpp-navy);">visibility</span>
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px; color: var(--wpp-navy);">visibility</span>
                                 Vista previa
                             </h4>
                             <a href="${previewUrl}" target="_blank" class="btn-detail-action" style="font-size: 11px; padding: 4px 9px; background: transparent; border: 1px solid var(--border-input); color: var(--text-secondary);">
@@ -2156,11 +2200,21 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             }
 
             const editBtnHtml = `
-                <a href="/brandlift?edit_id=${s.liquid_id || s.id}" class="btn-detail-action" style="background: var(--wpp-navy); color: #ffffff; border: none; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px; border-radius: var(--radius-md);">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
-                    Editar
-                </a>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <a href="/brandlift?edit_id=${s.liquid_id || s.id}" class="btn-detail-action" data-tooltip="Abrir el configurador para modificar preguntas, respuestas, creativos o segmentación." data-tooltip-title="Editar brandlift" data-tooltip-icon="edit" style="background: var(--wpp-navy); color: #ffffff; border: none; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px; border-radius: var(--radius-md);">
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">edit</span>
+                        Editar
+                    </a>
+                    <button type="button" onclick="openAssignModal(${s.id})" class="btn-detail-action" data-tooltip="Asignar acceso a otro usuario del mercado para que pueda ver el Brandlift en su dashboard y gestionar hotspots pendientes." data-tooltip-title="Seguimiento de campaña" data-tooltip-icon="person_add" style="background: rgba(14, 165, 233, 0.1); color: #0369a1; border: 1px solid rgba(14, 165, 233, 0.3); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--radius-md); font-size: 12.5px;">
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">person_add</span>
+                        Seguimiento de campaña
+                    </button>
+                </div>
             `;
+
+            const assignedUsersDetailHtml = (Array.isArray(s.assigned_users_info) && s.assigned_users_info.length > 0)
+                ? `<div class="pill-list">${s.assigned_users_info.map(u => `<span class="pill-tag" style="background:rgba(14,165,233,0.1);color:#0369a1;border:1px solid rgba(14,165,233,0.25);" title="${escapeAttr(u.email || '')}">${escapeHtml(u.name)}</span>`).join('')}</div>`
+                : `<span style="color:var(--text-muted);font-size:12px;">Sin personas asignadas</span>`;
 
             // Audit Logs History Timeline
             let auditLogHtml = '';
@@ -2175,6 +2229,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     let actionBadge = `<span style="background:rgba(3,105,161,0.12);color:#0369a1;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Modificación</span>`;
                     if (action === 'created') actionBadge = `<span style="background:rgba(22,163,74,0.12);color:#15803d;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Creación</span>`;
                     if (action === 'send_tags') actionBadge = `<span style="background:rgba(217,119,6,0.12);color:#b45309;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Tags enviados</span>`;
+                    if (action === 'assign_users') actionBadge = `<span style="background:rgba(14,165,233,0.14);color:#0284c7;font-size:10.5px;padding:2px 6px;border-radius:4px;font-weight:600;">Seguimiento</span>`;
 
                     return `
                         <div style="padding: 8px 12px; background: var(--bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--border-input); font-size: 12px;">
@@ -2193,7 +2248,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 auditLogHtml = `
                     <div class="detail-questions-section" style="margin-top: 16px;">
                         <h4 class="detail-section-title">
-                            <span class="material-symbols-outlined" style="font-size: 16px;">history</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">history</span>
                             Historial y log de auditoría (${s.edit_logs.length})
                         </h4>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -2236,6 +2291,18 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                                     <span class="meta-val">${createdDateStr} <span style="color:var(--text-muted);font-size:11px;">(${createdTimeStr})</span></span>
                                 </div>
                                 <div class="detail-meta-cell">
+                                    <span class="meta-lbl">Objetivo de campaña</span>
+                                    <span class="meta-val">${escapeHtml(s.campaign_objective || '—')}</span>
+                                </div>
+                                <div class="detail-meta-cell">
+                                    <span class="meta-lbl">Responsable</span>
+                                    <span class="meta-val">${escapeHtml(s.creator_name || 'Equipo del mercado')}</span>
+                                </div>
+                                <div class="detail-meta-cell">
+                                    <span class="meta-lbl">En seguimiento</span>
+                                    <div class="meta-val">${assignedUsersDetailHtml}</div>
+                                </div>
+                                <div class="detail-meta-cell">
                                     <span class="meta-lbl">DSPs / Plataformas</span>
                                     <div class="meta-val">${dpsHtml}</div>
                                 </div>
@@ -2269,7 +2336,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             `;
         } catch (e) {
             console.error('Error in openDetail:', e);
-            body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;display:flex;align-items:center;justify-content:center;gap:6px;"><span class="material-symbols-outlined">error</span> Error al cargar los detalles</div>';
+            body.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;display:flex;align-items:center;justify-content:center;gap:6px;"><span translate="no" class="material-symbols-outlined notranslate">error</span> Error al cargar los detalles</div>';
         }
     }
 
@@ -2281,6 +2348,262 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
     $('#detail-modal').addEventListener('click', (e) => {
         if (e.target === $('#detail-modal')) closeModal();
     });
+
+    // ===== ASSIGN USERS / OOO FOLLOW-UP MODAL =====
+    window.assignModalState = {
+        studyId: null,
+        market: '',
+        marketName: '',
+        users: [],
+        selectedIds: new Set()
+    };
+
+    function closeAssignModal() {
+        $('#assign-users-modal')?.classList.remove('active');
+    }
+
+    $('#assign-users-modal')?.addEventListener('click', (e) => {
+        if (e.target === $('#assign-users-modal')) closeAssignModal();
+    });
+
+    async function openAssignModal(studyId) {
+        const modal = $('#assign-users-modal');
+        const body = $('#assign-users-modal-body');
+        if (!modal || !body) return;
+
+        body.innerHTML = `
+            <div style="text-align:center;padding:36px 20px;">
+                <span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px; animation: spin 1.2s linear infinite; color: var(--wpp-navy);">progress_activity</span>
+                <p style="color:var(--text-muted);font-size:13px;margin-top:10px;">Cargando perfiles disponibles del país...</p>
+            </div>
+        `;
+        modal.classList.add('active');
+
+        try {
+            const res = await fetch(`/api/brandlift/history/${studyId}/assignable-users`);
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                body.innerHTML = `
+                    <div style="text-align:center;padding:30px;color:#ef4444;">
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px;">error</span>
+                        <p style="margin-top:8px;font-size:13px;">${escapeHtml(data.message || 'No se pudieron cargar los usuarios disponibles.')}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            window.assignModalState = {
+                studyId: data.study_id,
+                campaignName: data.campaign_name,
+                market: data.market,
+                marketName: data.market_name || MARKET_NAMES[data.market] || data.market,
+                creatorName: data.creator_name,
+                users: Array.isArray(data.users) ? data.users : [],
+                selectedIds: new Set((data.assigned_users || []).map(id => Number(id)))
+            };
+
+            renderAssignModalContent();
+        } catch (err) {
+            console.error('Error loading assignable users:', err);
+            body.innerHTML = `
+                <div style="text-align:center;padding:30px;color:#ef4444;">
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px;">error</span>
+                    <p style="margin-top:8px;font-size:13px;">Error de conexión al consultar perfiles disponibles.</p>
+                </div>
+            `;
+        }
+    }
+
+    function renderAssignModalContent() {
+        const body = $('#assign-users-modal-body');
+        const state = window.assignModalState;
+        if (!body || !state) return;
+
+        body.innerHTML = `
+            <div style="background: rgba(14, 165, 233, 0.07); border: 1px solid rgba(14, 165, 233, 0.22); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px;">
+                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px; color: #0284c7; flex-shrink: 0; margin-top: 1px;">group_add</span>
+                <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">
+                    <strong style="color: var(--text-primary); display: block; margin-bottom: 2px;">Seguimiento de campaña</strong>
+                    Asigna acceso a otro usuario para que pueda visualizar este Brandlift desde su dashboard, dar seguimiento y gestionar los hotspots pendientes.
+                </div>
+            </div>
+
+            <div style="background: var(--bg-secondary); border: 1px solid var(--border-input); border-radius: var(--radius-md); padding: 11px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Campaña</div>
+                    <div style="font-size: 13.5px; font-weight: 700; color: var(--wpp-navy); word-break: break-all;">${escapeHtml(state.campaignName)}</div>
+                    ${state.creatorName ? `<div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Responsable: <strong style="color: var(--text-secondary);">${escapeHtml(state.creatorName)}</strong></div>` : ''}
+                </div>
+                <span style="background: var(--wpp-navy); color: var(--wpp-lime); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; white-space: nowrap;">
+                    ${escapeHtml(state.marketName)} (${escapeHtml(state.market)})
+                </span>
+            </div>
+
+            <div style="margin-bottom: 10px; position: relative;">
+                <input type="text" id="assign-users-search" class="filter-input" placeholder="Buscar perfil por nombre o correo..." oninput="filterAssignUsersList(this.value)" style="width: 100%; font-size: 12.5px; padding: 8px 12px 8px 34px; border-radius: var(--radius-sm); box-sizing: border-box;">
+                <span translate="no" class="material-symbols-outlined notranslate" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 17px; color: var(--text-muted); pointer-events: none;">search</span>
+            </div>
+
+            <div id="assign-users-list" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-input); border-radius: var(--radius-md); padding: 6px; background: var(--bg-card); margin-bottom: 16px; display: flex; flex-direction: column; gap: 4px;">
+            </div>
+
+            <div id="assign-users-feedback"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                <span id="assign-users-counter" style="font-size: 12px; color: var(--text-muted); font-weight: 600;"></span>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" onclick="closeAssignModal()" style="padding: 9px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); background: transparent; color: var(--text-secondary); font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                        Cancelar
+                    </button>
+                    <button type="button" id="btn-save-assign-users" onclick="submitAssignUsers()" style="padding: 9px 18px; border-radius: var(--radius-sm); border: none; background: var(--wpp-navy); color: var(--wpp-lime); font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">check_circle</span>
+                        <span>Guardar seguimiento</span>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        filterAssignUsersList('');
+    }
+
+    function filterAssignUsersList(query = '') {
+        const listEl = $('#assign-users-list');
+        const counterEl = $('#assign-users-counter');
+        const state = window.assignModalState;
+        if (!listEl || !state) return;
+
+        const q = (query || '').trim().toLowerCase();
+        const filtered = state.users.filter(u => {
+            if (!q) return true;
+            return (u.name && u.name.toLowerCase().includes(q)) || (u.email && u.email.toLowerCase().includes(q));
+        });
+
+        if (counterEl) {
+            const count = state.selectedIds.size;
+            counterEl.textContent = count === 0
+                ? 'Ningún usuario seleccionado'
+                : `${count} usuario${count === 1 ? '' : 's'} seleccionado${count === 1 ? '' : 's'}`;
+        }
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = `
+                <div style="text-align: center; padding: 24px 12px; color: var(--text-muted); font-size: 12.5px;">
+                    No se encontraron perfiles disponibles para ${escapeHtml(state.marketName)} (${escapeHtml(state.market)}).
+                </div>
+            `;
+            return;
+        }
+
+        listEl.innerHTML = filtered.map(u => {
+            const checked = state.selectedIds.has(Number(u.id));
+            const roleLabel = (u.role === 'admin') ? 'Admin' : ((u.role === 'diseñador' || u.role === 'disenador') ? 'Diseñador' : 'Local');
+            const marketsText = Array.isArray(u.markets) && u.markets.length > 0 ? u.markets.join(', ') : 'Global';
+
+            return `
+                <label onclick="toggleAssignUserSelection(${u.id}, event)" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 11px; border-radius: var(--radius-sm); border: 1px solid ${checked ? 'rgba(14, 165, 233, 0.45)' : 'transparent'}; background: ${checked ? 'rgba(14, 165, 233, 0.08)' : 'var(--bg-secondary)'}; cursor: pointer; transition: all 0.15s ease;">
+                    <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+                        <input type="checkbox" ${checked ? 'checked' : ''} style="width: 16px; height: 16px; accent-color: var(--wpp-navy); cursor: pointer; pointer-events: none;">
+                        <div style="min-width: 0;">
+                            <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${escapeHtml(u.name)}
+                            </div>
+                            <div style="font-size: 11.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${escapeHtml(u.email)}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
+                        <span style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: rgba(0, 0, 80, 0.07); color: var(--wpp-navy);">
+                            ${escapeHtml(marketsText)}
+                        </span>
+                        <span style="font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(100, 116, 139, 0.12); color: var(--text-secondary);">
+                            ${escapeHtml(roleLabel)}
+                        </span>
+                    </div>
+                </label>
+            `;
+        }).join('');
+    }
+
+    function toggleAssignUserSelection(userId, event) {
+        if (event) event.preventDefault();
+        const state = window.assignModalState;
+        if (!state) return;
+
+        const idNum = Number(userId);
+        if (state.selectedIds.has(idNum)) {
+            state.selectedIds.delete(idNum);
+        } else {
+            state.selectedIds.add(idNum);
+        }
+
+        const searchVal = $('#assign-users-search')?.value || '';
+        filterAssignUsersList(searchVal);
+    }
+
+    async function submitAssignUsers() {
+        const state = window.assignModalState;
+        if (!state || !state.studyId) return;
+
+        const btn = $('#btn-save-assign-users');
+        const feedback = $('#assign-users-feedback');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px; animation: spin 1s linear infinite;">progress_activity</span><span>Guardando...</span>`;
+        }
+        if (feedback) feedback.innerHTML = '';
+
+        try {
+            const res = await fetch(`/api/brandlift/history/${state.studyId}/assign-users`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    user_ids: Array.from(state.selectedIds)
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                showToast(data.message || 'Seguimiento actualizado correctamente');
+                closeAssignModal();
+                fetchHistory(currentPage);
+                if ($('#detail-modal')?.classList.contains('active') && window.currentDetailStudy?.id == state.studyId) {
+                    openDetail(state.studyId);
+                }
+            } else {
+                if (feedback) {
+                    feedback.innerHTML = `
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 9px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+                            ${escapeHtml(data.message || 'Error al guardar la asignación.')}
+                        </div>
+                    `;
+                }
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">check_circle</span><span>Guardar seguimiento</span>`;
+                }
+            }
+        } catch (err) {
+            console.error('Error saving assigned users:', err);
+            if (feedback) {
+                feedback.innerHTML = `
+                    <div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 9px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+                        Error de conexión al guardar la asignación.
+                    </div>
+                `;
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">check_circle</span><span>Guardar seguimiento</span>`;
+            }
+        }
+    }
 
     // ===== RESOLUTION MODAL =====
     function closeResolutionModal() {
@@ -2298,7 +2621,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         body.innerHTML = `
             <div style="text-align:center;padding:40px;">
                 <div style="font-size:24px;margin-bottom:12px;">
-                    <span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span>
                 </div>
                 <p style="color:var(--text-muted);font-size:13px;">Analizando estado del brandlift...</p>
             </div>
@@ -2321,21 +2644,21 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 resolutionActionHtml = `
                     <div style="background: var(--bg-card); border: 1px solid var(--border-input); border-radius: var(--radius-md); padding: 18px; margin-top: 14px;">
                         <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="color: #16a34a; font-size: 18px;">table_chart</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="color: #16a34a; font-size: 18px;">table_chart</span>
                             Opción 1: Generar hoja de cálculo automática
                         </h4>
                         <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
                             Crea una nueva hoja de cálculo en Google Drive en la carpeta de <strong>${escapeHtml(marketName)}</strong> basada en la plantilla estándar de respuestas.
                         </p>
                         <button type="button" id="btn-resolve-sheet" onclick="executeResolveSheet(${s.id})" style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="font-size: 15px;">add</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 15px;">add</span>
                             <span>Generar Google Sheet ahora</span>
                         </button>
 
                         <div style="margin: 18px 0 14px; border-top: 1px dashed var(--border-input);"></div>
 
                         <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="color: #0284c7; font-size: 18px;">link</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="color: #0284c7; font-size: 18px;">link</span>
                             Opción 2: Vincular hoja existente
                         </h4>
                         <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
@@ -2354,7 +2677,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 resolutionActionHtml = `
                     <div style="background: var(--bg-card); border: 1px solid var(--border-input); border-radius: var(--radius-md); padding: 18px; margin-top: 14px;">
                         <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="color: #0369a1; font-size: 18px;">sync</span>
+                            <span translate="no" class="material-symbols-outlined notranslate" style="color: #0369a1; font-size: 18px;">sync</span>
                             Sincronización con Google Campaign Manager 360
                         </h4>
                         <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
@@ -2378,12 +2701,12 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
                             <button type="button" id="btn-resolve-sync" onclick="executeResolveSync(${s.id})" style="background: var(--wpp-navy); color: #ffffff; border: none; padding: 9px 18px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span>
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">cloud_upload</span>
                                 <span>Reintentar sincronización ahora</span>
                             </button>
 
                             <a href="/brandlift?edit_id=${s.liquid_id || s.id}" class="btn-detail-action" style="font-size: 12px; color: var(--text-secondary); text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                <span class="material-symbols-outlined" style="font-size: 15px;">tune</span>
+                                <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 15px;">tune</span>
                                 <span>Abrir configurador completo</span>
                             </a>
                         </div>
@@ -2411,7 +2734,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 <!-- Diagnostic Explanation -->
                 <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;">
                     <div style="display: flex; align-items: flex-start; gap: 8px;">
-                        <span class="material-symbols-outlined" style="color: #d97706; font-size: 18px; flex-shrink: 0; margin-top: 1px;">info</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="color: #d97706; font-size: 18px; flex-shrink: 0; margin-top: 1px;">info</span>
                         <div style="font-size: 12px; color: #92400e; line-height: 1.45;">
                             <strong style="display: block; font-size: 12.5px; margin-bottom: 2px; color: #78350f;">Diagnóstico:</strong>
                             ${escapeHtml(errorInfo.full)}
@@ -2434,7 +2757,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             console.error('Error in openResolutionModal:', e);
             body.innerHTML = `
                 <div style="text-align:center;padding:30px;color:#ef4444;">
-                    <span class="material-symbols-outlined" style="font-size:32px;">error</span>
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px;">error</span>
                     <p style="margin-top:8px;">No se pudo cargar la información para resolución.</p>
                 </div>
             `;
@@ -2458,7 +2781,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         }
 
         btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; animation: spin 1s linear infinite;">progress_activity</span> Sincronizando con CM360...`;
+        btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px; animation: spin 1s linear infinite;">progress_activity</span> Sincronizando con CM360...`;
         feedback.innerHTML = '';
 
         try {
@@ -2480,11 +2803,11 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (data.success) {
                 feedback.innerHTML = `
                     <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <span class="material-symbols-outlined" style="color: #16a34a;">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="color: #16a34a;">check_circle</span>
                         <span>${escapeHtml(data.message)}</span>
                     </div>
                 `;
-                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">check</span> Sincronizado`;
+                btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">check</span> Sincronizado`;
                 showToast('¡Brandlift sincronizado exitosamente con CM360!');
                 
                 fetchHistory(currentPage);
@@ -2500,7 +2823,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     </div>
                 `;
                 btn.disabled = false;
-                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">cloud_upload</span> Reintentar de nuevo`;
+                btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">cloud_upload</span> Reintentar de nuevo`;
             }
         } catch (e) {
             console.error(e);
@@ -2510,7 +2833,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 </div>
             `;
             btn.disabled = false;
-            btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">cloud_upload</span> Reintentar sincronización`;
+            btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">cloud_upload</span> Reintentar sincronización`;
         }
     }
 
@@ -2519,7 +2842,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const feedback = document.getElementById('res-feedback-slot');
 
         btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; animation: spin 1s linear infinite;">progress_activity</span> Creando Google Sheet...`;
+        btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px; animation: spin 1s linear infinite;">progress_activity</span> Creando Google Sheet...`;
         feedback.innerHTML = '';
 
         try {
@@ -2536,11 +2859,11 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (data.success) {
                 feedback.innerHTML = `
                     <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <span class="material-symbols-outlined" style="color: #16a34a;">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="color: #16a34a;">check_circle</span>
                         <span>${escapeHtml(data.message)}</span>
                     </div>
                 `;
-                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">check</span> Hoja creada`;
+                btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">check</span> Hoja creada`;
                 showToast('¡Hoja de cálculo generada y vinculada!');
                 fetchHistory(currentPage);
                 setTimeout(() => {
@@ -2553,13 +2876,13 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     </div>
                 `;
                 btn.disabled = false;
-                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">add</span> Generar Google Sheet ahora`;
+                btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">add</span> Generar Google Sheet ahora`;
             }
         } catch (e) {
             console.error(e);
             feedback.innerHTML = `<div style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px; border-radius: 6px; font-size: 12px;">Error de conexión.</div>`;
             btn.disabled = false;
-            btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px;">add</span> Generar Google Sheet ahora`;
+            btn.innerHTML = `<span translate="no" class="material-symbols-outlined notranslate" style="font-size:16px;">add</span> Generar Google Sheet ahora`;
         }
     }
 
@@ -2587,7 +2910,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (data.success) {
                 feedback.innerHTML = `
                     <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 12px 16px; border-radius: 6px; font-size: 12.5px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <span class="material-symbols-outlined" style="color: #16a34a;">check_circle</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="color: #16a34a;">check_circle</span>
                         <span>${escapeHtml(data.message)}</span>
                     </div>
                 `;
@@ -2655,7 +2978,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             btn.disabled = false;
             btn.style.opacity = '1';
             btn.style.cursor = 'pointer';
-            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Enviar tags</span>';
+            btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span><span>Enviar tags</span>';
         }
 
         const btnCancel = $('#btn-cancel-send-tags');
@@ -2706,7 +3029,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             btn.disabled = true;
             btn.style.opacity = '0.6';
             btn.style.cursor = 'not-allowed';
-            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px; animation: spin 1s linear infinite;">progress_activity</span><span>Enviando tags...</span>';
+            btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px; animation: spin 1s linear infinite;">progress_activity</span><span>Enviando tags...</span>';
         }
         if (btnCancel) {
             btnCancel.disabled = true;
@@ -2765,7 +3088,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     btn.disabled = false;
                     btn.style.opacity = '1';
                     btn.style.cursor = 'pointer';
-                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
+                    btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
                 }
                 if (btnCancel) {
                     btnCancel.disabled = false;
@@ -2787,7 +3110,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 btn.style.cursor = 'pointer';
-                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
+                btn.innerHTML = '<span translate="no" class="material-symbols-outlined notranslate" style="font-size: 16px;">send</span><span>Reintentar envío</span>';
             }
             if (btnCancel) {
                 btnCancel.disabled = false;
@@ -2809,7 +3132,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         }
 
         const modalBody = $('#modal-body');
-        modalBody.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span class="material-symbols-outlined" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Actualizando creativos en Base de Datos y CM360...</p><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Por favor espera, no cierres esta ventana.</p></div>';
+        modalBody.innerHTML = '<div style="text-align:center;padding:40px;"><div style="font-size:24px;margin-bottom:12px;"><span translate="no" class="material-symbols-outlined notranslate" style="font-size:32px; animation: spin 1.5s linear infinite; color: var(--wpp-navy);">progress_activity</span></div><p style="color:var(--text-muted)">Actualizando creativos en Base de Datos y CM360...</p><p style="font-size:12px;color:var(--text-muted);margin-top:8px;">Por favor espera, no cierres esta ventana.</p></div>';
 
         try {
             const res = await fetch(`/api/brandlift/history/${id}/remove-click`, {

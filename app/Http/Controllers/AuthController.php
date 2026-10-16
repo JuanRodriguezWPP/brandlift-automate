@@ -86,7 +86,7 @@ class AuthController extends Controller
         $market = $request->input('market');
         $user = auth()->user();
 
-        if ($market && $user && ! $user->hasMarket($market) && ! $user->isAdmin()) {
+        if ($market && $user && ! $user->hasMarket($market) && ! $user->hasGlobalAccess()) {
             return response()->json(['success' => false, 'message' => 'Mercado no autorizado.'], 403);
         }
 

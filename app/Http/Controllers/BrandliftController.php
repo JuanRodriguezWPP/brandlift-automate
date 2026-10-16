@@ -72,8 +72,8 @@ class BrandliftController extends Controller
 
             // Add Questions 1 to 5 to match the 10 columns in Excel
             for ($i = 1; $i <= 5; $i++) {
-                $values[] = $request->input('q' . $i, '');
-                $values[] = $request->input('a' . $i, '');
+                $values[] = $request->input('q'.$i, '');
+                $values[] = $request->input('a'.$i, '');
             }
 
             // Add Market, Campaign, Group, Date
@@ -82,6 +82,12 @@ class BrandliftController extends Controller
             $values[] = $group;
             $values[] = $date;
 
+            /*
+             * ConvertEmptyStringsToNull turns empty inputs into null and the Google client
+             * drops null cells when serializing, which leaves gaps in the row and makes it
+             * be sent as a JSON object instead of a list. Cast every cell to string.
+             */
+            $values = array_values(array_map(fn ($value): string => (string) ($value ?? ''), $values));
 
             // Append to Google Sheet using the service account
             $success = $this->googleService->appendRowToSheet($sheetId, $values);
@@ -92,7 +98,7 @@ class BrandliftController extends Controller
                     ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
                     ->header('Access-Control-Allow-Headers', 'Content-Type');
             } else {
-                return response()->json(['error' => 'Failed to write to sheet: ' . $success], 500)
+                return response()->json(['error' => 'Failed to write to sheet: '.$success], 500)
                     ->header('Access-Control-Allow-Origin', '*');
             }
 
@@ -122,7 +128,7 @@ class BrandliftController extends Controller
     {
         // Limpiar strings vacíos para evitar que Laravel falle las reglas de validación (ej. end_date)
         $inputs = $request->all();
-        foreach (['end_date', 'investment', 'cm360_site_id', 'cm360_profile_id', 'cm360_advertiser_id'] as $field) {
+        foreach (['end_date', 'investment', 'cm360_site_id', 'cm360_profile_id', 'cm360_advertiser_id', 'campaign_objective'] as $field) {
             if (isset($inputs[$field]) && $inputs[$field] === '') {
                 $inputs[$field] = null;
             }
@@ -135,6 +141,7 @@ class BrandliftController extends Controller
         $validator = Validator::make($request->all(), [
             'market' => 'required|string|max:50',
             'campaign_name' => 'required|string|max:255',
+            'campaign_objective' => 'nullable|string|max:255',
             'question_count' => 'required|integer|min:1',
             'creative_width' => 'required|integer|min:1',
             'creative_height' => 'required|integer|min:1',
@@ -146,7 +153,17 @@ class BrandliftController extends Controller
             'questions.*.creative_html' => 'nullable|string',
             'client_name' => 'nullable|string|max:255',
             'audiences' => 'nullable|array',
-            'audiences.*' => 'required|string|distinct:ignore_case',
+            'audiences.*' => [
+                'required',
+                'string',
+                'distinct:ignore_case',
+                function ($attribute, $value, $fail) {
+                    $clean = strtolower(str_replace([' ', '_', '-'], '', (string) $value));
+                    if (in_array($clean, ['adexposed', 'control'])) {
+                        $fail("No es necesario agregar '{$value}' como audiencia, ya que la plataforma las genera automáticamente por defecto.");
+                    }
+                },
+            ],
             'dps_tags' => 'nullable|array',
             'end_date' => 'nullable|date|after_or_equal:today',
             'investment' => 'nullable|string',
@@ -213,6 +230,7 @@ class BrandliftController extends Controller
                 $studyData = [
                     'market' => $market,
                     'campaign_name' => $formattedCampaignName,
+                    'campaign_objective' => $request->input('campaign_objective'),
                     'question_count' => $request->input('question_count'),
                     'creative_width' => $request->input('creative_width'),
                     'creative_height' => $request->input('creative_height'),
@@ -722,7 +740,7 @@ class BrandliftController extends Controller
         $study = is_numeric($id) ? BrandliftStudy::with(['questions', 'creatives', 'tags'])->findOrFail($id) : BrandliftStudy::findOrFailByLiquidId($id, ['questions', 'creatives', 'tags']);
         $user = auth()->user();
 
-        if ($user && ! $user->hasMarket($study->market)) {
+        if ($user && ! $study->canBeAccessedBy($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permisos para enviar los tags de este Brandlift.',
@@ -937,9 +955,9 @@ class BrandliftController extends Controller
 
         $study = BrandliftStudy::with(['questions', 'creatives'])->findOrFail($id);
 
-        // Validar permisos de mercado
+        // Validar permisos de acceso (mercado y asignación OOO)
         $user = auth()->user();
-        if ($user && ! $user->isAdmin() && ! $user->hasMarket($study->market)) {
+        if ($user && ! $study->canBeAccessedBy($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permisos para sincronizar este estudio.',
@@ -1078,9 +1096,9 @@ class BrandliftController extends Controller
     {
         $study = BrandliftStudy::findOrFail($id);
 
-        // Validar permisos de mercado
+        // Validar permisos de acceso (mercado y asignación OOO)
         $user = auth()->user();
-        if ($user && ! $user->isAdmin() && ! $user->hasMarket($study->market)) {
+        if ($user && ! $study->canBeAccessedBy($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permisos para modificar este estudio.',

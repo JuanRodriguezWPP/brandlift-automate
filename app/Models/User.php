@@ -51,6 +51,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Determine if the user has the designer role.
+     */
+    public function isDesigner(): bool
+    {
+        return in_array(mb_strtolower((string) $this->role), ['diseñador', 'disenador'], true);
+    }
+
+    /**
+     * Determine if the user has global visibility across all markets and studies (admin or designer).
+     */
+    public function hasGlobalAccess(): bool
+    {
+        return $this->isAdmin() || $this->isDesigner();
+    }
+
+    /**
      * Determine if the user is local.
      */
     public function isLocal(): bool
@@ -81,7 +97,7 @@ class User extends Authenticatable
      */
     public function hasMarket(?string $market): bool
     {
-        if ($this->isAdmin()) {
+        if ($this->hasGlobalAccess()) {
             return true;
         }
 
@@ -100,7 +116,7 @@ class User extends Authenticatable
         $assigned = $this->assigned_markets;
 
         if (empty($assigned)) {
-            return $this->isAdmin() ? 'Global' : null;
+            return $this->hasGlobalAccess() ? 'Global' : null;
         }
 
         $countries = [
@@ -135,19 +151,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the SVG flag icon markup for the user's assigned country/market.
+     * Get the SVG flag icon markup for a given market code.
      */
-    public function getCountryFlagSvgAttribute(): string
+    public static function flagSvgForMarket(?string $market): string
     {
-        $assigned = $this->assigned_markets;
-
-        if (count($assigned) !== 1) {
+        if (empty($market)) {
             return '<svg viewBox="0 0 16 12" width="16" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="6" r="4.5" stroke="#475569" stroke-width="1"/><line x1="3.5" y1="6" x2="12.5" y2="6" stroke="#475569" stroke-width="0.8"/><ellipse cx="8" cy="6" rx="2.5" ry="4.5" stroke="#475569" stroke-width="0.8"/></svg>';
         }
 
-        $market = strtoupper($assigned[0]);
-
-        return match ($market) {
+        return match (strtoupper($market)) {
             'PE', 'PER' => '<svg viewBox="0 0 16 12" width="16" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="12" fill="#D91023"/><rect x="5.33" width="5.34" height="12" fill="#FFFFFF"/></svg>',
             'PRI', 'PR' => '<svg viewBox="0 0 16 12" width="16" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="12" fill="#ED0000"/><rect y="2.4" width="16" height="2.4" fill="#FFFFFF"/><rect y="7.2" width="16" height="2.4" fill="#FFFFFF"/><polygon points="0,0 7,6 0,12" fill="#0038A8"/><polygon points="2.5,4.3 2.9,5.4 4.1,5.5 3.1,6.3 3.5,7.4 2.5,6.7 1.5,7.4 1.9,6.3 0.9,5.5 2.1,5.4" fill="#FFFFFF"/></svg>',
             'ARG', 'AR' => '<svg viewBox="0 0 16 12" width="16" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="12" fill="#74ACDF"/><rect y="4" width="16" height="4" fill="#FFFFFF"/><circle cx="8" cy="6" r="1.2" fill="#F6B40E" stroke="#85340A" stroke-width="0.25"/><path d="M8 4.3v0.5M8 7.2v0.5M6.3 6h0.5M9.2 6h0.5M6.8 4.8l0.4 0.4M8.8 6.8l0.4 0.4M6.8 7.2l0.4-0.4M8.8 5.2l0.4-0.4" stroke="#F6B40E" stroke-width="0.35" stroke-linecap="round"/></svg>',
@@ -158,6 +170,20 @@ class User extends Authenticatable
             'MIA', 'USA', 'US' => '<svg viewBox="0 0 16 12" width="16" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="16" height="12" fill="#B22234"/><rect y="0.92" width="16" height="0.92" fill="#FFFFFF"/><rect y="2.77" width="16" height="0.92" fill="#FFFFFF"/><rect y="4.62" width="16" height="0.92" fill="#FFFFFF"/><rect y="6.46" width="16" height="0.92" fill="#FFFFFF"/><rect y="8.31" width="16" height="0.92" fill="#FFFFFF"/><rect y="10.15" width="16" height="0.92" fill="#FFFFFF"/><rect width="6.5" height="6.46" fill="#3C3B6E"/><circle cx="1.6" cy="1.6" r="0.45" fill="#FFFFFF"/><circle cx="3.25" cy="1.6" r="0.45" fill="#FFFFFF"/><circle cx="4.9" cy="1.6" r="0.45" fill="#FFFFFF"/><circle cx="2.4" cy="3.2" r="0.45" fill="#FFFFFF"/><circle cx="4.1" cy="3.2" r="0.45" fill="#FFFFFF"/><circle cx="1.6" cy="4.8" r="0.45" fill="#FFFFFF"/><circle cx="3.25" cy="4.8" r="0.45" fill="#FFFFFF"/><circle cx="4.9" cy="4.8" r="0.45" fill="#FFFFFF"/></svg>',
             default => '<svg viewBox="0 0 16 12" width="16" height="12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="6" r="4.5" stroke="#475569" stroke-width="1"/><line x1="3.5" y1="6" x2="12.5" y2="6" stroke="#475569" stroke-width="0.8"/><ellipse cx="8" cy="6" rx="2.5" ry="4.5" stroke="#475569" stroke-width="0.8"/></svg>',
         };
+    }
+
+    /**
+     * Get the SVG flag icon markup for the user's assigned country/market.
+     */
+    public function getCountryFlagSvgAttribute(): string
+    {
+        $assigned = $this->assigned_markets;
+
+        if (count($assigned) !== 1) {
+            return self::flagSvgForMarket(null);
+        }
+
+        return self::flagSvgForMarket($assigned[0]);
     }
 
     /**

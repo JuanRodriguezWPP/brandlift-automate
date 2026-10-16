@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/api/brandlift/history', [DashboardController::class, 'apiList']);
     Route::get('/api/brandlift/history/{id}', [DashboardController::class, 'show']);
+    Route::get('/api/brandlift/history/{id}/assignable-users', [DashboardController::class, 'assignableUsers']);
+    Route::post('/api/brandlift/history/{id}/assign-users', [DashboardController::class, 'assignUsers']);
     Route::delete('/api/brandlift/history/{id}', [DashboardController::class, 'destroy']);
     Route::post('/api/brandlift/history/{id}/remove-click', [DashboardController::class, 'removeClickEvent']);
     Route::post('/api/brandlift/history/{id}/toggle-status', [DashboardController::class, 'toggleStatus']);

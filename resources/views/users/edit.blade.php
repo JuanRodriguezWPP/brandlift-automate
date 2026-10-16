@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar usuario — Brandlift Automate</title>
-    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}?v={{ filemtime(public_path('css/wpp-design-system.css')) }}">
     <style>
         /* ===== PAGE-SPECIFIC STYLES ===== */
 
@@ -181,7 +184,8 @@
                             @foreach($allMarkets as $code => $info)
                             <label style="display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border-input); padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-primary); margin: 0;">
                                 <input type="checkbox" name="markets[]" value="{{ $code }}" {{ in_array($code, $userMarkets) ? 'checked' : '' }} style="width: auto; margin: 0;">
-                                <span>{{ $info['flag'] }} {{ $code }}</span>
+                                <span class="top-header-user-flag">{!! \App\Models\User::flagSvgForMarket($code) !!}</span>
+                                <span>{{ $code }}</span>
                             </label>
                             @endforeach
                         </div>

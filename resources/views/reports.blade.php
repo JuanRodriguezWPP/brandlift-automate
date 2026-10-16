@@ -6,7 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Reportes & Analítica — WPP Media</title>
     <meta name="description" content="Reportes consolidados y analítica de estudios de Brandlift para WPP Media LATAM">
-    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="{{ asset('css/wpp-design-system.css') }}?v={{ filemtime(public_path('css/wpp-design-system.css')) }}">
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
     <style>
         :root {
@@ -204,7 +207,7 @@
                     <div class="kpi-card">
                         <div class="kpi-header">
                             <span class="kpi-label">Estudios Creados</span>
-                            <div class="kpi-icon" style="background: rgba(0,0,80,0.06); color: var(--wpp-navy);"><span class="material-symbols-outlined" style="font-size: 20px;">bar_chart</span></div>
+                            <div class="kpi-icon" style="background: rgba(0,0,80,0.06); color: var(--wpp-navy);"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px;">bar_chart</span></div>
                         </div>
                         <div>
                             <div class="kpi-value">{{ $totalStudies }}</div>
@@ -215,7 +218,7 @@
                     <div class="kpi-card">
                         <div class="kpi-header">
                             <span class="kpi-label">Desplegados en CM360</span>
-                            <div class="kpi-icon" style="background: rgba(176,244,103,0.2); color: var(--wpp-navy);"><span class="material-symbols-outlined" style="font-size: 20px;">rocket_launch</span></div>
+                            <div class="kpi-icon" style="background: rgba(176,244,103,0.2); color: var(--wpp-navy);"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px;">rocket_launch</span></div>
                         </div>
                         <div>
                             <div class="kpi-value" style="color: #10b981;">{{ $totalPushed }}</div>
@@ -226,7 +229,7 @@
                     <div class="kpi-card">
                         <div class="kpi-header">
                             <span class="kpi-label">Preguntas Registradas</span>
-                            <div class="kpi-icon" style="background: rgba(147,223,227,0.2); color: var(--wpp-navy);"><span class="material-symbols-outlined" style="font-size: 20px;">quiz</span></div>
+                            <div class="kpi-icon" style="background: rgba(147,223,227,0.2); color: var(--wpp-navy);"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px;">quiz</span></div>
                         </div>
                         <div>
                             <div class="kpi-value">{{ $totalQuestions }}</div>
@@ -237,7 +240,7 @@
                     <div class="kpi-card">
                         <div class="kpi-header">
                             <span class="kpi-label">Creativos & Variantes</span>
-                            <div class="kpi-icon" style="background: rgba(0,0,80,0.06); color: var(--wpp-navy);"><span class="material-symbols-outlined" style="font-size: 20px;">palette</span></div>
+                            <div class="kpi-icon" style="background: rgba(0,0,80,0.06); color: var(--wpp-navy);"><span translate="no" class="material-symbols-outlined notranslate" style="font-size: 20px;">palette</span></div>
                         </div>
                         <div>
                             <div class="kpi-value">{{ $totalCreatives }}</div>
@@ -284,7 +287,7 @@
                                 visual.value = '';
                             }
                         ">
-                        <span class="material-symbols-outlined" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none;">calendar_today</span>
+                        <span translate="no" class="material-symbols-outlined notranslate" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-muted); pointer-events: none;">calendar_today</span>
                     </div>
 
                     <button type="submit" class="btn-filter">

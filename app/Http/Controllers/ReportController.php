@@ -18,16 +18,13 @@ class ReportController extends Controller
 
         $activeMarket = session('active_market');
 
-        // Only show campaigns for the markets associated with the user profile
-        if ($user && ! $user->isAdmin()) {
-            $assigned = $user->assigned_markets;
-            if (! empty($assigned)) {
-                $query->whereIn('market', $assigned);
+        // Only show campaigns visible to the user profile (including OOO assigned studies)
+        $query->visibleTo($user, $activeMarket);
+
+        if ($market = $request->input('market')) {
+            if (! $user || $user->hasMarket($market) || $user->hasGlobalAccess()) {
+                $query->where('market', $market);
             }
-        } elseif ($market = $request->input('market')) {
-            $query->where('market', $market);
-        } elseif ($user && $user->isAdmin() && ! empty($activeMarket)) {
-            $query->where('market', $activeMarket);
         }
 
         if ($search = $request->input('search')) {

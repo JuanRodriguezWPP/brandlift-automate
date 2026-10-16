@@ -22,22 +22,24 @@
                     ];
                 @endphp
 
-                @if(Auth::user()?->isAdmin())
-                    <div class="top-header-market-switcher" style="margin-top: 3px;">
+                @if(Auth::user()?->hasGlobalAccess())
+                    <div class="top-header-market-switcher" style="margin-top: 3px; display: inline-flex; align-items: center; gap: 6px;">
+                        <span class="top-header-user-flag">{!! \App\Models\User::flagSvgForMarket($activeMarket) !!}</span>
                         <select onchange="switchUserMarket(this.value)" style="font-size: 11.5px; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border-input); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; font-weight: 500; outline: none;">
-                            <option value="" {{ empty($activeMarket) ? 'selected' : '' }}>🌐 Todos los mercados</option>
+                            <option value="" {{ empty($activeMarket) ? 'selected' : '' }}>Todos los mercados</option>
                             @foreach($allMarkets as $code => $info)
-                                <option value="{{ $code }}" {{ $activeMarket === $code ? 'selected' : '' }}>{{ $info['flag'] }} {{ $info['name'] }}</option>
+                                <option value="{{ $code }}" {{ $activeMarket === $code ? 'selected' : '' }}>{{ $info['name'] }} ({{ $code }})</option>
                             @endforeach
                         </select>
                     </div>
                 @elseif($marketCount > 1)
-                    <div class="top-header-market-switcher" style="margin-top: 3px;">
+                    <div class="top-header-market-switcher" style="margin-top: 3px; display: inline-flex; align-items: center; gap: 6px;">
+                        <span class="top-header-user-flag">{!! \App\Models\User::flagSvgForMarket($activeMarket) !!}</span>
                         <select onchange="switchUserMarket(this.value)" style="font-size: 11.5px; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border-input); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; font-weight: 500; outline: none;">
-                            <option value="" {{ empty($activeMarket) ? 'selected' : '' }}>🌐 Mis mercados ({{ $marketCount }})</option>
+                            <option value="" {{ empty($activeMarket) ? 'selected' : '' }}>Mis mercados ({{ $marketCount }})</option>
                             @foreach($assignedMarkets as $code)
                                 @if(isset($allMarkets[$code]))
-                                    <option value="{{ $code }}" {{ $activeMarket === $code ? 'selected' : '' }}>{{ $allMarkets[$code]['flag'] }} {{ $allMarkets[$code]['name'] }}</option>
+                                    <option value="{{ $code }}" {{ $activeMarket === $code ? 'selected' : '' }}>{{ $allMarkets[$code]['name'] }} ({{ $code }})</option>
                                 @endif
                             @endforeach
                         </select>
@@ -56,7 +58,7 @@
         <form action="{{ route('logout') }}" method="POST" class="top-header-logout-form">
             @csrf
             <button type="submit" class="top-header-logout-btn" title="Cerrar sesión">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -83,4 +85,42 @@
             });
         }
     }
+
+    (function protectMaterialIconsFromChromeTranslate() {
+        function markIcons(root) {
+            if (!root || !root.querySelectorAll) return;
+            const icons = root.querySelectorAll('.material-symbols-outlined');
+            icons.forEach(function (el) {
+                if (el.getAttribute('translate') !== 'no') {
+                    el.setAttribute('translate', 'no');
+                }
+                if (!el.classList.contains('notranslate')) {
+                    el.classList.add('notranslate');
+                }
+            });
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () { markIcons(document); });
+        } else {
+            markIcons(document);
+        }
+        if (typeof MutationObserver !== 'undefined') {
+            const observer = new MutationObserver(function (mutations) {
+                for (let i = 0; i < mutations.length; i++) {
+                    const added = mutations[i].addedNodes;
+                    for (let j = 0; j < added.length; j++) {
+                        const node = added[j];
+                        if (node.nodeType === 1) {
+                            if (node.classList && node.classList.contains('material-symbols-outlined')) {
+                                node.setAttribute('translate', 'no');
+                                node.classList.add('notranslate');
+                            }
+                            markIcons(node);
+                        }
+                    }
+                }
+            });
+            observer.observe(document.documentElement, { childList: true, subtree: true });
+        }
+    })();
 </script>
