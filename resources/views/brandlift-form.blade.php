@@ -685,6 +685,51 @@
             cursor: pointer;
         }
 
+        /* ===== FILTERABLE ADVERTISER SELECT DROPDOWN ===== */
+        #cm360-advertiser-search.form-select {
+            cursor: text;
+        }
+        #cm360-advertiser-search.form-select:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .adv-dropdown-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .adv-dropdown-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .adv-dropdown-panel::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.45);
+            border-radius: 3px;
+        }
+        .adv-dropdown-item {
+            padding: 9px 14px;
+            font-size: 14px;
+            font-family: 'WPP', sans-serif;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 4px;
+            user-select: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .adv-dropdown-item:hover, .adv-dropdown-item.highlighted {
+            background: rgba(176, 244, 103, 0.25);
+            color: var(--wpp-navy);
+        }
+        .adv-dropdown-item.selected {
+            background: var(--wpp-navy);
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .adv-dropdown-empty {
+            padding: 12px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
         /* ===== ANSWERS ===== */
         .answers-container {
             display: flex;
@@ -1684,9 +1729,9 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group" style="padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
-                                        <label for="cm360-advertiser-id">Anunciante (Advertiser CM360) <span class="required">*</span> <span id="advertiser-loader" style="display:none; font-size:11px; margin-left:8px; color:var(--accent-blue-light)">Cargando...</span></label>
-                                        <select id="cm360-advertiser-id" class="form-select" {{ !empty($editStudy) ? '' : 'disabled' }}>
+                                    <div class="form-group" style="padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2); position: relative;">
+                                        <label for="cm360-advertiser-search">Anunciante (Advertiser CM360) <span class="required">*</span> <span id="advertiser-loader" style="display:none; font-size:11px; margin-left:8px; color:var(--accent-blue-light)">Cargando...</span></label>
+                                        <select id="cm360-advertiser-id" class="form-select" style="display: none;" {{ !empty($editStudy) ? '' : 'disabled' }}>
                                             @if(!empty($editStudy?->client_name) || !empty($editStudy?->cm360_advertiser_id))
                                                 <option value="{{ $editStudy->cm360_advertiser_id ?? '' }}" selected>
                                                     {{ $editStudy->client_name ?? 'Anunciante' }} {{ $editStudy->cm360_advertiser_id ? '('.$editStudy->cm360_advertiser_id.')' : '' }}
@@ -1695,6 +1740,17 @@
                                                 <option value="">Selecciona un mercado primero...</option>
                                             @endif
                                         </select>
+                                        <div id="adv-combobox-wrapper" style="position: relative; width: 100%;">
+                                            <input type="text" id="cm360-advertiser-search" class="form-select"
+                                                placeholder="{{ !empty($editStudy?->client_name) ? ($editStudy->client_name.' '.($editStudy->cm360_advertiser_id ? '('.$editStudy->cm360_advertiser_id.')' : '')) : 'Selecciona un mercado primero...' }}"
+                                                value="{{ !empty($editStudy?->client_name) ? ($editStudy->client_name.' '.($editStudy->cm360_advertiser_id ? '('.$editStudy->cm360_advertiser_id.')' : '')) : '' }}"
+                                                autocomplete="off"
+                                                spellcheck="false"
+                                                {{ !empty($editStudy) ? '' : 'disabled' }}>
+                                            <div id="cm360-adv-dropdown" class="adv-dropdown-panel"
+                                                style="display: none; position: absolute; top: calc(100% + 2px); left: 0; right: 0; max-height: 260px; overflow-y: auto; background: var(--bg-input, #ffffff); border: 1px solid var(--border-input); border-radius: var(--radius-sm); box-shadow: 0 10px 24px rgba(0,0,0,0.14); z-index: 1050; padding: 4px;">
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="form-group" style="display: none; padding-bottom: 20px; border-bottom: 1px dashed rgba(176, 244, 103, 0.2);">
@@ -2927,6 +2983,9 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                 el = $('#preview-frame') || $('#step-2-actions');
             } else if (typeof target === 'string') {
                 el = $(target);
+                if (el && el.id === 'cm360-advertiser-id') {
+                    el = $('#cm360-advertiser-search') || el;
+                }
             }
 
             if (el) {
@@ -3317,7 +3376,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
     // ===== CHECK STEP COMPLETION =====
     function isStepComplete(stepNum) {
         if (stepNum === 1) {
-            const market = $('#bl-market-step1').value;
+            const market = $('#bl-market-step1').value || ($('#bl-market-hidden-val')?.value || '');
             const client = $('#bl-client-step1').value.trim();
             const endDate = $('#bl-end-date-step1').value;
             const campaign = $('#bl-campaign-name-step1').value.trim();
@@ -3326,7 +3385,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             const advertiserId = $('#cm360-advertiser-id').value.trim();
             const today = new Date().toLocaleDateString('en-CA');
             const isDateValid = endDate && (endDate >= today || !!state.studyId);
-            return market && state.dpsSelections.length > 0 && client && isDateValid && campaign && investment && profileId && advertiserId && !hasGroupErrors();
+            return !window.cm360MatrixLoading && market && state.dpsSelections.length > 0 && client && isDateValid && campaign && investment && profileId && advertiserId && !hasGroupErrors();
         }
         if (stepNum === 2) {
             return validateQuestionsAndAnswers(false).isValid;
@@ -3408,8 +3467,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
     $('#bl-market-step1').addEventListener('change', () => {
         populateSummary();
-        filterAdvertisers();
-        filterSites();
+        syncCm360MatrixForMarket({ resetSelection: !window.isInitializingEditMode });
     });
     $$('.dps-checkbox').forEach(cb => {
         cb.addEventListener('change', () => {
@@ -4255,12 +4313,21 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             questionsData.push(getQuestionData(i));
         }
 
-        const market = $('#bl-market-step1').value;
+        const market = $('#bl-market-step1').value || ($('#bl-market-hidden-val')?.value || '');
         const campaignNameStep1 = $('#bl-campaign-name-step1').value.trim();
         const endDateStep1 = $('#bl-end-date-step1').value;
         const investmentStep1 = $('#bl-investment-step1').value.trim();
-        const profileId = $('#cm360-profile-id').value.trim();
+        const expectedProfileId = typeof resolveProfileIdForMarket === 'function' ? resolveProfileIdForMarket(market) : '';
+        if (expectedProfileId && $('#cm360-profile-id').value.trim() !== String(expectedProfileId)) {
+            if ([...$('#cm360-profile-id').options].some(o => String(o.value) === String(expectedProfileId))) {
+                $('#cm360-profile-id').value = String(expectedProfileId);
+            }
+        }
+        const profileId = $('#cm360-profile-id').value.trim() || String(expectedProfileId || '');
         const advertiserId = $('#cm360-advertiser-id').value.trim();
+        if (!$('#cm360-site-id').value.trim() && window.cm360Sites && window.cm360Sites.length > 0) {
+            filterSites();
+        }
         const siteId = $('#cm360-site-id').value.trim();
         const clientName = $('#bl-client-step1').value.trim();
 
@@ -4486,7 +4553,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     profile_id: profileId,
                     advertiser_id: advertiserId,
                     site_id: siteId,
-                    market: $('#bl-market-step1').value,
+                    market: market,
                     client_name: $('#bl-client-step1').value.trim(),
                     campaign_name: $('#bl-campaign-name-step1').value.trim(),
                     end_date: $('#bl-end-date-step1').value,
@@ -4557,8 +4624,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             const campaignId = (data.results && data.results.find(r => r.campaign_id)?.campaign_id) || null;
             let cm360Url = '';
             if (campaignId) {
-                const profileObj = (window.cm360Profiles || []).find(p => p.id == profileId);
-                const accountId = profileObj?.accountId || '732535';
+                const accountId = resolveAccountIdForMarket(market, profileId);
                 cm360Url = `https://campaignmanager.google.com/trafficking/#/accounts/${accountId}/campaigns/${campaignId}/explorer?statuses=0;2`;
             }
 
@@ -4673,9 +4739,179 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             f.contentWindow.showScreen(targetId);
         }
     };
-    // ===== CM360 AUTO-FETCH LOGIC =====
+    // ===== CM360 MULTI-MATRIX CONFIG & AUTO-FETCH LOGIC =====
+    window.EDIT_STUDY_DATA = @json($editStudy ?? null);
+
+    (function syncInitialSingleMarketField() {
+        const hiddenMarketEl = $('#bl-market-hidden-val');
+        const marketSelectEl = $('#bl-market-step1');
+        if (hiddenMarketEl && hiddenMarketEl.value && marketSelectEl && !marketSelectEl.value) {
+            marketSelectEl.value = hiddenMarketEl.value;
+        }
+    })();
+
+    const CM360_MATRICES = {
+        MEX: {
+            accountId: '936782',
+            profileId: '11281445',
+            accountKeywords: ['xaxis mexico', 'xaxis méxico', 'mexico', 'méxico']
+        },
+        DEFAULT: {
+            accountId: '732535',
+            profileId: '11193230',
+            accountKeywords: ['xaxis latam', 'latam']
+        }
+    };
+
+    window.cm360Profiles = [];
     window.cm360Advertisers = [];
     window.cm360Sites = [];
+    window.loadedAdvertisersProfileId = null;
+    window.loadedSitesProfileId = null;
+    window.loadingProfileId = null;
+    window.cm360MatrixLoading = false;
+    window.cm360LoadSeq = 0;
+    window.activeMatrixPromise = null;
+
+    function getSelectedMarketCode() {
+        const sel = $('#bl-market-step1');
+        const hidden = $('#bl-market-hidden-val');
+        return ((sel && sel.value) || (hidden && hidden.value) || '').trim().toUpperCase();
+    }
+
+    function isMexicoMarket(marketCode) {
+        return String(marketCode || '').trim().toUpperCase() === 'MEX';
+    }
+
+    function resolveAccountIdForMarket(marketCode, profileId = null) {
+        if (profileId && Array.isArray(window.cm360Profiles) && window.cm360Profiles.length > 0) {
+            const found = window.cm360Profiles.find(p => String(p.id) === String(profileId));
+            if (found && found.accountId) {
+                return String(found.accountId);
+            }
+        }
+        if (String(profileId) === CM360_MATRICES.MEX.profileId) return CM360_MATRICES.MEX.accountId;
+        if (String(profileId) === CM360_MATRICES.DEFAULT.profileId) return CM360_MATRICES.DEFAULT.accountId;
+        return isMexicoMarket(marketCode) ? CM360_MATRICES.MEX.accountId : CM360_MATRICES.DEFAULT.accountId;
+    }
+
+    function resolveProfileIdForMarket(marketCode) {
+        const profiles = Array.isArray(window.cm360Profiles) ? window.cm360Profiles : [];
+        const targetCfg = isMexicoMarket(marketCode) ? CM360_MATRICES.MEX : CM360_MATRICES.DEFAULT;
+
+        if (profiles.length === 0) {
+            return targetCfg.profileId;
+        }
+
+        // 1. Exact Profile ID match (11281445 for Xaxis Mexico, 11193230 for Xaxis Latam)
+        let match = profiles.find(p => String(p.id) === targetCfg.profileId);
+        if (match) return String(match.id);
+
+        // 2. Exact CM360 Account ID match (936782 for Xaxis Mexico, 732535 for Xaxis Latam)
+        match = profiles.find(p => String(p.accountId) === targetCfg.accountId);
+        if (match) return String(match.id);
+
+        // 3. Account Name keyword match
+        match = profiles.find(p => {
+            const accName = String(p.accountName || '').toLowerCase();
+            return targetCfg.accountKeywords.some(kw => accName.includes(kw));
+        });
+        if (match) return String(match.id);
+
+        // 4. Fallback for non-Mexico: wmcs-campaign-tracker profile outside Mexico account
+        if (!isMexicoMarket(marketCode)) {
+            match = profiles.find(p => {
+                const pName = String(p.name || '').toLowerCase();
+                return String(p.accountId) !== CM360_MATRICES.MEX.accountId &&
+                    (pName.includes('wmcs-campaign-tracker') || pName.includes('wmcs campaign tracker'));
+            });
+            if (match) return String(match.id);
+        }
+
+        return String(profiles[0].id);
+    }
+
+    async function syncCm360MatrixForMarket({ resetSelection = false } = {}) {
+        const market = getSelectedMarketCode();
+        const profileSelect = $('#cm360-profile-id');
+        const advSelect = $('#cm360-advertiser-id');
+        const siteSelect = $('#cm360-site-id');
+
+        if (resetSelection) {
+            if (advSelect) advSelect.value = '';
+            if (siteSelect) siteSelect.value = '';
+            const clientEl = $('#bl-client-step1');
+            if (clientEl) clientEl.value = '';
+
+            if (window.EDIT_STUDY_DATA && String(window.EDIT_STUDY_DATA.market || '').toUpperCase() !== market) {
+                window.EDIT_STUDY_DATA.cm360_advertiser_id = null;
+                window.EDIT_STUDY_DATA.cm360_site_id = null;
+            }
+            updateAdvComboboxUi();
+        }
+
+        const targetProfileId = resolveProfileIdForMarket(market);
+        if (!targetProfileId) return;
+
+        if (profileSelect) {
+            if (![...profileSelect.options].some(o => String(o.value) === String(targetProfileId))) {
+                const tempOpt = document.createElement('option');
+                tempOpt.value = String(targetProfileId);
+                tempOpt.textContent = `Perfil (${targetProfileId})`;
+                profileSelect.appendChild(tempOpt);
+            }
+            profileSelect.value = String(targetProfileId);
+        }
+
+        const alreadyLoaded =
+            window.loadedAdvertisersProfileId === String(targetProfileId) &&
+            window.loadedSitesProfileId === String(targetProfileId);
+
+        if (alreadyLoaded) {
+            filterAdvertisers();
+            filterSites();
+            populateSummary();
+            if (typeof validateCurrentStep === 'function') validateCurrentStep();
+            return;
+        }
+
+        if (window.loadingProfileId === String(targetProfileId) && window.activeMatrixPromise) {
+            return window.activeMatrixPromise;
+        }
+
+        const seq = ++window.cm360LoadSeq;
+        window.loadingProfileId = String(targetProfileId);
+        window.cm360MatrixLoading = true;
+        window.cm360Advertisers = [];
+        window.cm360Sites = [];
+        window.loadedAdvertisersProfileId = null;
+        window.loadedSitesProfileId = null;
+
+        if (advSelect) {
+            advSelect.innerHTML = `<option value="">${market ? 'Cargando anunciantes...' : 'Selecciona un mercado primero...'}</option>`;
+            advSelect.disabled = true;
+        }
+        if (siteSelect) {
+            siteSelect.innerHTML = `<option value="">${market ? 'Cargando sites...' : 'Selecciona un mercado primero...'}</option>`;
+            siteSelect.disabled = true;
+        }
+        if (typeof validateCurrentStep === 'function') validateCurrentStep();
+        updateAdvComboboxUi();
+
+        window.activeMatrixPromise = Promise.all([
+            loadAdvertisers(targetProfileId, seq),
+            loadSites(targetProfileId, seq)
+        ]).finally(() => {
+            if (seq === window.cm360LoadSeq) {
+                window.loadingProfileId = null;
+                window.cm360MatrixLoading = false;
+                updateAdvComboboxUi();
+                if (typeof validateCurrentStep === 'function') validateCurrentStep();
+            }
+        });
+
+        return window.activeMatrixPromise;
+    }
 
     async function loadProfiles() {
         const profileSelect = $('#cm360-profile-id');
@@ -4688,22 +4924,17 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             const profiles = await res.json();
 
             profileSelect.innerHTML = '<option value="">Selecciona un perfil...</option>';
-            if (profiles && profiles.length > 0) {
-                // Auto-select wmcs-campaign-tracker if found
-                let selectedId = profiles[0].id; // fallback to first
+            if (res.ok && Array.isArray(profiles) && profiles.length > 0) {
+                window.cm360Profiles = profiles;
                 profiles.forEach(p => {
                     const opt = document.createElement('option');
                     opt.value = p.id;
-                    opt.textContent = `${p.name} (${p.id})`;
+                    const accLabel = p.accountName ? `${p.accountName} — ` : '';
+                    opt.textContent = `${accLabel}${p.name} (${p.id})`;
                     profileSelect.appendChild(opt);
-                    if (p.name.toLowerCase().includes('wmcs-campaign-tracker') || p.name.toLowerCase().includes('wmcs campaign tracker')) {
-                        selectedId = p.id;
-                    }
                 });
 
-                profileSelect.value = selectedId;
-                loadAdvertisers(selectedId);
-                loadSites(selectedId);
+                await syncCm360MatrixForMarket({ resetSelection: false });
             } else {
                 profileSelect.innerHTML = '<option value="">No hay perfiles disponibles</option>';
             }
@@ -4715,7 +4946,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         }
     }
 
-    async function loadAdvertisers(profileId) {
+    async function loadAdvertisers(profileId, seq) {
         const advSelect = $('#cm360-advertiser-id');
         const loader = $('#advertiser-loader');
 
@@ -4727,18 +4958,36 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             const res = await fetch(`/api/cm360/advertisers/${profileId}`);
             const advertisers = await res.json();
 
-            if (advertisers && advertisers.length > 0) {
-                window.cm360Advertisers = advertisers.sort((a, b) => a.name.localeCompare(b.name));
+            if (seq !== undefined && seq !== window.cm360LoadSeq) return;
+
+            if (!res.ok || !Array.isArray(advertisers)) {
+                throw new Error(advertisers?.error || 'Respuesta inválida de anunciantes');
+            }
+
+            window.loadedAdvertisersProfileId = String(profileId);
+
+            if (advertisers.length > 0) {
+                window.cm360Advertisers = advertisers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
                 filterAdvertisers(); // Filter based on current market selection
+                if (window.cm360Sites && window.cm360Sites.length > 0) {
+                    filterSites();
+                }
             } else {
                 window.cm360Advertisers = [];
+                window.eligibleAdvertisers = [];
                 advSelect.innerHTML = '<option value="">No hay anunciantes</option>';
+                updateAdvComboboxUi();
             }
         } catch (e) {
+            if (seq !== undefined && seq !== window.cm360LoadSeq) return;
             console.error('Error fetching advertisers', e);
+            window.eligibleAdvertisers = [];
             advSelect.innerHTML = '<option value="">Error cargando anunciantes</option>';
+            updateAdvComboboxUi();
         } finally {
-            loader.style.display = 'none';
+            if (seq === undefined || seq === window.cm360LoadSeq) {
+                loader.style.display = 'none';
+            }
         }
     }
 
@@ -4757,53 +5006,93 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
     function filterAdvertisers() {
         const advSelect = $('#cm360-advertiser-id');
-        const market = $('#bl-market-step1').value;
+        const market = getSelectedMarketCode();
 
         if (!market) {
+            window.eligibleAdvertisers = [];
             advSelect.innerHTML = '<option value="">Selecciona un mercado primero...</option>';
             advSelect.disabled = true;
+            updateAdvComboboxUi();
             return;
         }
 
         if (!window.cm360Advertisers || window.cm360Advertisers.length === 0) {
+            window.eligibleAdvertisers = [];
+            if (!window.cm360MatrixLoading) {
+                advSelect.innerHTML = `<option value="">No se encontraron anunciantes para ${market}</option>`;
+                advSelect.disabled = false;
+                updateAdvComboboxUi();
+            }
             return;
         }
 
+        const previousAdvId = advSelect.value ? String(advSelect.value) : '';
         advSelect.innerHTML = '<option value="">Selecciona un anunciante...</option>';
 
-        const marketAliases = {
-            'PE': ['PE', 'PER', 'XAXPE', 'PERU', 'PERÚ'],
-            'PRI': ['PRI', 'PR', 'XAXPR', 'PUERTO RICO'],
-            'ARG': ['ARG', 'AR', 'XAXAR', 'ARGENTINA'],
-            'MIA': ['MIA', 'MSMIA', 'MIAMI'],
-            'MEX': ['MEX', 'MX', 'XAXMEX', 'MEXICO', 'MÉXICO'],
-            'CHL': ['CHL', 'CL', 'XAXCL', 'CHILE'],
-            'COL': ['COL', 'CO', 'XAXCO', 'COLOMBIA'],
-            'ECU': ['ECU', 'EC', 'XAXEC', 'ECUADOR']
-        };
-
-        const aliases = marketAliases[market.toUpperCase()] || [market.toUpperCase()];
-
         let filteredCount = 0;
-        window.cm360Advertisers.forEach(a => {
-            const nameUpper = (a.name || '').toUpperCase();
-            const matches = aliases.some(alias => {
-                if (nameUpper.startsWith(alias)) return true;
-                const regex = new RegExp(`(^|[\\s_\\|\\-\\[\\(])${alias}([\\s_\\|\\-\\]\\)]|$)`, 'i');
-                return regex.test(nameUpper);
-            });
 
-            if (matches) {
+        window.eligibleAdvertisers = [];
+
+        if (isMexicoMarket(market)) {
+            // Matriz Xaxis Mexico (936782): extraer TODOS los clientes sin filtrar por prefijo de país
+            window.cm360Advertisers.forEach(a => {
                 const opt = document.createElement('option');
                 opt.value = a.id;
                 opt.textContent = `${a.name} (${a.id})`;
                 advSelect.appendChild(opt);
                 filteredCount++;
-            }
-        });
+                window.eligibleAdvertisers.push({
+                    id: String(a.id),
+                    name: a.name || '',
+                    subaccountId: a.subaccountId || null,
+                    text: `${a.name} (${a.id})`
+                });
+            });
+        } else {
+            const marketAliases = {
+                'PE': ['PE', 'PER', 'XAXPE', 'PERU', 'PERÚ'],
+                'PRI': ['PRI', 'PR', 'XAXPR', 'PUERTO RICO'],
+                'ARG': ['ARG', 'AR', 'XAXAR', 'ARGENTINA'],
+                'MIA': ['MIA', 'MSMIA', 'MIAMI'],
+                'MEX': ['MEX', 'MX', 'XAXMEX', 'MEXICO', 'MÉXICO'],
+                'CHL': ['CHL', 'CL', 'XAXCL', 'CHILE'],
+                'COL': ['COL', 'CO', 'XAXCO', 'COLOMBIA'],
+                'ECU': ['ECU', 'EC', 'XAXEC', 'ECUADOR']
+            };
+
+            const aliases = marketAliases[market] || [market];
+
+            window.cm360Advertisers.forEach(a => {
+                const nameUpper = (a.name || '').toUpperCase();
+                const matches = aliases.some(alias => {
+                    if (nameUpper.startsWith(alias)) return true;
+                    const regex = new RegExp(`(^|[\\s_\\|\\-\\[\\(])${alias}([\\s_\\|\\-\\]\\)]|$)`, 'i');
+                    return regex.test(nameUpper);
+                });
+
+                if (matches) {
+                    const opt = document.createElement('option');
+                    opt.value = a.id;
+                    opt.textContent = `${a.name} (${a.id})`;
+                    advSelect.appendChild(opt);
+                    filteredCount++;
+                    window.eligibleAdvertisers.push({
+                        id: String(a.id),
+                        name: a.name || '',
+                        subaccountId: a.subaccountId || null,
+                        text: `${a.name} (${a.id})`
+                    });
+                }
+            });
+        }
+
+        // Restore previously selected advertiser if still valid in this matrix/market
+        if (previousAdvId && [...advSelect.options].some(o => String(o.value) === previousAdvId)) {
+            advSelect.value = previousAdvId;
+        }
 
         // In edit mode or existing study data, ensure the pre-saved advertiser is available and selected
-        if (window.EDIT_STUDY_DATA) {
+        if (!advSelect.value && window.EDIT_STUDY_DATA && (!window.EDIT_STUDY_DATA.market || String(window.EDIT_STUDY_DATA.market).toUpperCase() === market)) {
             const editAdvId = window.EDIT_STUDY_DATA.cm360_advertiser_id ? String(window.EDIT_STUDY_DATA.cm360_advertiser_id) : null;
             const editClient = (window.EDIT_STUDY_DATA.client_name || '').trim().toLowerCase();
 
@@ -4853,10 +5142,11 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             advSelect.innerHTML = `<option value="">No se encontraron anunciantes para ${market}</option>`;
         }
         advSelect.disabled = false;
+        updateAdvComboboxUi();
         if (typeof validateCurrentStep === 'function') validateCurrentStep();
     }
 
-    async function loadSites(profileId) {
+    async function loadSites(profileId, seq) {
         const siteSelect = $('#cm360-site-id');
         const loader = $('#site-loader');
 
@@ -4868,25 +5158,36 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             const res = await fetch(`/api/cm360/sites/${profileId}`);
             const sites = await res.json();
 
-            if (sites && sites.length > 0) {
-                window.cm360Sites = sites.sort((a, b) => a.name.localeCompare(b.name));
+            if (seq !== undefined && seq !== window.cm360LoadSeq) return;
+
+            if (!res.ok || !Array.isArray(sites)) {
+                throw new Error(sites?.error || 'Respuesta inválida de sites');
+            }
+
+            window.loadedSitesProfileId = String(profileId);
+
+            if (sites.length > 0) {
+                window.cm360Sites = sites.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
                 filterSites();
             } else {
                 window.cm360Sites = [];
                 siteSelect.innerHTML = '<option value="">No hay sites disponibles</option>';
             }
         } catch (e) {
+            if (seq !== undefined && seq !== window.cm360LoadSeq) return;
             console.error('Error fetching sites', e);
             siteSelect.innerHTML = '<option value="">Error cargando sites</option>';
         } finally {
-            loader.style.display = 'none';
+            if (seq === undefined || seq === window.cm360LoadSeq) {
+                loader.style.display = 'none';
+            }
         }
     }
 
     function filterSites() {
         const siteSelect = $('#cm360-site-id');
         const marketSelect = $('#bl-market-step1');
-        const marketVal = marketSelect.value;
+        const marketVal = getSelectedMarketCode();
         const advSelect = $('#cm360-advertiser-id');
         const advId = advSelect ? advSelect.value : null;
 
@@ -4898,8 +5199,8 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
         if (!window.cm360Sites || window.cm360Sites.length === 0) return;
 
-        const selectedOption = marketSelect.options[marketSelect.selectedIndex];
-        const countryName = selectedOption ? selectedOption.getAttribute('data-country') : '';
+        const selectedOption = marketSelect ? marketSelect.options[marketSelect.selectedIndex] : null;
+        const countryName = selectedOption ? (selectedOption.getAttribute('data-country') || '') : (isMexicoMarket(marketVal) ? 'Mexico' : '');
 
         let targetSiteName = `Xaxis ${countryName}`.toLowerCase();
         if (marketVal === 'PE') {
@@ -4915,12 +5216,17 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
         let foundMatchId = null;
 
-        // If advertiser has a subaccount, filter to only sites in that subaccount
+        // Respect CM360 subaccount vs root-account site compatibility
         let eligibleSites = window.cm360Sites;
         if (hasSubaccount) {
             const subaccountSites = window.cm360Sites.filter(s => String(s.subaccountId) === String(selectedAdv.subaccountId));
             if (subaccountSites.length > 0) {
                 eligibleSites = subaccountSites;
+            }
+        } else {
+            const rootSites = window.cm360Sites.filter(s => !s.subaccountId);
+            if (rootSites.length > 0) {
+                eligibleSites = rootSites;
             }
         }
 
@@ -4932,20 +5238,24 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
             // Matching logic:
             if (!foundMatchId) {
-                if (s.name.toLowerCase().includes(targetSiteName)) {
+                const sNameLower = (s.name || '').toLowerCase();
+                if (targetSiteName && sNameLower.includes(targetSiteName)) {
                     foundMatchId = s.id;
-                } else if (hasSubaccount && s.name.toLowerCase().includes('xaxis')) {
+                } else if (isMexicoMarket(marketVal) && (sNameLower.includes('xaxis_mexico') || sNameLower.includes('xaxis mx') || sNameLower.includes('xaxis méxico'))) {
+                    foundMatchId = s.id;
+                } else if (hasSubaccount && sNameLower.includes('xaxis')) {
                     foundMatchId = s.id;
                 }
             }
         });
 
-        // If no match found yet, select first eligible site if subaccount was used
-        if (!foundMatchId && hasSubaccount && eligibleSites.length > 0) {
-            foundMatchId = eligibleSites[0].id;
+        // Secondary preference: any Xaxis site in the eligible list, then first available site in the matrix
+        if (!foundMatchId && eligibleSites.length > 0) {
+            const xaxisSite = eligibleSites.find(s => (s.name || '').toLowerCase().includes('xaxis'));
+            foundMatchId = xaxisSite ? xaxisSite.id : eligibleSites[0].id;
         }
 
-        if (window.EDIT_STUDY_DATA && window.EDIT_STUDY_DATA.cm360_site_id) {
+        if (window.EDIT_STUDY_DATA && window.EDIT_STUDY_DATA.cm360_site_id && (!window.EDIT_STUDY_DATA.market || String(window.EDIT_STUDY_DATA.market).toUpperCase() === marketVal)) {
             const editSiteId = String(window.EDIT_STUDY_DATA.cm360_site_id);
             if ([...siteSelect.options].some(o => o.value === editSiteId)) {
                 foundMatchId = editSiteId;
@@ -4964,6 +5274,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         const advId = e.target.value;
         if (!advId) {
             $('#bl-client-step1').value = '';
+            updateAdvComboboxUi();
             filterSites();
             populateSummary();
             validateCurrentStep();
@@ -4976,15 +5287,289 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
             if (clientName) {
                 $('#bl-client-step1').value = clientName;
             }
+            updateAdvComboboxUi();
             filterSites();
             populateSummary();
             validateCurrentStep();
         }
     });
 
+    // ===== FILTERABLE ADVERTISER DROPDOWN LOGIC =====
+    let highlightedAdvIndex = -1;
+
+    function getAdvSearchInput() {
+        return $('#cm360-advertiser-search');
+    }
+    function getAdvDropdown() {
+        return $('#cm360-adv-dropdown');
+    }
+
+    function updateAdvComboboxUi() {
+        const searchInput = getAdvSearchInput();
+        const advSelect = $('#cm360-advertiser-id');
+        const market = getSelectedMarketCode();
+
+        if (!searchInput) return;
+
+        if (!market) {
+            searchInput.disabled = true;
+            searchInput.value = '';
+            searchInput.placeholder = 'Selecciona un mercado primero...';
+            closeAdvDropdown();
+            return;
+        }
+
+        if (window.cm360MatrixLoading) {
+            searchInput.disabled = true;
+            searchInput.value = '';
+            searchInput.placeholder = 'Cargando anunciantes...';
+            closeAdvDropdown();
+            return;
+        }
+
+        if (!window.eligibleAdvertisers || window.eligibleAdvertisers.length === 0) {
+            searchInput.disabled = false;
+            searchInput.value = '';
+            searchInput.placeholder = `No se encontraron anunciantes para ${market}`;
+            closeAdvDropdown();
+            return;
+        }
+
+        searchInput.disabled = false;
+        searchInput.placeholder = 'Selecciona un anunciante...';
+
+        const currentVal = advSelect ? advSelect.value : '';
+        if (currentVal) {
+            const found = window.eligibleAdvertisers.find(a => String(a.id) === String(currentVal)) ||
+                          (window.cm360Advertisers || []).find(a => String(a.id) === String(currentVal));
+            searchInput.value = found ? `${found.name} (${found.id})` : '';
+        } else {
+            searchInput.value = '';
+        }
+
+        const dropdown = getAdvDropdown();
+        if (dropdown && dropdown.style.display === 'block') {
+            renderAdvDropdown('');
+        }
+    }
+
+    function renderAdvDropdown(filterTerm = '') {
+        const dropdown = getAdvDropdown();
+        if (!dropdown) return;
+
+        const advSelect = $('#cm360-advertiser-id');
+        const currentAdvId = advSelect ? String(advSelect.value || '') : '';
+        const query = String(filterTerm || '').toLowerCase().trim();
+
+        let filtered = window.eligibleAdvertisers || [];
+        if (query) {
+            filtered = filtered.filter(a => {
+                const label = `${a.name || ''} (${a.id})`.toLowerCase();
+                return label.includes(query);
+            });
+        }
+
+        dropdown.innerHTML = '';
+
+        // Default placeholder option at the top when no filter text is typed
+        if (!query) {
+            const defaultOpt = document.createElement('div');
+            defaultOpt.className = 'adv-dropdown-item' + (!currentAdvId ? ' selected' : '');
+            defaultOpt.dataset.advId = '';
+            defaultOpt.textContent = 'Selecciona un anunciante...';
+            defaultOpt.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                selectAdvFromCombobox('');
+            });
+            dropdown.appendChild(defaultOpt);
+        }
+
+        if (filtered.length === 0) {
+            const emptyEl = document.createElement('div');
+            emptyEl.className = 'adv-dropdown-empty';
+            emptyEl.textContent = `No se encontraron anunciantes para "${filterTerm}"`;
+            dropdown.appendChild(emptyEl);
+            return;
+        }
+
+        filtered.forEach((a, idx) => {
+            const item = document.createElement('div');
+            const isSelected = String(a.id) === currentAdvId;
+            let cls = 'adv-dropdown-item';
+            if (isSelected) cls += ' selected';
+            if (idx === highlightedAdvIndex) cls += ' highlighted';
+            item.className = cls;
+            item.dataset.advId = String(a.id);
+            item.textContent = `${a.name} (${a.id})`;
+
+            item.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                selectAdvFromCombobox(String(a.id));
+            });
+
+            dropdown.appendChild(item);
+        });
+
+        const targetItem = dropdown.querySelector('.adv-dropdown-item.highlighted') || dropdown.querySelector('.adv-dropdown-item.selected');
+        if (targetItem) {
+            targetItem.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    function openAdvDropdown(filterTerm = '') {
+        const searchInput = getAdvSearchInput();
+        if (!searchInput || searchInput.disabled) return;
+        const dropdown = getAdvDropdown();
+        if (!dropdown) return;
+
+        highlightedAdvIndex = -1;
+        renderAdvDropdown(filterTerm);
+        dropdown.style.display = 'block';
+    }
+
+    function closeAdvDropdown() {
+        const dropdown = getAdvDropdown();
+        if (dropdown) dropdown.style.display = 'none';
+        highlightedAdvIndex = -1;
+    }
+
+    function selectAdvFromCombobox(advId) {
+        const advSelect = $('#cm360-advertiser-id');
+        const searchInput = getAdvSearchInput();
+
+        const adv = advId ? (window.cm360Advertisers || []).find(a => String(a.id) === String(advId)) : null;
+        if (adv) {
+            if (advSelect) advSelect.value = String(adv.id);
+            if (searchInput) searchInput.value = `${adv.name} (${adv.id})`;
+        } else {
+            if (advSelect) advSelect.value = '';
+            if (searchInput) searchInput.value = '';
+        }
+
+        closeAdvDropdown();
+        if (advSelect) {
+            advSelect.dispatchEvent(new Event('change'));
+        }
+    }
+
+    (function initAdvComboboxListeners() {
+        const searchInput = $('#cm360-advertiser-search');
+        const comboboxWrapper = $('#adv-combobox-wrapper');
+
+        if (!searchInput) return;
+
+        // Clicking or focusing opens the full dropdown list of all advertisers immediately
+        searchInput.addEventListener('focus', () => {
+            searchInput.select();
+            openAdvDropdown('');
+        });
+
+        searchInput.addEventListener('click', () => {
+            const dropdown = getAdvDropdown();
+            if (dropdown && dropdown.style.display !== 'block') {
+                searchInput.select();
+                openAdvDropdown('');
+            }
+        });
+
+        // Typing filters the options in the open dropdown list live
+        searchInput.addEventListener('input', (e) => {
+            openAdvDropdown(e.target.value);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            const dropdown = getAdvDropdown();
+            const isOpen = dropdown && dropdown.style.display === 'block';
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!isOpen) {
+                    openAdvDropdown('');
+                    return;
+                }
+                const items = dropdown.querySelectorAll('.adv-dropdown-item');
+                if (items.length > 0) {
+                    highlightedAdvIndex = (highlightedAdvIndex + 1) % items.length;
+                    items.forEach((item, idx) => item.classList.toggle('highlighted', idx === highlightedAdvIndex));
+                    items[highlightedAdvIndex]?.scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (!isOpen) {
+                    openAdvDropdown('');
+                    return;
+                }
+                const items = dropdown.querySelectorAll('.adv-dropdown-item');
+                if (items.length > 0) {
+                    highlightedAdvIndex = (highlightedAdvIndex - 1 + items.length) % items.length;
+                    items.forEach((item, idx) => item.classList.toggle('highlighted', idx === highlightedAdvIndex));
+                    items[highlightedAdvIndex]?.scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'Enter') {
+                if (isOpen) {
+                    e.preventDefault();
+                    const items = dropdown.querySelectorAll('.adv-dropdown-item[data-adv-id]');
+                    if (highlightedAdvIndex >= 0 && items[highlightedAdvIndex]) {
+                        selectAdvFromCombobox(items[highlightedAdvIndex].dataset.advId);
+                    } else {
+                        const nonEmptyItems = [...items].filter(el => el.dataset.advId !== '');
+                        if (nonEmptyItems.length === 1) {
+                            selectAdvFromCombobox(nonEmptyItems[0].dataset.advId);
+                        }
+                    }
+                }
+            } else if (e.key === 'Escape') {
+                closeAdvDropdown();
+            }
+        });
+
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                const advSelect = $('#cm360-advertiser-id');
+                const currentVal = advSelect ? advSelect.value : '';
+                const typed = searchInput.value.trim();
+
+                if (!typed) {
+                    if (currentVal) {
+                        selectAdvFromCombobox('');
+                    }
+                    closeAdvDropdown();
+                    return;
+                }
+
+                if (currentVal) {
+                    const found = (window.cm360Advertisers || []).find(a => String(a.id) === String(currentVal));
+                    if (found) {
+                        searchInput.value = `${found.name} (${found.id})`;
+                    }
+                } else {
+                    const exactMatch = (window.eligibleAdvertisers || []).find(a =>
+                        (a.name || '').toLowerCase() === typed.toLowerCase() ||
+                        String(a.id) === typed ||
+                        `${a.name} (${a.id})`.toLowerCase() === typed.toLowerCase()
+                    );
+                    if (exactMatch) {
+                        selectAdvFromCombobox(exactMatch.id);
+                        return;
+                    }
+                    searchInput.value = '';
+                }
+                closeAdvDropdown();
+            }, 150);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (comboboxWrapper && !comboboxWrapper.contains(e.target)) {
+                closeAdvDropdown();
+            }
+        });
+    })();
+
     $('#cm360-profile-id').addEventListener('change', (e) => {
-        loadAdvertisers(e.target.value);
-        loadSites(e.target.value);
+        const manualProfileId = e.target.value;
+        const seq = ++window.cm360LoadSeq;
+        loadAdvertisers(manualProfileId, seq);
+        loadSites(manualProfileId, seq);
     });
 
     // Load profiles on init
@@ -5162,22 +5747,22 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         }
     });
 
-    window.EDIT_STUDY_DATA = @json($editStudy ?? null);
-
     function initEditModeIfPresent() {
         if (!window.EDIT_STUDY_DATA) return;
         const data = window.EDIT_STUDY_DATA;
 
-        state.studyId = data.id;
+        window.isInitializingEditMode = true;
+        try {
+            state.studyId = data.id;
 
-        // Step 1 fields
-        if (data.market) {
-            const marketSel = $('#bl-market-step1');
-            if (marketSel) {
-                marketSel.value = data.market;
-                marketSel.dispatchEvent(new Event('change'));
+            // Step 1 fields
+            if (data.market) {
+                const marketSel = $('#bl-market-step1');
+                if (marketSel) {
+                    marketSel.value = data.market;
+                    marketSel.dispatchEvent(new Event('change'));
+                }
             }
-        }
 
         if (data.campaign_name) {
             const campEl = $('#bl-campaign-name-step1');
@@ -5292,6 +5877,10 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
         validateCurrentStep();
         populateSummary();
         updateViewportHeight();
+
+        } finally {
+            window.isInitializingEditMode = false;
+        }
 
         setTimeout(() => {
             if (window.cm360Advertisers && window.cm360Advertisers.length > 0) {

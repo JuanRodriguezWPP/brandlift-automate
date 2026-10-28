@@ -1758,7 +1758,8 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     ? `<span style="color:#ef4444;font-size:12px;font-weight:500;cursor:pointer;" onclick="event.stopPropagation(); openResolutionModal(${study.id})" data-tooltip="Haz clic para diagnosticar o vincular una hoja de cálculo" data-tooltip-title="Hoja pendiente">No disponible</span>`
                     : `<span style="color:var(--text-muted);font-size:12px;">—</span>`);
 
-            const accountId = study.cm360_account_id || '732535';
+            const fallbackAccountId = String(study.cm360_profile_id || '') === '11281445' || (!study.cm360_profile_id && String(study.market || '').toUpperCase() === 'MEX') ? '936782' : '732535';
+            const accountId = study.cm360_account_id || fallbackAccountId;
             const cm360Url = study.cm360_url || (study.cm360_campaign_id
                 ? `https://campaignmanager.google.com/trafficking/#/accounts/${accountId}/campaigns/${study.cm360_campaign_id}/explorer?statuses=0;2`
                 : null);
@@ -2068,7 +2069,8 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
 
             // CM360
             let cm360Html = '';
-            const detailAccountId = s.cm360_account_id || '732535';
+            const fallbackDetailAccId = String(s.cm360_profile_id || '') === '11281445' || (!s.cm360_profile_id && String(s.market || '').toUpperCase() === 'MEX') ? '936782' : '732535';
+            const detailAccountId = s.cm360_account_id || fallbackDetailAccId;
             const detailCm360Url = s.cm360_url || (s.cm360_campaign_id 
                 ? `https://campaignmanager.google.com/trafficking/#/accounts/${detailAccountId}/campaigns/${s.cm360_campaign_id}/explorer?statuses=0;2`
                 : null);
@@ -2198,6 +2200,56 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     </div>
                 `;
             }
+
+            // Preparar datos de tags para descarga Excel debajo de la vista previa
+            let parsedTags = [];
+            if (s.cm360_tags) {
+                try {
+                    let raw = typeof s.cm360_tags === 'string' ? JSON.parse(s.cm360_tags) : s.cm360_tags;
+                    if (typeof raw === 'string') raw = JSON.parse(raw);
+                    if (Array.isArray(raw)) {
+                        parsedTags = raw.map(item => ({
+                            creative_name: item.creative_name || '',
+                            creative_id: item.creative_id || '',
+                            placement_id: item.placement_id || '',
+                            ad_id: item.ad_id || '',
+                            ad_tags: Array.isArray(item.ad_tags) ? item.ad_tags : []
+                        }));
+                    }
+                } catch (err) {
+                    console.warn('Error parsing cm360_tags:', err);
+                }
+            }
+            if (parsedTags.length === 0 && Array.isArray(s.tags) && s.tags.length > 0) {
+                parsedTags = s.tags.map(t => ({
+                    creative_name: t.creative_name || s.campaign_name || '',
+                    creative_id: t.creative_id || '',
+                    placement_id: t.placement_id || '',
+                    ad_id: t.ad_id || '',
+                    ad_tags: [{
+                        format: t.tag_type || 'PLACEMENT_TAG_IFRAME_JAVASCRIPT',
+                        impression_tag: t.tag_script || '',
+                        click_tag: null
+                    }]
+                }));
+            }
+            const tagsDataStr = escapeAttr(JSON.stringify(parsedTags));
+            const downloadTagsBtnHtml = `
+                <button type="button"
+                    class="btn-detail-action"
+                    onclick="downloadTagsFromDashboard(this)"
+                    data-tags="${tagsDataStr}"
+                    data-market="${escapeAttr(s.market || '')}"
+                    data-client="${escapeAttr(s.client_name || '')}"
+                    data-campaign="${escapeAttr(s.campaign_name || '')}"
+                    data-tooltip="Descargar archivo Excel (.xlsx) con los tags de tráfico generados para Campaign Manager 360."
+                    data-tooltip-title="Descargar tags"
+                    data-tooltip-icon="download"
+                    style="width: 100%; padding: 10px 16px; font-size: 13px; font-weight: 700; background: var(--wpp-navy); color: var(--wpp-lime); border: none; border-radius: var(--radius-md); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0, 0, 80, 0.12); transition: all 0.2s ease;">
+                    <span translate="no" class="material-symbols-outlined notranslate" style="font-size: 18px;">download</span>
+                    <span>Descargar tags</span>
+                </button>
+            `;
 
             const editBtnHtml = `
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -2331,6 +2383,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                     <!-- Right Column: Creative Preview -->
                     <div class="detail-modal-right">
                         ${previewHtml}
+                        ${downloadTagsBtnHtml}
                     </div>
                 </div>
             `;
@@ -2687,7 +2740,7 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;">
                             <div>
                                 <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px;">ID de Perfil</label>
-                                <input type="text" id="res-cm-profile" value="${escapeAttr(s.cm360_profile_id || '732535')}" class="filter-input" style="width: 100%; font-size: 12px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); box-sizing: border-box;">
+                                <input type="text" id="res-cm-profile" value="${escapeAttr(s.cm360_profile_id || (String(s.market || '').toUpperCase() === 'MEX' ? '11281445' : '11193230'))}" class="filter-input" style="width: 100%; font-size: 12px; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-input); box-sizing: border-box;">
                             </div>
                             <div>
                                 <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 3px;">ID de Anunciante</label>
@@ -3260,9 +3313,12 @@ Por favor verificar la correcta implementación antes del inicio de la pauta.</t
     window.downloadTagsFromDashboard = function(btn) {
         try {
             const tagsStr = btn.getAttribute('data-tags');
-            const tagsData = JSON.parse(tagsStr);
+            let tagsData = tagsStr ? JSON.parse(tagsStr) : [];
+            if (typeof tagsData === 'string') {
+                tagsData = JSON.parse(tagsData);
+            }
             if (!tagsData || tagsData.length === 0) {
-                showToast('No hay tags disponibles para descargar');
+                showToast('No hay tags disponibles para descargar', true);
                 return;
             }
             

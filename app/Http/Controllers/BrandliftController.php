@@ -374,6 +374,7 @@ class BrandliftController extends Controller
                     $study->update([
                         'cm360_profile_id' => $request->input('profile_id'),
                         'cm360_advertiser_id' => $request->input('advertiser_id'),
+                        'cm360_site_id' => $result['resolved_site_id'] ?? $request->input('site_id'),
                         'cm360_pushed' => $result['success'],
                         'cm360_pushed_at' => $result['success'] ? now() : null,
                         'cm360_campaign_id' => $campaignId,
@@ -527,8 +528,10 @@ class BrandliftController extends Controller
                             $creativeName .= "_{$vKey}";
                         }
 
+                        $targetProfileId = $study->cm360_profile_id ?: BrandliftStudy::defaultCm360ProfileIdForMarket($study->market);
+
                         $this->cmService->updateCreativeHtml(
-                            $study->cm360_profile_id,
+                            $targetProfileId,
                             $study->cm360_advertiser_id,
                             $dbCreative->cm360_creative_id,
                             $newHtml,
@@ -964,9 +967,13 @@ class BrandliftController extends Controller
             ], 403);
         }
 
-        $profileId = $request->input('profile_id', $study->cm360_profile_id);
-        $advertiserId = $request->input('advertiser_id', $study->cm360_advertiser_id);
-        $siteId = $request->input('site_id', $study->cm360_site_id);
+        $profileId = trim((string) ($request->input('profile_id') ?: $study->cm360_profile_id ?: BrandliftStudy::defaultCm360ProfileIdForMarket($study->market)));
+        $advertiserId = trim((string) ($request->input('advertiser_id') ?: $study->cm360_advertiser_id));
+        $siteId = trim((string) ($request->input('site_id') ?: $study->cm360_site_id));
+
+        if ($siteId === '' && $profileId !== '' && $advertiserId !== '') {
+            $siteId = $this->cmService->resolveSiteForAdvertiser($profileId, $advertiserId, null);
+        }
 
         if (empty($profileId) || empty($advertiserId) || empty($siteId)) {
             return response()->json([
@@ -1039,7 +1046,7 @@ class BrandliftController extends Controller
                 $study->update([
                     'cm360_profile_id' => $profileId,
                     'cm360_advertiser_id' => $advertiserId,
-                    'cm360_site_id' => $siteId,
+                    'cm360_site_id' => $result['resolved_site_id'] ?? $siteId,
                     'cm360_pushed' => true,
                     'cm360_pushed_at' => now(),
                     'cm360_campaign_id' => $campaignId ?: $study->cm360_campaign_id,

@@ -44,6 +44,9 @@ class CampaignManagerService
 {
     private Dfareporting $service;
 
+    /** @var array<string, string> */
+    private array $resolvedSiteCache = [];
+
     public function __construct()
     {
         $client = new Client;
@@ -401,6 +404,7 @@ class CampaignManagerService
             'success' => $allSuccess,
             'message' => $message,
             'results' => $results,
+            'resolved_site_id' => $siteId,
         ];
     }
 
@@ -990,9 +994,31 @@ class CampaignManagerService
      */
     public function getAdvertisers(string $profileId): array
     {
-        $advertisersResponse = $this->service->advertisers->listAdvertisers($profileId);
+        $allAdvertisers = [];
+        $pageToken = null;
+        $maxPages = 20;
+        $page = 0;
 
-        return json_decode(json_encode($advertisersResponse), true);
+        do {
+            $params = ['maxResults' => 1000];
+            if ($pageToken) {
+                $params['pageToken'] = $pageToken;
+            }
+
+            $advertisersResponse = $this->service->advertisers->listAdvertisers($profileId, $params);
+            $decoded = json_decode(json_encode($advertisersResponse), true);
+
+            if (! empty($decoded['advertisers']) && is_array($decoded['advertisers'])) {
+                foreach ($decoded['advertisers'] as $adv) {
+                    $allAdvertisers[] = $adv;
+                }
+            }
+
+            $pageToken = $decoded['nextPageToken'] ?? null;
+            $page++;
+        } while (! empty($pageToken) && $page < $maxPages);
+
+        return ['advertisers' => $allAdvertisers];
     }
 
     /**
@@ -1003,9 +1029,31 @@ class CampaignManagerService
      */
     public function getSites(string $profileId): array
     {
-        $sitesResponse = $this->service->sites->listSites($profileId);
+        $allSites = [];
+        $pageToken = null;
+        $maxPages = 20;
+        $page = 0;
 
-        return json_decode(json_encode($sitesResponse), true);
+        do {
+            $params = ['maxResults' => 1000];
+            if ($pageToken) {
+                $params['pageToken'] = $pageToken;
+            }
+
+            $sitesResponse = $this->service->sites->listSites($profileId, $params);
+            $decoded = json_decode(json_encode($sitesResponse), true);
+
+            if (! empty($decoded['sites']) && is_array($decoded['sites'])) {
+                foreach ($decoded['sites'] as $site) {
+                    $allSites[] = $site;
+                }
+            }
+
+            $pageToken = $decoded['nextPageToken'] ?? null;
+            $page++;
+        } while (! empty($pageToken) && $page < $maxPages);
+
+        return ['sites' => $allSites];
     }
 
     /**
@@ -1122,10 +1170,15 @@ class CampaignManagerService
     }
 
     /**
-     * Resolve the most appropriate Site ID for an advertiser, respecting its subaccount permissions.
+     * Resolve the most appropriate Site ID for an advertiser, respecting its account and subaccount permissions.
      */
     public function resolveSiteForAdvertiser(string $profileId, string $advertiserId, ?string $preferredSiteId): string
     {
+        $cacheKey = "{$profileId}:{$advertiserId}:".($preferredSiteId ?? '');
+        if (isset($this->resolvedSiteCache[$cacheKey])) {
+            return $this->resolvedSiteCache[$cacheKey];
+        }
+
         try {
             $advertiser = $this->service->advertisers->get($profileId, $advertiserId);
             $subaccountId = $advertiser->getSubaccountId();
@@ -1134,35 +1187,75 @@ class CampaignManagerService
                 // Get all sites available in this subaccount
                 $subSitesResponse = $this->service->sites->listSites($profileId, [
                     'subaccountId' => (string) $subaccountId,
+                    'maxResults' => 1000,
                 ]);
                 $subSites = $subSitesResponse->getSites() ?? [];
 
                 if (! empty($subSites)) {
                     // If preferredSiteId belongs to this subaccount, use it
-                    foreach ($subSites as $s) {
-                        if ((string) $s->getId() === (string) $preferredSiteId) {
-                            return (string) $preferredSiteId;
+                    if (! empty($preferredSiteId)) {
+                        foreach ($subSites as $s) {
+                            if ((string) $s->getId() === (string) $preferredSiteId) {
+                                return $this->resolvedSiteCache[$cacheKey] = (string) $preferredSiteId;
+                            }
                         }
                     }
 
                     // Otherwise, find an Xaxis or best-matching site in this subaccount
                     $bestSite = collect($subSites)->first(function ($s) {
-                        return stripos($s->getName(), 'xaxis') !== false;
+                        return stripos((string) $s->getName(), 'xaxis') !== false;
                     }) ?? $subSites[0];
 
                     Log::info("Resolved subaccount site for advertiser {$advertiserId} (subaccount {$subaccountId})", [
+                        'profile_id' => $profileId,
                         'requested_site' => $preferredSiteId,
                         'resolved_site' => $bestSite->getId(),
                         'site_name' => $bestSite->getName(),
                     ]);
 
-                    return (string) $bestSite->getId();
+                    return $this->resolvedSiteCache[$cacheKey] = (string) $bestSite->getId();
+                }
+            } else {
+                // Root-level advertiser (no subaccount): validate or resolve a root-level site in this profile/matrix
+                $sitesResponse = $this->service->sites->listSites($profileId, [
+                    'maxResults' => 1000,
+                ]);
+                $allSites = $sitesResponse->getSites() ?? [];
+
+                if (! empty($allSites)) {
+                    $rootSites = array_values(array_filter($allSites, fn ($s) => empty($s->getSubaccountId())));
+                    $eligibleSites = ! empty($rootSites) ? $rootSites : $allSites;
+
+                    if (! empty($preferredSiteId)) {
+                        foreach ($eligibleSites as $s) {
+                            if ((string) $s->getId() === (string) $preferredSiteId) {
+                                return $this->resolvedSiteCache[$cacheKey] = (string) $preferredSiteId;
+                            }
+                        }
+                    }
+
+                    $bestSite = collect($eligibleSites)->first(function ($s) {
+                        return stripos((string) $s->getName(), 'xaxis mexico') !== false
+                            || stripos((string) $s->getName(), 'xaxis_mexico') !== false
+                            || stripos((string) $s->getName(), 'xaxis mx') !== false;
+                    }) ?? collect($eligibleSites)->first(function ($s) {
+                        return stripos((string) $s->getName(), 'xaxis') !== false;
+                    }) ?? $eligibleSites[0];
+
+                    Log::info("Resolved account-level site for advertiser {$advertiserId}", [
+                        'profile_id' => $profileId,
+                        'requested_site' => $preferredSiteId,
+                        'resolved_site' => $bestSite->getId(),
+                        'site_name' => $bestSite->getName(),
+                    ]);
+
+                    return $this->resolvedSiteCache[$cacheKey] = (string) $bestSite->getId();
                 }
             }
         } catch (\Exception $e) {
-            Log::warning("Could not resolve subaccount site for advertiser {$advertiserId}: ".$e->getMessage());
+            Log::warning("Could not resolve site for advertiser {$advertiserId} on profile {$profileId}: ".$e->getMessage());
         }
 
-        return (string) ($preferredSiteId ?: '4946484');
+        return $this->resolvedSiteCache[$cacheKey] = (string) ($preferredSiteId ?: '4946484');
     }
 }

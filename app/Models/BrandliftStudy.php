@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BrandliftStudy extends Model
 {
+    public const CM360_MEX_ACCOUNT_ID = '936782';
+
+    public const CM360_MEX_PROFILE_ID = '11281445';
+
+    public const CM360_LATAM_ACCOUNT_ID = '732535';
+
+    public const CM360_LATAM_PROFILE_ID = '11193230';
+
     protected $fillable = [
         'market',
         'campaign_name',
@@ -114,11 +122,37 @@ class BrandliftStudy extends Model
     }
 
     /**
+     * Resolve default CM360 profile ID based on market.
+     */
+    public static function defaultCm360ProfileIdForMarket(?string $market): string
+    {
+        return strtoupper(trim((string) $market)) === 'MEX'
+            ? self::CM360_MEX_PROFILE_ID
+            : self::CM360_LATAM_PROFILE_ID;
+    }
+
+    /**
      * Get the CM360 account ID.
      */
     public function getCm360AccountIdAttribute(): string
     {
-        return $this->attributes['cm360_account_id'] ?? '732535';
+        if (! empty($this->attributes['cm360_account_id'])) {
+            return (string) $this->attributes['cm360_account_id'];
+        }
+
+        $profileId = trim((string) ($this->cm360_profile_id ?? ''));
+        if ($profileId === self::CM360_MEX_PROFILE_ID) {
+            return self::CM360_MEX_ACCOUNT_ID;
+        }
+        if ($profileId === self::CM360_LATAM_PROFILE_ID) {
+            return self::CM360_LATAM_ACCOUNT_ID;
+        }
+
+        if (strtoupper(trim((string) ($this->market ?? ''))) === 'MEX') {
+            return self::CM360_MEX_ACCOUNT_ID;
+        }
+
+        return self::CM360_LATAM_ACCOUNT_ID;
     }
 
     /**
